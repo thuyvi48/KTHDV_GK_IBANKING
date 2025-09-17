@@ -20,7 +20,7 @@ $user = [
         <?php include 'includes/sidebar.php'; ?>
         
         <main class="main-content">
-            <?php include 'admin/dashboard.php'; ?>
+            <?php include 'pages/dashboard.php'; ?>
         </main>
     </div>
     

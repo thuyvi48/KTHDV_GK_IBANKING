@@ -12,9 +12,9 @@
     </div>
     
     <nav class="main-nav">
-        <a href="#" class="nav-link active">Trang chủ</a>
-        <a href="#" class="nav-link">Dịch vụ</a>
-        <a href="#" class="nav-link">Hỗ trợ</a>
+        <a href="../index.php" class="nav-link active">Trang chủ</a>
+        <a href="../pages/service.php" class="nav-link">Dịch vụ</a>
+        <a href="../pages/support.php" class="nav-link">Hỗ trợ</a>
     </nav>
     
     <div class="header-right">

@@ -16,25 +16,25 @@
             <h3>Chức năng chính</h3>
             <ul class="nav-menu">
                 <li class="nav-item active">
-                    <a href="#" class="nav-link">
+                    <a href="../admin/dashboard.php" class="nav-link">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../pages/customer-info.php" class="nav-link">
                         <i class="fas fa-user"></i>
                         <span>Thông tin khách hàng</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../pages/payment.php" class="nav-link">
                         <i class="fas fa-credit-card"></i>
                         <span>Thanh toán</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../pages/transaction.php" class="nav-link">
                         <i class="fas fa-history"></i>
                         <span>Lịch sử giao dịch</span>
                     </a>
