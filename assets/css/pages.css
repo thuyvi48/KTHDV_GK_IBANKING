@@ -1,0 +1,103 @@
+/* === FORM STYLING (customer-info, payment, support) === */
+.form-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #014d2e;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+/* === TABLE (transactions) === */
+.table-wrapper {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.table-wrapper th {
+  background: #f2f2f2;
+}
+
+/* === STATUS BADGES === */
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+.status.success {
+  background: #28a745;
+}
+.status.danger {
+  background: #dc3545;
+}
+.status.warning {
+  background: #ffc107;
+  color: #000;
+}
+.status.info {
+  background: #17a2b8;
+}
+
+/* === CARDS (services) === */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.3s;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.card .icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #65b806;
+}
+.card h3 {
+  font-size: 18px;
+  color: #014d2e;
+}

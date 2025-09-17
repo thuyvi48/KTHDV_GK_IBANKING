@@ -1,52 +1,31 @@
-<?php include '../includes/header.php'; ?>
-<div class="main-content">
-  <?php include '../includes/sidebar.php'; ?>
+<h1 class="page-title">Thanh toán học phí</h1>
 
-  <div class="content">
-    <h2>Thanh toán học phí</h2>
-    <p>Thực hiện các giao dịch chuyển tiền và thanh toán</p>
-
-    <div class="payment">
-      <div class="form-box">
-        <h3>Thông tin giao dịch</h3>
-        <form>
-          <label>Loại giao dịch</label>
-          <select>
-            <option>Thanh toán học phí</option>
-            <option>Chuyển khoản khác</option>
-          </select>
-
-          <label>Số tài khoản trường học</label>
-          <input type="text" placeholder="Nhập số tài khoản của trường">
-
-          <label>Tên trường</label>
-          <input type="text" placeholder="Ví dụ: Trường Đại học XYZ">
-
-          <label>Số tiền</label>
-          <input type="number" placeholder="Nhập số tiền học phí">
-
-          <label>Nội dung</label>
-          <textarea placeholder="Ví dụ: Thanh toán học phí kỳ 1"></textarea>
-
-          <button type="submit" class="btn">Thanh toán</button>
-        </form>
-      </div>
-
-      <div class="side-box">
-        <div class="card">
-          <h4>Số dư khả dụng</h4>
-          <p class="balance">2,450,000 đ</p>
+<div class="form-section">
+    <form action="#" method="post">
+        <div class="form-group">
+            <label for="studentId">Mã sinh viên</label>
+            <input type="text" id="studentId" name="studentId" placeholder="VD: SV123456">
         </div>
 
-        <div class="card">
-          <h4>Chuyển nhanh</h4>
-          <ul>
-            <li>Nguyễn Thị B (VCB - 1234567890)</li>
-            <li>Trần Văn C (BIDV - 0987654321)</li>
-          </ul>
+        <div class="form-group">
+            <label for="fullname">Họ và tên</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Nhập họ tên sinh viên">
         </div>
-      </div>
-    </div>
-  </div>
+
+        <div class="form-group">
+            <label for="semester">Học kỳ</label>
+            <select id="semester" name="semester">
+                <option value="">-- Chọn học kỳ --</option>
+                <option value="1">Học kỳ 1 (2025)</option>
+                <option value="2">Học kỳ 2 (2025)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Số tiền cần thanh toán</label>
+            <input type="number" id="amount" name="amount" value="5000000">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Thanh toán ngay</button>
+    </form>
 </div>
-<?php include '../includes/footer.php'; ?>

@@ -12,10 +12,22 @@
     </div>
     
     <nav class="main-nav">
-        <a href="../index.php" class="nav-link active">Trang chủ</a>
-        <a href="../pages/service.php" class="nav-link">Dịch vụ</a>
-        <a href="../pages/support.php" class="nav-link">Hỗ trợ</a>
-    </nav>
+    <a href="index.php" 
+       class="nav-item <?php echo ($page=='index') ? 'active' : ''; ?>">
+       Trang chủ
+    </a>
+
+    <a href="index.php?page=service" 
+       class="nav-item <?php echo ($page=='service') ? 'active' : ''; ?>">
+       Dịch vụ
+    </a>
+
+    <a href="index.php?page=support" 
+       class="nav-item <?php echo ($page=='support') ? 'active' : ''; ?>">
+       Hỗ trợ
+    </a>
+</nav>
+
     
     <div class="header-right">
         

@@ -1,52 +1,43 @@
-<?php include '../includes/header.php'; ?>
-<div class="main-content">
-  <?php include '../includes/sidebar.php'; ?>
+<?php
+// Giả lập dữ liệu khách hàng (sau này có thể lấy từ CSDL)
+$customer = [
+    'name' => 'Nguyễn Văn An',
+    'dob' => '1995-06-15',
+    'email' => 'an.nguyen@example.com',
+    'phone' => '0987654321',
+    'address' => '123 Đường ABC, Quận 1, TP.HCM'
+];
+?>
 
-  <div class="content">
-    <h2>Thông tin khách hàng</h2>
-    <p>Quản lý và cập nhật thông tin cá nhân</p>
+<h1 class="page-title">Thông tin khách hàng</h1>
 
-    <div class="customer-info">
-      <div class="info-left">
-        <h3>Thông tin cá nhân</h3>
-        <form>
-          <label>Họ và tên</label>
-          <input type="text" value="Nguyễn Văn An" disabled>
-          
-          <label>Email</label>
-          <input type="email" value="nguyen.van.an@email.com" disabled>
-          
-          <label>Ngày sinh</label>
-          <input type="text" value="15/08/1990" disabled>
-          
-          <label>Địa chỉ</label>
-          <input type="text" value="123 Đường ABC, Quận 1, TP.HCM" disabled>
-
-          <label>CCCD/CMND</label>
-          <input type="text" value="025123456789" disabled>
-          
-          <label>Số điện thoại</label>
-          <input type="text" value="0901234567" disabled>
-        </form>
-      </div>
-
-      <div class="info-right">
-        <div class="card">
-          <h4>Tài khoản ngân hàng</h4>
-          <div class="account-box">•••• •••• •••• 3456</div>
-          <button class="btn">Sao chép STK</button>
+<div class="form-section">
+    <form action="#" method="post">
+        <div class="form-group">
+            <label for="name">Họ và tên</label>
+            <input type="text" id="name" name="name" value="<?php echo $customer['name']; ?>">
         </div>
 
-        <div class="card">
-          <h4>Trạng thái bảo mật</h4>
-          <ul>
-            <li>Xác thực 2 lớp: <span class="badge success">Đã bật</span></li>
-            <li>Xác thực email: <span class="badge success">Đã xác thực</span></li>
-            <li>Xác thực SMS: <span class="badge success">Đã xác thực</span></li>
-          </ul>
+        <div class="form-group">
+            <label for="dob">Ngày sinh</label>
+            <input type="date" id="dob" name="dob" value="<?php echo $customer['dob']; ?>">
         </div>
-      </div>
-    </div>
-  </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<?php echo $customer['email']; ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Số điện thoại</label>
+            <input type="text" id="phone" name="phone" value="<?php echo $customer['phone']; ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="address">Địa chỉ</label>
+            <textarea id="address" name="address" rows="3"><?php echo $customer['address']; ?></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
+    </form>
 </div>
-<?php include '../includes/footer.php'; ?>

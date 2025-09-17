@@ -11,6 +11,7 @@ $user = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iBanking - Dashboard</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/pages.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -20,8 +21,17 @@ $user = [
         <?php include 'includes/sidebar.php'; ?>
         
         <main class="main-content">
-            <?php include 'pages/dashboard.php'; ?>
-        </main>
+    <?php
+    $page = $_GET['page'] ?? 'dashboard'; // mặc định dashboard
+    $file = "pages/$page.php";
+    if (file_exists($file)) {
+        include $file;
+    } else {
+        echo "<p>Trang không tồn tại!</p>";
+    }
+    ?>
+</main>
+
     </div>
     
     <?php include 'includes/footer.php'; ?>

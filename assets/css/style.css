@@ -61,7 +61,7 @@ body {
   margin-left: 3rem;
 }
 
-.nav-link {
+.nav-item {
   text-decoration: none;
   color: #666;
   font-weight: 500;
@@ -70,8 +70,8 @@ body {
   transition: all 0.3s;
 }
 
-.nav-link.active,
-.nav-link:hover {
+.nav-item.active,
+.nav-item:hover {
   color: #2d5a57;
   background-color: #f0f8f7;
 }
