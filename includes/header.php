@@ -1,3 +1,19 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iBanking - Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
 <header class="main-header">
     <div class="header-left">
         <div class="logo">
@@ -5,7 +21,7 @@
                 <i class="fas fa-university"></i>
             </div>
             <div class="logo-text">
-                <h2>iBanking</h2>
+                <h2>iBanking <?php echo $namePage ?></h2>
                 <span>Ngân hàng số an toàn</span>
             </div>
         </div>
