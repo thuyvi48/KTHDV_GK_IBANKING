@@ -1,5 +1,5 @@
 <?php
-// nếu $page chưa có (khi load trực tiếp sidebar.php) thì mặc định là dashboard
+
 $page = $page ?? ($_GET['page'] ?? 'dashboard');
 ?>
 
