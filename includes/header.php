@@ -48,8 +48,10 @@ if (session_status() === PHP_SESSION_NONE) {
         
         <div class="user-info">
             <div class="notification">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">1</span>
+                <a href="notification.php">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">1</span>
+                </a>
             </div>
             <div class="user-profile">
                 <div class="user-avatar">

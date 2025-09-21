@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit;
 }
+$namePage = "Lịch sử giao dịch";
 
 $user = $_SESSION['user'];
 $user_id = $user['id'];
