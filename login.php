@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'includes/db.php';
+$namePage = "Đăng nhập";
 
 // Nếu đã đăng nhập thì chuyển về trang chủ
 if (isset($_SESSION['USER_ID'])) {
@@ -60,25 +61,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - iBanking</title>
+    <title>iBanking - $namePage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('assets/images/bg-login.jpg') no-repeat center center fixed;
+            background-size: cover; 
             min-height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .login-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.9); 
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             overflow: hidden;
+            backdrop-filter: blur(8px);
         }
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3e5857 100%);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -97,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3e5857 100%);
             border: none;
             padding: 12px;
             border-radius: 10px;
@@ -134,7 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-university me-2"></i>
                             iBanking
                         </h2>
-                        <p class="mb-0 mt-2 opacity-75">Đăng nhập vào hệ thống</p>
                     </div>
                     
                     <div class="login-body">
@@ -149,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method="POST" action="">
                             <div class="mb-3">
                                 <label for="username" class="form-label fw-semibold">
-                                    <i class="fas fa-user me-1"></i>Tên đăng nhập hoặc Email
+                                  </i>Tên đăng nhập hoặc Email
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">
@@ -168,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                             <div class="mb-4">
                                 <label for="password" class="form-label fw-semibold">
-                                    <i class="fas fa-lock me-1"></i>Mật khẩu
+                                    </i>Mật khẩu
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">

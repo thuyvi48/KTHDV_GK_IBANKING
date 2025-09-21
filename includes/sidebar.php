@@ -11,14 +11,12 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
             </div>
             <div class="logo-text">
                 <strong>iBanking</strong>
-                <small>Ngân hàng số</small>
             </div>
         </div>
     </div>
     
     <nav class="sidebar-nav">
         <div class="nav-section">
-            <h3>Chức năng chính</h3>
             <ul class="nav-menu">
                 <li class="nav-item <?php echo ($page=='dashboard') ? 'active' : ''; ?>">
                     <a href="index.php?page=dashboard" class="nav-link">

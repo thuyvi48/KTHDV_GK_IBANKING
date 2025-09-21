@@ -7,7 +7,6 @@
                 </div>
                 <div class="logo-text">
                     <h3>iBanking</h3>
-                    <p>Ngân hàng số</p>
                 </div>
             </div>
             <div class="footer-description">
@@ -72,14 +71,7 @@
     
     <div class="footer-bottom">
         <div class="footer-bottom-content">
-            <p>&copy; 2023 iBanking. Tất cả quyền được bảo lưu.</p>
-            <div class="footer-certificates">
-                <span>Giấy phép số: 123/GP-NHNN</span>
-                <div class="security-badges">
-                    <span class="badge ssl">SSL 256-bit</span>
-                    <span class="badge iso">ISO 27001</span>
-                </div>
-            </div>
+            <p>&copy; 2023 iBanking System. All right reserved.</p>
         </div>
     </div>
 </footer>

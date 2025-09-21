@@ -27,9 +27,12 @@ $_SESSION['logout_user'] = $user_name;
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('assets/images/bg-login.jpg') no-repeat center center fixed;
+            background-size: cover; 
             min-height: 100vh;
             display: flex;
+            align-items: center;
+            justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -51,7 +54,7 @@ $_SESSION['logout_user'] = $user_name;
             }
         }
         .logout-header {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg,#3e5857 100%);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -61,7 +64,7 @@ $_SESSION['logout_user'] = $user_name;
             text-align: center;
         }
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3e5857 100%);
             border: none;
             padding: 12px 30px;
             border-radius: 10px;
@@ -131,7 +134,6 @@ $_SESSION['logout_user'] = $user_name;
                             <i class="fas fa-university me-2"></i>
                             iBanking
                         </h2>
-                        <p class="mb-0 mt-2 opacity-75">Đăng xuất thành công</p>
                     </div>
                     
                     <div class="logout-body">
@@ -140,7 +142,6 @@ $_SESSION['logout_user'] = $user_name;
                         </div>
                         
                         <div class="logout-message">
-                            <strong>Tạm biệt, <?php echo htmlspecialchars($user_name); ?>!</strong>
                             <br>
                             Bạn đã đăng xuất khỏi hệ thống thành công.
                             <br>
@@ -168,14 +169,6 @@ $_SESSION['logout_user'] = $user_name;
                         
                         <hr class="my-4">
                         
-                        <div class="text-muted">
-                            <h6><i class="fas fa-lightbulb me-2"></i>Lời khuyên bảo mật:</h6>
-                            <small>
-                                • Luôn đăng xuất khi sử dụng máy tính chung<br>
-                                • Không chia sẻ thông tin đăng nhập với người khác<br>
-                                • Thay đổi mật khẩu định kỳ để bảo mật tài khoản
-                            </small>
-                        </div>
                     </div>
                 </div>
                 

@@ -35,7 +35,7 @@ body {
 .logo-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #2d5a57 0%, #4a8b85 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@ body {
 }
 
 .logo-text h2 {
-  color: #2d5a57;
+  color: #3e5857;
   font-size: 1.8rem;
   font-weight: 700;
 }
@@ -72,7 +72,7 @@ body {
 
 .nav-item.active,
 .nav-item:hover {
-  color: #2d5a57;
+  color: #3e5857;
   background-color: #f0f8f7;
 }
 
@@ -212,7 +212,7 @@ body {
 
 .sidebar-logo .logo-text strong {
   display: block;
-  color: #2d5a57;
+  color: #3e5857;
   font-size: 1.2rem;
 }
 
@@ -252,7 +252,7 @@ body {
 
 .nav-item.active .nav-link,
 .nav-item .nav-link:hover {
-  background: linear-gradient(135deg, #2d5a57 0%, #4a8b85 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
   color: white;
   transform: translateX(5px);
 }
@@ -295,7 +295,7 @@ body {
 
 .settings-link:hover {
   background: #f8f9fa;
-  color: #2d5a57;
+  color: #3e5857;
 }
 
 .logout-link:hover {
@@ -355,7 +355,7 @@ body {
 }
 
 .account-card.primary {
-  background: linear-gradient(135deg, #2d5a57 0%, #4a8b85 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
   color: white;
 }
 
@@ -511,7 +511,7 @@ body {
 }
 
 .action-icon.transfer {
-  background: linear-gradient(135deg, #2d5a57 0%, #4a8b85 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
 }
 
 .action-icon.payment {
@@ -519,7 +519,7 @@ body {
 }
 
 .action-icon.savings {
-  background: linear-gradient(135deg, #2d5a57 0%, #4a8b85 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
 }
 
 .action-icon.loan {
@@ -568,8 +568,8 @@ body {
 
 .btn-view-all {
   background: transparent;
-  border: 1px solid #2d5a57;
-  color: #2d5a57;
+  border: 1px solid #3e5857;
+  color: #3e5857;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -578,7 +578,7 @@ body {
 }
 
 .btn-view-all:hover {
-  background: #2d5a57;
+  background: #3e5857;
   color: white;
 }
 
@@ -659,7 +659,7 @@ body {
 
 /* Footer Styles */
 .main-footer {
-  background: linear-gradient(135deg, #2d5a57 0%, #1a3f3c 100%);
+  background: linear-gradient(135deg, #3e5857 100%);
   color: white;
   margin-top: 4rem;
 }
@@ -738,6 +738,14 @@ body {
 
 .footer-links a:hover {
   color: white;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    height: 60px;        
+    color: #fff;          
 }
 
 .contact-info {
