@@ -56,7 +56,7 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
             </a>
         </div>
         <div class="logout">
-            <a href="#" class="logout-link">
+            <a href="logout.php" class="logout-link">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Đăng xuất</span>
             </a>

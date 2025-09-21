@@ -1,40 +1,53 @@
-<h1 class="page-title">Lịch sử giao dịch</h1>
+<?php
+include __DIR__ . '/../includes/db.php';
 
-<div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th>Thời gian</th>
-                <th>Nội dung</th>
-                <th>Số tiền</th>
-                <th>Trạng thái</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>10/09/2025 - 08:45</td>
-                <td>Thanh toán học phí</td>
-                <td>- 5,000,000 đ</td>
-                <td><span class="status success">Thành công</span></td>
-            </tr>
-            <tr>
-                <td>05/09/2025 - 14:20</td>
-                <td>Chuyển tiền</td>
-                <td>- 1,200,000 đ</td>
-                <td><span class="status success">Thành công</span></td>
-            </tr>
-            <tr>
-                <td>02/09/2025 - 19:10</td>
-                <td>Nhận tiền từ ACB</td>
-                <td>+ 3,500,000 đ</td>
-                <td><span class="status info">Đang xử lý</span></td>
-            </tr>
-            <tr>
-                <td>28/08/2025 - 09:50</td>
-                <td>Thanh toán điện nước</td>
-                <td>- 850,000 đ</td>
-                <td><span class="status danger">Thất bại</span></td>
-            </tr>
-        </tbody>
-    </table>
+// Check login
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+$user = $_SESSION['user'];
+$user_id = $user['id'];
+
+// Lấy giao dịch
+$sql = "SELECT * FROM transactions WHERE user_id = $user_id ORDER BY created_at DESC";
+$result = mysqli_query($conn, $sql);
+?>
+
+<div class="container mt-4">
+  <h2>Lịch sử giao dịch</h2>
+
+  <?php if (isset($_GET['success'])): ?>
+    <div class="alert alert-success">Giao dịch học phí thành công!</div>
+  <?php endif; ?>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Thời gian</th>
+        <th>Loại giao dịch</th>
+        <th>Số tiền</th>
+        <th>Mô tả</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while($row = mysqli_fetch_assoc($result)): ?>
+        <tr>
+          <td><?php echo $row['created_at']; ?></td>
+          <td>
+            <?php 
+              if ($row['type'] === 'tuition') {
+                echo "Đóng học phí";
+              } else {
+                echo ucfirst($row['type']);
+              }
+            ?>
+          </td>
+          <td><?php echo number_format($row['amount']); ?> đ</td>
+          <td><?php echo $row['description']; ?></td>
+        </tr>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
 </div>
