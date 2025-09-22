@@ -57,9 +57,9 @@ if (session_status() === PHP_SESSION_NONE) {
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <div class="user-details">
-                    <span class="user-name"><?php echo $user['name']; ?></span>
-                </div>
+                <span class="user-name">
+                <?php echo isset($user['full_name']) ? $user['full_name'] : 'Khách vãng lai'; ?>
+                </span>
             </div>
         </div>
     </div>
