@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             // Sử dụng USENAME như trong database (không phải USERNAME)
-            $stmt = $conn->prepare("SELECT USER_ID, FULL_NAME, PASSWORD FROM users WHERE USENAME = ? OR EMAIL = ?");
+            $stmt = $conn->prepare("SELECT user_id, full_name, password FROM users WHERE username = ? OR email = ?");   
             $stmt->bind_param("ss", $username, $username);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -30,12 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // if (password_verify($password, $row['PASSWORD'])) {
                 
                 // Hiện tại dùng so sánh trực tiếp (không an toàn)
-                if ($password === $row['PASSWORD']) {
+                if ($password === $row['password']) {
                     $_SESSION['USER_ID'] = $row['USER_ID'];
                     $_SESSION['FULL_NAME'] = $row['FULL_NAME'];
                     
                     // Cập nhật thời gian đăng nhập cuối
-                    $updateStmt = $conn->prepare("UPDATE users SET LAST_LOGIN = NOW() WHERE USER_ID = ?");
                     $updateStmt->bind_param("i", $row['USER_ID']);
                     $updateStmt->execute();
                     

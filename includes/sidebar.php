@@ -21,7 +21,7 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
                 <li class="nav-item <?php echo ($page=='dashboard') ? 'active' : ''; ?>">
                     <a href="index.php?page=dashboard" class="nav-link">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
+                        <span>Trang chủ</span>
                     </a>
                 </li>
                 <li class="nav-item <?php echo ($page=='customer-info') ? 'active' : ''; ?>">
@@ -42,22 +42,23 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
                         <span>Lịch sử giao dịch</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Cài đặt</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="logout.php" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
             </ul>
+            
         </div>
     </nav>
     
-    <div class="sidebar-footer">
-        <div class="settings">
-            <a href="#" class="settings-link">
-                <i class="fas fa-cog"></i>
-                <span>Cài đặt</span>
-            </a>
-        </div>
-        <div class="logout">
-            <a href="logout.php" class="logout-link">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Đăng xuất</span>
-            </a>
-        </div>
-    </div>
+
 </aside>

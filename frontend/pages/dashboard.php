@@ -25,8 +25,7 @@ $recent_transactions = [
 
 <div class="dashboard">
     <div class="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Tổng quan tài khoản ngân hàng của bạn</p>
+        <h1>Trang chủ</h1>
     </div>
     
     <!-- Account Cards -->
@@ -40,7 +39,6 @@ $recent_transactions = [
                         <i class="fas fa-copy"></i>
                     </div>
                 </div>
-                <div class="account-number">**** 1234</div>
             </div>
             <div class="card-balance">
                 <span class="balance-amount"><?php echo number_format($account_balance, 0, ',', '.'); ?> đ</span>
@@ -55,7 +53,6 @@ $recent_transactions = [
         <div class="account-card savings">
             <div class="card-header">
                 <h3>Tiết kiệm</h3>
-                <div class="savings-info">Số tiết kiệm không kỳ hạn</div>
             </div>
             <div class="card-balance">
                 <span class="balance-amount"><?php echo number_format($savings_balance, 0, ',', '.'); ?> đ</span>
@@ -70,7 +67,6 @@ $recent_transactions = [
         <div class="account-card credit">
             <div class="card-header">
                 <h3>Thẻ tín dụng</h3>
-                <div class="credit-info">Hạn mức khả dụng</div>
             </div>
             <div class="card-balance">
                 <span class="balance-amount"><?php echo number_format($credit_limit, 0, ',', '.'); ?> đ</span>
@@ -84,8 +80,7 @@ $recent_transactions = [
     
     <!-- Quick Actions -->
     <div class="quick-actions">
-        <h2>Thao tác nhanh</h2>
-        <p>Các giao dịch thường dùng</p>
+        <h1>Các giao dịch thường dùng</h1>
         
         <div class="actions-grid">
             <div class="action-item">
@@ -94,7 +89,6 @@ $recent_transactions = [
                 </div>
                 <div class="action-content">
                     <h4>Chuyển tiền</h4>
-                    <p>Chuyển tiền nhanh</p>
                 </div>
             </div>
             
@@ -104,7 +98,6 @@ $recent_transactions = [
                 </div>
                 <div class="action-content">
                     <h4>Thanh toán</h4>
-                    <p>Thanh toán hóa đơn</p>
                 </div>
             </div>
             
@@ -114,7 +107,6 @@ $recent_transactions = [
                 </div>
                 <div class="action-content">
                     <h4>Tiết kiệm</h4>
-                    <p>Gửi tiết kiệm</p>
                 </div>
             </div>
             
@@ -124,7 +116,6 @@ $recent_transactions = [
                 </div>
                 <div class="action-content">
                     <h4>Vay vốn</h4>
-                    <p>Vay tiêu dùng</p>
                 </div>
             </div>
         </div>
