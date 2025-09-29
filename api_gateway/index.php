@@ -47,6 +47,24 @@ switch ($service) {
         }
         break;
 
+     case 'transaction':
+        if ($action === 'list') {
+            $user_id = $_GET['user_id'] ?? '';
+            $url = "http://localhost/ibanking/backend/transaction_service/index.php?action=list&user_id=" . urlencode($user_id);
+            $response = @file_get_contents($url);
+
+            if ($response === false) {
+                echo json_encode(["error" => "Không thể kết nối transaction_service"]);
+            } else {
+                echo $response;
+            }
+        } else {
+            echo json_encode(["error" => "Action transaction không hợp lệ"]);
+        }
+        break;
+
+
+
     default:
         echo json_encode(["error" => "Service không hợp lệ"]);
 }
