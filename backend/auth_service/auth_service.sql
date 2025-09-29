@@ -20,9 +20,3 @@ create table USERS_AUTH
    primary key (AUTH_ID)
 );
 
-INSERT INTO USERS_AUTH (
-  AUTH_ID, USERNAME, PASSWORD, USER_ID, CREATED_AT, UPDATED_AT
-) VALUES
-('A001', 'john_doe',   '123456',  'U001', NOW(), NOW()),
-('A002', 'jane_smith', 'abcdef',  'U002', NOW(), NOW()),
-('A003', 'admin',      'admin123','U003', NOW(), NOW());

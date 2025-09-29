@@ -1,58 +1,35 @@
 <?php
 session_start();
-require_once 'includes/db.php';
-
-// Nếu đã đăng nhập thì chuyển về trang chủ
-if (isset($_SESSION['USER_ID'])) {
-    header("Location: index.php");
-    exit();
-}
-
-$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
-    
-    // Validate input
-    if (empty($username) || empty($password)) {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
-    } else {
-        try {
-            // Sử dụng USENAME như trong database (không phải USERNAME)
-            $stmt = $conn->prepare("SELECT user_id, full_name, password FROM users WHERE username = ? OR email = ?");   
-            $stmt->bind_param("ss", $username, $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
 
-            if ($row = $result->fetch_assoc()) {
-                // Nếu sử dụng password_hash, thì dùng password_verify
-                // if (password_verify($password, $row['PASSWORD'])) {
-                
-                // Hiện tại dùng so sánh trực tiếp (không an toàn)
-                if ($password === $row['password']) {
-                    $_SESSION['USER_ID'] = $row['USER_ID'];
-                    $_SESSION['FULL_NAME'] = $row['FULL_NAME'];
-                    
-                    // Cập nhật thời gian đăng nhập cuối
-                    $updateStmt->bind_param("i", $row['USER_ID']);
-                    $updateStmt->execute();
-                    
-                    header("Location: index.php");
-                    exit();
-                } else {
-                    $error = "Sai tài khoản hoặc mật khẩu!";
-                }
-            } else {
-                $error = "Sai tài khoản hoặc mật khẩu!";
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            $error = "Lỗi hệ thống! Vui lòng thử lại sau.";
-            error_log("Login error: " . $e->getMessage());
-        }
+    $ch = curl_init("http://localhost/KTHDV_GK_IBANKING/backend/auth_service/login.php");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'username' => $username,
+        'password' => $password
+    ]));
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+    if (!empty($data['success']) && $data['success'] === true) {
+        $_SESSION['USER_ID'] = $data['auth']['user_id'];
+        $_SESSION['USERNAME'] = $data['auth']['username'];
+        $_SESSION['TOKEN'] = $data['token'];
+        header("Location: index.php");
+        exit;
+    } else {
+        $error = $data['error'] ?? 'Lỗi hệ thống!';
     }
 }
+?>
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">

@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php'; // kết nối DB
+require_once 'db.php'; // $conn
 
 header('Content-Type: application/json');
 
@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Nhận JSON
 $data = json_decode(file_get_contents("php://input"), true);
 
 $username = trim($data['username'] ?? '');
@@ -19,26 +20,28 @@ if (empty($username) || empty($password)) {
     exit;
 }
 
-$sql = "SELECT USER_ID, FULLNAME, PASSWORD 
-        FROM USERS 
-        WHERE USERNAME = ? OR EMAIL = ?";
+// Truy vấn bảng USERS_AUTH
+$sql = "SELECT AUTH_ID, USERNAME, PASSWORD, USER_ID 
+        FROM USERS_AUTH
+        WHERE USERNAME = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $username, $username);
+$stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
-    // Nếu trong DB đang dùng plain text thì so sánh trực tiếp
-    // Nếu đã dùng password_hash() thì thay bằng password_verify()
+    // Nếu DB đang lưu plain text thì so sánh trực tiếp
+    // Nếu dùng password_hash() thì thay bằng password_verify()
     if ($password === $row['PASSWORD']) {
         echo json_encode([
             "success" => true,
-            "user" => [
-                "id" => $row['USER_ID'],
-                "fullname" => $row['FULLNAME']
+            "auth" => [
+                "auth_id" => $row['AUTH_ID'],
+                "user_id" => $row['USER_ID'],
+                "username" => $row['USERNAME']
             ],
-            "token" => bin2hex(random_bytes(16)) // giả lập JWT/Session Token
+            "token" => bin2hex(random_bytes(16)) // giả lập token
         ]);
     } else {
         echo json_encode(["error" => "Sai mật khẩu"]);
