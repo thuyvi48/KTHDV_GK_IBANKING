@@ -3,17 +3,23 @@ require_once 'db.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_GET['id'])) {
-    echo json_encode(["error" => "Thiếu tham số id"]);
+if (!isset($_GET['id']) && !isset($_GET['email'])) {
+    echo json_encode(["error" => "Thiếu tham số id hoặc email"]);
     exit;
 }
 
-$id = $_GET['id'];
+if (isset($_GET['id'])) {
+    $sql = "SELECT USER_ID, FULLNAME, EMAIL, AVAILABLE__BALANCE 
+            FROM USERS WHERE USER_ID = ?";
+    $param = $_GET['id'];
+} else {
+    $sql = "SELECT USER_ID, FULLNAME, EMAIL, AVAILABLE__BALANCE 
+            FROM USERS WHERE EMAIL = ?";
+    $param = $_GET['email'];
+}
 
-$sql = "SELECT USER_ID, FULLNAME, EMAIL, AVAILABLE__BALANCE 
-        FROM USERS WHERE USER_ID = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $id);
+$stmt->bind_param("s", $param);
 $stmt->execute();
 $result = $stmt->get_result();
 

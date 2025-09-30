@@ -1,2 +1,2 @@
 <?php
-define("BASE_URL", "/IBANKING/frontend/");
+define("BASE_URL", "/KTHDV_GK_IBANKING/frontend/");

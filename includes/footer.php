@@ -6,7 +6,7 @@
                     <i class="fas fa-university"></i>
                 </div>
                 <div class="logo-text">
-                    <h3>iBanking</h3>
+                    <h3>iMAGINE</h3>
                 </div>
             </div>
             <div class="footer-description">
@@ -71,7 +71,7 @@
     
     <div class="footer-bottom">
         <div class="footer-bottom-content">
-            <p>&copy; 2023 iBanking System. All right reserved.</p>
+            <p>&copy; 2023 iMAGINE System. All right reserved.</p>
         </div>
     </div>
 </footer>

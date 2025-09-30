@@ -22,7 +22,7 @@ $_SESSION['logout_user'] = $user_name;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng xuất - iBanking</title>
+    <title>iMAGINE - Đăng xuất</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -132,7 +132,7 @@ $_SESSION['logout_user'] = $user_name;
                     <div class="logout-header">
                         <h2 class="mb-0">
                             <i class="fas fa-university me-2"></i>
-                            iBanking
+                            iMAGINE
                         </h2>
                     </div>
                     
@@ -145,7 +145,7 @@ $_SESSION['logout_user'] = $user_name;
                             <br>
                             Bạn đã đăng xuất khỏi hệ thống thành công.
                             <br>
-                            <small class="text-muted">Cảm ơn bạn đã sử dụng dịch vụ iBanking.</small>
+                            <small class="text-muted">Cảm ơn bạn đã sử dụng dịch vụ iMAGINE.</small>
                         </div>
                         
                         <div class="alert alert-success border-0" role="alert">
@@ -157,16 +157,11 @@ $_SESSION['logout_user'] = $user_name;
                             <a href="login.php" class="btn-login">
                                 <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập lại
                             </a>
-                            <a href="index.php" class="btn-home">
+                            <a href="../index.php" class="btn-home">
                                 <i class="fas fa-home me-2"></i>Trang chủ
                             </a>
                         </div>
-                        
-                        <div class="countdown">
-                            <i class="fas fa-clock me-1"></i>
-                            Tự động chuyển về trang đăng nhập sau <span id="countdown">10</span> giây
-                        </div>
-                        
+                                       
                         <hr class="my-4">
                         
                     </div>
@@ -174,7 +169,7 @@ $_SESSION['logout_user'] = $user_name;
                 
                 <div class="text-center mt-3">
                     <small class="text-white-50">
-                        © 2025 iBanking System. All rights reserved.
+                        © 2025 iMAGINE System. All rights reserved.
                     </small>
                 </div>
             </div>
@@ -183,19 +178,7 @@ $_SESSION['logout_user'] = $user_name;
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Countdown timer
-        let timeLeft = 10;
-        const countdownElement = document.getElementById('countdown');
-        
-        const timer = setInterval(function() {
-            timeLeft--;
-            countdownElement.textContent = timeLeft;
-            
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                window.location.href = 'login.php';
-            }
-        }, 1000);
+
         
         // Clear logout session data after showing
         <?php 

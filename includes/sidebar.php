@@ -4,16 +4,6 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
 ?>
 
 <aside class="sidebar">
-    <div class="sidebar-header">
-        <div class="sidebar-logo">
-            <div class="logo-icon">
-                <i class="fas fa-university"></i>
-            </div>
-            <div class="logo-text">
-                <strong>iBanking</strong>
-            </div>
-        </div>
-    </div>
     
     <nav class="sidebar-nav">
         <div class="nav-section">

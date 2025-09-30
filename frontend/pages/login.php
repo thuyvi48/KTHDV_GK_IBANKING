@@ -5,29 +5,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    $ch = curl_init("http://localhost/KTHDV_GK_IBANKING/backend/auth_service/login.php");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'username' => $username,
-        'password' => $password
-    ]));
-
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $data = json_decode($response, true);
-    if (!empty($data['success']) && $data['success'] === true) {
-        $_SESSION['USER_ID'] = $data['auth']['user_id'];
-        $_SESSION['USERNAME'] = $data['auth']['username'];
-        $_SESSION['TOKEN'] = $data['token'];
-        header("Location: index.php");
-        exit;
+    if (empty($username) || empty($password)) {
+        $error = "Vui lòng nhập đầy đủ thông tin!";
     } else {
-        $error = $data['error'] ?? 'Lỗi hệ thống!';
+        // Gọi API Gateway
+        $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=auth&action=login";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            "username" => $username,
+            "password" => $password
+        ]));
+            $response = curl_exec($ch);
+            if ($response === false) {
+                $error = 'Curl error: ' . curl_error($ch);
+            } else {
+                $data = json_decode($response, true);
+                if (!empty($data['success'])) {
+                    $_SESSION['USER_ID'] = $data['user_id'];
+                    $_SESSION['USERNAME'] = $data['username'];
+                    header("Location: index.php");
+                    exit();
+                } else {
+                    $error = $data['error'] ?? "Lỗi không xác định: " . $response;
+                }
+            }
+            curl_close($ch);
     }
 }
+
 ?>
 
 ?>
@@ -36,12 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iBanking - Đăng nhập</title>
+    <title>iMAGINE - Đăng nhập</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: url('assets/images/bg-login.jpg') no-repeat center center fixed;
+            background: url('../assets/images/bg-login.jpg') no-repeat center center fixed;
             background-size: cover; 
             min-height: 100vh;
             display: flex;
@@ -111,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="login-header">
                         <h2 class="mb-0">
                             <i class="fas fa-university me-2"></i>
-                            iBanking
+                            ĐĂNG NHẬP
                         </h2>
                     </div>
                     
@@ -181,8 +190,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </form>
                         
                         <div class="text-center">
-                            <a href="forgot-password.php" class="text-decoration-none">
-                                <i class="fas fa-question-circle me-1"></i>Quên mật khẩu?
+                            <a href="forgot_pwd.php" class="text-decoration-none" style="color:#3e5857">
+                                Quên mật khẩu?
                             </a>
                         </div>
                     </div>
@@ -190,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <div class="text-center mt-3">
                     <small class="text-white-50">
-                        © 2025 iBanking System. All rights reserved.
+                        © 2025 iMAGINE System. All rights reserved.
                     </small>
                 </div>
             </div>

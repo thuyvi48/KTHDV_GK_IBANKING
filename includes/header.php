@@ -10,7 +10,8 @@ require_once __DIR__ . "/../frontend/config.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iBanking - <?php echo isset($namePage) ? $namePage : ''; ?></title>
+    <title>iMAGINE - <?php echo isset($namePage) ? $namePage : ''; ?></title>
+    <link rel="icon" type="image/jpg" href="../frontend/assets/images/logo.jpg">
 
     <!-- CSS chung -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
@@ -24,10 +25,10 @@ require_once __DIR__ . "/../frontend/config.php";
     <div class="header-left">
         <div class="logo">
             <div class="logo-icon">
-                <i class="fas fa-university"></i>
+                <img src="../frontend/assets/images/logo.jpg" alt="Logo iMAGINE" width="60" height="60">
             </div>
             <div class="logo-text">
-                <h2>iBanking</h2>
+                <h2>iMAGINE</h2>
             </div>
         </div>
     </div>
@@ -59,12 +60,17 @@ require_once __DIR__ . "/../frontend/config.php";
             </div>
             <div class="user-profile">
                 <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+                    <a href="customer-info.php">
+                        <i class="fas fa-user"></i>
+                    </a>
                 </div>
                 <span class="user-name">
-                <?php echo isset($user['full_name']) ? $user['full_name'] : 'Khách vãng lai'; ?>
+                    <a href="../frontend/pages/login.php" class="text-decoration-none" style="text-decoration:none">
+                        <?php echo isset($user['full_name']) ? $user['full_name'] : 'Khách vãng lai'; ?>
+                    </a>
                 </span>
             </div>
+
         </div>
     </div>
 </header>
