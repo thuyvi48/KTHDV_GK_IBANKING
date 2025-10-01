@@ -39,12 +39,13 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
                         <span>Cài đặt</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="logout.php" class="nav-link">
+                    <li class="nav-item">
+                    <a href="index.php?page=logout" class="nav-link">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Đăng xuất</span>
                     </a>
-                </li>
+                    </li>
+
             </ul>
             
         </div>

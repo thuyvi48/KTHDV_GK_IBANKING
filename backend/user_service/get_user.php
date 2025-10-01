@@ -9,11 +9,11 @@ if (!isset($_GET['id']) && !isset($_GET['email'])) {
 }
 
 if (isset($_GET['id'])) {
-    $sql = "SELECT USER_ID, FULLNAME, EMAIL, AVAILABLE__BALANCE 
+    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, BALANCE 
             FROM USERS WHERE USER_ID = ?";
     $param = $_GET['id'];
 } else {
-    $sql = "SELECT USER_ID, FULLNAME, EMAIL, AVAILABLE__BALANCE 
+    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, BALANCE 
             FROM USERS WHERE EMAIL = ?";
     $param = $_GET['email'];
 }

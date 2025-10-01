@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['email_reset'])) header("Location: forgot_pwd.php");
@@ -153,7 +152,7 @@ body {
         </form>
 
         <div class="text-center">
-            <a href="forgot_pwd.php" class="text-decoration-none">
+            <a href="forgot_pwd.php" class="text-decoration-none" style="color:#3e5857">
                 <i class="fas fa-arrow-left me-1"></i> Quay lại
             </a>
         </div>
@@ -167,18 +166,38 @@ body {
 </div>
 </div>
 </div>
-
 <script>
-let timeLeft = 60;
 const countdownEl = document.getElementById("countdown");
 const otpInput = document.getElementById("otp");
 const otpLabel = document.querySelector('label[for="otp"]');
 
-function startCountdown() {
-    countdownEl.style.color = "#6c757d";
-    otpInput.disabled = false;
+const otpDuration = 60; // giây
+let timer = null;
 
-    const timer = setInterval(() => {
+// Lấy thời gian OTP vừa gửi từ sessionStorage
+let otpSentTime = sessionStorage.getItem('otpSentTime');
+otpSentTime = otpSentTime ? parseInt(otpSentTime) : null;
+
+// Tính thời gian còn lại
+function getTimeLeft() {
+    if (!otpSentTime) return 0;
+    const elapsed = Math.floor((Date.now() - otpSentTime) / 1000);
+    return Math.max(otpDuration - elapsed, 0);
+}
+
+// Start countdown
+function startCountdown() {
+    let timeLeft = getTimeLeft();
+    if (timeLeft <= 0) {
+        showResendLink();
+        return;
+    }
+
+    otpInput.disabled = false;
+    countdownEl.style.color = "#6c757d";
+    countdownEl.textContent = timeLeft + "s";
+
+    timer = setInterval(() => {
         timeLeft--;
         countdownEl.textContent = timeLeft + "s";
 
@@ -189,40 +208,54 @@ function startCountdown() {
     }, 1000);
 }
 
+// Hiển thị link gửi lại
 function showResendLink() {
+    clearInterval(timer);
     countdownEl.innerHTML = `<a href="#" id="resendOtp" style="color:#6c757d; font-weight:300; text-decoration:none;">Gửi lại</a>`;
     otpInput.disabled = false;
 
     document.getElementById("resendOtp").addEventListener("click", function(e) {
         e.preventDefault();
-
-        otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP <small style="color:red; font-weight:300;">(Vui lòng nhập mã mới)</small>`;
-
-        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, otp: otpInput.value })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                timeLeft = 60;
-                otpInput.value = "";
-                startCountdown();
-            } else {
-                otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP <small style="color:red; font-weight:300;">(${data.error || "Gửi OTP thất bại"})</small>`;
-                showResendLink();
-            }
-        })
-        .catch(err => {
-            otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP <small style="color:red; font-weight:300;">(Có lỗi khi gửi OTP)</small>`;
-            showResendLink();
-        });
+        resendOtp();
     });
 }
 
-// Bắt đầu đếm ngược lần đầu
-startCountdown();
+// Gửi lại OTP
+function resendOtp() {
+    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "<?php echo $email; ?>" })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP`;
+            otpInput.value = "";
+            otpSentTime = Date.now();
+            sessionStorage.setItem('otpSentTime', otpSentTime);
+            startCountdown();
+        } else {
+            otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP <small style="color:red; font-weight:300;">(${data.error || "Gửi OTP thất bại"})</small>`;
+        }
+    })
+    .catch(err => {
+        otpLabel.innerHTML = `<i class="fas fa-key me-1"></i> Nhập mã OTP <small style="color:red; font-weight:300;">(Có lỗi khi gửi OTP)</small>`;
+    });
+}
+
+// Dừng countdown khi submit form (nhập OTP)
+const form = document.querySelector('form');
+form.addEventListener('submit', function() {
+    clearInterval(timer);
+});
+
+// Nếu OTP vừa được gửi, start countdown
+if (otpSentTime) {
+    startCountdown();
+}
 </script>
+
+
 </body>
 </html>

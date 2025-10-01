@@ -170,7 +170,7 @@ create table USERS_AUTH
 (
    AUTH_ID              varchar(10) not null  comment '',
    USER_ID              varchar(10)  comment '',
-   USENAME              text  comment '',
+   USERNAME              text  comment '',
    PASSWORD             text  comment '',
    CREATED_AT           datetime  comment '',
    UPDATED_AT           datetime  comment '',

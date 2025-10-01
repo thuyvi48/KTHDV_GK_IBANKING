@@ -5,7 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Đảm bảo BASE_URL và các hàm dùng chung đã được định nghĩa
 require_once __DIR__ . "/../frontend/config.php";
-require_once __DIR__ . "/functions.php"; // header.php nằm trong includes, functions.php cũng nằm trong includes
 
  // file chứa callAPI()
 
@@ -13,15 +12,18 @@ require_once __DIR__ . "/functions.php"; // header.php nằm trong includes, fun
 $user = ['full_name' => 'Khách vãng lai'];
 
 if (isset($_SESSION['USER_ID'])) {
-    $apiUrl = BASE_URL . "backend/user_service/user_index.php";
-    $resp = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
-    
-    if ($resp && isset($resp['full_name'])) {
-        $user = $resp;
-    } else {
-        $user = ['full_name' => 'Không tải được thông tin user'];
-    }
+$apiUrl = BASE_URL . "backend/user_service/index.php?action=get";
+$resp = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+
+
+if ($resp && isset($resp['full_name'])) {
+    $user = $resp;
+} else {
+    $user = ['full_name' => 'Không tải được thông tin user'];
 }
+
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -29,7 +31,7 @@ if (isset($_SESSION['USER_ID'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iMAGINE - <?php echo isset($namePage) ? $namePage : ''; ?></title>
-    <link rel="icon" type="image/jpg" href="<?php echo BASE_URL; ?>assets/images/logo.jpg">
+    <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg">
 
     <!-- CSS chung -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
