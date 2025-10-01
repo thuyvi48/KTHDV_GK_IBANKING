@@ -49,10 +49,12 @@ if ($conn->connect_error) {
 }
 
 // Lưu OTP vào bảng OTPS
+// Lưu OTP vào bảng OTPS
 $otp_id = uniqid("OTP");
-$stmt = $conn->prepare("INSERT INTO OTPS (OTP_ID, USER_ID, CODE, STATUS, CREATED_AT, EXPIRES_AT, ATTEMPTS) 
-                        VALUES (?, ?, ?, 'pending', NOW(), ?, 0)");
+$stmt = $conn->prepare("INSERT INTO OTPS (OTP_ID, USER_ID, CODE, STATUS, CREATED_AT, EXPIRES_AT) 
+                        VALUES (?, ?, ?, 'pending', NOW(), ?)");
 $stmt->bind_param("ssss", $otp_id, $user_id, $otp, $expires_at);
+
 
 if (!$stmt->execute()) {
     echo json_encode(["error" => "Lưu OTP thất bại"]);

@@ -33,17 +33,20 @@ $protected_pages = ['customer-info', 'transaction-history', 'edit-profile', 'cha
 $page = $_GET['page'] ?? 'dashboard';
 
 // Nếu user chưa đăng nhập và truy cập trang cần bảo vệ -> về login
-if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
-    header("Location: login.php");
+// Nếu user bấm logout
+if ($page === 'logout') {
+    session_destroy(); // hủy session
+    header("Location: pages/login.php"); 
     exit();
 }
+
 
 // ========================
 // Lấy thông tin user qua User Service
 // ========================
 if (isset($_SESSION['USER_ID'])) {
     // Gọi đúng endpoint API (index.php của user_service)
-    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/user_index.php";
+    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
     $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
     if (!$user) {
         $user = ['full_name' => 'Không tải được thông tin user'];
