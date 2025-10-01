@@ -14,6 +14,14 @@ switch ($action) {
         require_once 'get_payment_status.php';
         break;
 
+    case 'confirm': 
+        require_once 'confirm_payment.php';   // cập nhật PAYMENT + ghi TRANSACTION
+        break;
+
+    case 'transactions': 
+        require_once 'get_transactions.php';  // lấy lịch sử TRANSACTIONS
+        break;
+
     default:
         echo json_encode(["error" => "Action Payment không hợp lệ"]);
 }

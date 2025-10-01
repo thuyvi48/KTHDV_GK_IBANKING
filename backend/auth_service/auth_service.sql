@@ -5,18 +5,16 @@
 
 
 drop table if exists USERS_AUTH;
-
 /*==============================================================*/
 /* Table: USERS_AUTH                                            */
 /*==============================================================*/
 create table USERS_AUTH
 (
    AUTH_ID              varchar(10) not null  comment '',
-   USERNAME             text  comment '',
-   PASSWORD             text  comment '',
    USER_ID              varchar(10)  comment '',
+   USENAME              text  comment '',
+   PASSWORD             text  comment '',
    CREATED_AT           datetime  comment '',
    UPDATED_AT           datetime  comment '',
    primary key (AUTH_ID)
 );
-

@@ -3,7 +3,25 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Đảm bảo BASE_URL và các hàm dùng chung đã được định nghĩa
 require_once __DIR__ . "/../frontend/config.php";
+require_once __DIR__ . "/functions.php"; // header.php nằm trong includes, functions.php cũng nằm trong includes
+
+ // file chứa callAPI()
+
+// Lấy thông tin user mặc định
+$user = ['full_name' => 'Khách vãng lai'];
+
+if (isset($_SESSION['USER_ID'])) {
+    $apiUrl = BASE_URL . "backend/user_service/user_index.php";
+    $resp = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+    
+    if ($resp && isset($resp['full_name'])) {
+        $user = $resp;
+    } else {
+        $user = ['full_name' => 'Không tải được thông tin user'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -11,7 +29,7 @@ require_once __DIR__ . "/../frontend/config.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iMAGINE - <?php echo isset($namePage) ? $namePage : ''; ?></title>
-    <link rel="icon" type="image/jpg" href="../frontend/assets/images/logo.jpg">
+    <link rel="icon" type="image/jpg" href="<?php echo BASE_URL; ?>assets/images/logo.jpg">
 
     <!-- CSS chung -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
@@ -25,7 +43,7 @@ require_once __DIR__ . "/../frontend/config.php";
     <div class="header-left">
         <div class="logo">
             <div class="logo-icon">
-                <img src="../frontend/assets/images/logo.jpg" alt="Logo iMAGINE" width="60" height="60">
+                <img src="<?php echo BASE_URL; ?>assets/images/logo.jpg" alt="Logo iMAGINE" width="60" height="60">
             </div>
             <div class="logo-text">
                 <h2>iMAGINE</h2>
@@ -34,20 +52,9 @@ require_once __DIR__ . "/../frontend/config.php";
     </div>
     
     <nav class="main-nav">
-        <a href="<?php echo BASE_URL; ?>index.php" 
-           class="nav-item <?php echo ($page=='index') ? 'active' : ''; ?>">
-           Trang chủ
-        </a>
-
-        <a href="<?php echo BASE_URL; ?>index.php?page=service" 
-           class="nav-item <?php echo ($page=='service') ? 'active' : ''; ?>">
-           Dịch vụ
-        </a>
-
-        <a href="<?php echo BASE_URL; ?>index.php?page=support" 
-           class="nav-item <?php echo ($page=='support') ? 'active' : ''; ?>">
-           Hỗ trợ
-        </a>
+        <a href="<?php echo BASE_URL; ?>index.php" class="nav-item <?php echo ($page=='dashboard') ? 'active' : ''; ?>">Trang chủ</a>
+        <a href="<?php echo BASE_URL; ?>index.php?page=service" class="nav-item <?php echo ($page=='service') ? 'active' : ''; ?>">Dịch vụ</a>
+        <a href="<?php echo BASE_URL; ?>index.php?page=support" class="nav-item <?php echo ($page=='support') ? 'active' : ''; ?>">Hỗ trợ</a>
     </nav>
 
     <div class="header-right">
@@ -60,17 +67,16 @@ require_once __DIR__ . "/../frontend/config.php";
             </div>
             <div class="user-profile">
                 <div class="user-avatar">
-                    <a href="customer-info.php">
+                    <a href="<?php echo isset($_SESSION['USER_ID']) ? BASE_URL.'pages/customer-info.php' : BASE_URL.'pages/login.php'; ?>">
                         <i class="fas fa-user"></i>
                     </a>
                 </div>
                 <span class="user-name">
-                    <a href="../frontend/pages/login.php" class="text-decoration-none" style="text-decoration:none">
-                        <?php echo isset($user['full_name']) ? $user['full_name'] : 'Khách vãng lai'; ?>
+                    <a href="<?php echo isset($_SESSION['USER_ID']) ? BASE_URL.'pages/customer-info.php' : BASE_URL.'pages/login.php'; ?>" class="text-decoration-none">
+                        <?php echo htmlspecialchars($user['full_name']); ?>
                     </a>
                 </span>
             </div>
-
         </div>
     </div>
 </header>

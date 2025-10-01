@@ -12,12 +12,10 @@ drop table if exists USERS;
 create table USERS
 (
    USER_ID              varchar(10) not null  comment '',
-   FULLNAME             text  comment '',
-   PHONE                text  comment '',
+   FULL_NAME            text  comment '',
    EMAIL                text  comment '',
-   AVAILABLE__BALANCE   decimal  comment '',
-   HOLD_BALANCE         decimal  comment '',
-   VERSION              decimal  comment '',
+   PHONE                text  comment '',
+   BALANCE              decimal  comment '',
    CREATED_AT           datetime  comment '',
    UPDATED_AT           datetime  comment '',
    primary key (USER_ID)

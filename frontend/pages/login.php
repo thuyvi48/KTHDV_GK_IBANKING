@@ -27,8 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($data['success'])) {
                     $_SESSION['USER_ID'] = $data['user_id'];
                     $_SESSION['USERNAME'] = $data['username'];
-                    header("Location: index.php");
+                    header("Location: ../index.php?page=dashboard");
                     exit();
+
+                
                 } else {
                     $error = $data['error'] ?? "Lỗi không xác định: " . $response;
                 }

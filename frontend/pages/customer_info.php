@@ -1,24 +1,26 @@
 <?php
-// File: pages/customer-info.php
-// Session đã được kiểm tra ở index.php
-
-// Lấy thông tin user từ session
-$userId = $_SESSION['USER_ID'];
-$userName = $_SESSION['FULL_NAME'];
-
-// Lấy thông tin chi tiết user từ database
-$sql = "SELECT * FROM USERS WHERE USER_ID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-} else {
-    echo '<div class="alert alert-danger">Không tìm thấy thông tin người dùng!</div>';
-    return;
+$userId = $_SESSION['USER_ID'] ?? '';
+if (!$userId) {
+    header("Location: login.php");
+    exit;
 }
+
+// Gọi API Gateway
+function callApi($service, $action, $payload) {
+    $url = "http://localhost/KTHDV_GK_IBANKING/backend/api_gateway/index.php?service=$service&action=$action";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
+
+// Lấy thông tin user
+$user = callApi('user', 'get_info', ['user_id' => $userId]);
+
 ?>
 
 <div class="container mt-4">
