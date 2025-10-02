@@ -8,22 +8,17 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
     <nav class="sidebar-nav">
         <div class="nav-section">
             <ul class="nav-menu">
-                <li class="nav-item <?php echo ($page=='dashboard') ? 'active' : ''; ?>">
-                    <a href="index.php?page=dashboard" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Trang chủ</span>
-                    </a>
-                </li>
                 <li class="nav-item <?php echo ($page=='customer-info') ? 'active' : ''; ?>">
-                    <a href="index.php?page=customer-info" class="nav-link">
-                        <i class="fas fa-user"></i>
-                        <span>Thông tin khách hàng</span>
-                    </a>
-                </li>
-                <li class="nav-item <?php echo ($page=='payment') ? 'active' : ''; ?>">
                     <a href="index.php?page=payment" class="nav-link">
                         <i class="fas fa-credit-card"></i>
                         <span>Thanh toán</span>
+                    </a>
+
+                </li>
+                <li class="nav-item <?php echo ($page=='payment') ? 'active' : ''; ?>">
+                    <a href="index.php?page=customer-info" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Thông tin khách hàng</span>
                     </a>
                 </li>
                 <li class="nav-item <?php echo ($page=='transaction') ? 'active' : ''; ?>">

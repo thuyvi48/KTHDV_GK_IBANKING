@@ -1,11 +1,12 @@
 <?php
+session_start();
 $userId = $_SESSION['USER_ID'] ?? '';
 if (!$userId) {
     header("Location: login.php");
     exit;
 }
 
-// Gọi API Gateway
+// Hàm gọi API Gateway
 function callApi($service, $action, $payload) {
     $url = "http://localhost/KTHDV_GK_IBANKING/backend/api_gateway/index.php?service=$service&action=$action";
     $ch = curl_init($url);
@@ -18,8 +19,9 @@ function callApi($service, $action, $payload) {
     return json_decode($response, true);
 }
 
-// Lấy thông tin user
+// Lấy thông tin user từ User Service
 $user = callApi('user', 'get_info', ['user_id' => $userId]);
+?>
 
 ?>
 
@@ -87,46 +89,6 @@ $user = callApi('user', 'get_info', ['user_id' => $userId]);
                     </button>
                 </div>
             </div>
-
-            <!-- Thống kê nhanh -->
-            <div class="card shadow-sm mt-3">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Thống kê</h6>
-                </div>
-                <div class="card-body">
-                    <?php
-                    // Lấy số lượng giao dịch từ bảng transactions
-                    $transactionCountSql = "SELECT COUNT(*) as total FROM transactions WHERE USER_ID = ?";
-                    $transactionStmt = $conn->prepare($transactionCountSql);
-                    $transactionStmt->bind_param("s", $userId);
-                    $transactionStmt->execute();
-                    $transactionResult = $transactionStmt->get_result();
-                    $transactionCount = $transactionResult->fetch_assoc()['total'] ?? 0;
-                    
-                    // Lấy tổng số tiền giao dịch thành công
-                    $totalAmountSql = "SELECT SUM(AMOUNT) as total FROM transactions WHERE USER_ID = ? AND STATUS = 'SUCCESS'";
-                    $totalStmt = $conn->prepare($totalAmountSql);
-                    $totalStmt->bind_param("s", $userId);
-                    $totalStmt->execute();
-                    $totalResult = $totalStmt->get_result();
-                    $totalAmount = $totalResult->fetch_assoc()['total'] ?? 0;
-                    ?>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="text-muted">Tổng giao dịch:</small>
-                        <span class="fw-bold"><?php echo $transactionCount; ?></span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="text-muted">Đã thanh toán:</small>
-                        <span class="fw-bold"><?php echo number_format($totalAmount, 0, ',', '.'); ?> đ</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">ID người dùng:</small>
-                        <span class="fw-bold"><?php echo $userId; ?></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Nút hành động -->
     <div class="row mt-4">

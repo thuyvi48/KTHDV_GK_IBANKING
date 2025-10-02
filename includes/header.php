@@ -52,12 +52,6 @@ if ($resp && isset($resp['full_name'])) {
             </div>
         </div>
     </div>
-    
-    <nav class="main-nav">
-        <a href="<?php echo BASE_URL; ?>index.php" class="nav-item <?php echo ($page=='dashboard') ? 'active' : ''; ?>">Trang chủ</a>
-        <a href="<?php echo BASE_URL; ?>index.php?page=service" class="nav-item <?php echo ($page=='service') ? 'active' : ''; ?>">Dịch vụ</a>
-        <a href="<?php echo BASE_URL; ?>index.php?page=support" class="nav-item <?php echo ($page=='support') ? 'active' : ''; ?>">Hỗ trợ</a>
-    </nav>
 
     <div class="header-right">
         <div class="user-info">
