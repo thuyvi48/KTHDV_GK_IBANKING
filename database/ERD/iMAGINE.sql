@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     01/10/2025 9:52:07 AM                        */
+/* Created on:     03/10/2025 10:29:29 PM                       */
 /*==============================================================*/
 
 
@@ -129,6 +129,7 @@ create table TRANSACTIONS
    CHANGE_AMOUNT        decimal  comment '',
    DESCRIPTION          text  comment '',
    CREATED_AT           datetime  comment '',
+   STATUS               text  comment '',
    primary key (TRANSACTION_ID)
 );
 
@@ -170,7 +171,7 @@ create table USERS_AUTH
 (
    AUTH_ID              varchar(10) not null  comment '',
    USER_ID              varchar(10)  comment '',
-   USERNAME              text  comment '',
+   USERNAME             text  comment '',
    PASSWORD             text  comment '',
    CREATED_AT           datetime  comment '',
    UPDATED_AT           datetime  comment '',
