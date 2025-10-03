@@ -15,11 +15,11 @@ switch ($action) {
         break;
 
     case 'confirm': 
-        require_once 'confirm_payment.php';   // cập nhật PAYMENT + ghi TRANSACTION
+        require_once 'confirm_payment.php';  
         break;
 
     case 'transactions': 
-        require_once 'get_transactions.php';  // lấy lịch sử TRANSACTIONS
+        require_once 'get_transactions.php';  
         break;
 
     default:

@@ -1,33 +1,39 @@
 <?php
-require_once 'db.php';
-header('Content-Type: application/json');
+header("Content-Type: application/json");
+require_once "db.php"; // file kết nối DB
 
-// Lấy transaction_id từ query string
-if (!isset($_GET['id'])) {
-    echo json_encode(["error" => "Thiếu tham số id"]);
+if (!isset($_GET['user_id'])) {
+    http_response_code(400);
+    echo json_encode(["error" => "Missing user_id"]);
     exit;
 }
 
-$transaction_id = $_GET['id'];
+$userId = $_GET['user_id'];
 
-try {
-    $stmt = $conn->prepare("SELECT TRANSACTION_ID, PAYMENT_ID, USER_ID, CHANGE_AMOUNT, BALANCE_AFTER, TYPE, DESCRIPTION, CREATED_AT 
-                            FROM TRANSACTIONS 
-                            WHERE TRANSACTION_ID = ?");
-    $stmt->bind_param("s", $transaction_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+// Lấy 5 giao dịch gần nhất theo USER_ID
+$sql = "SELECT TRANSACTION_ID, USER_ID, PAYMENT_ID, BALANCE_AFTER, TYPE, CHANGE_AMOUNT, DESCRIPTION, CREATED_AT
+        FROM TRANSACTIONS
+        WHERE USER_ID = ?
+        ORDER BY CREATED_AT DESC
+        LIMIT 5";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($row = $result->fetch_assoc()) {
-        echo json_encode($row);
-    } else {
-        echo json_encode(["error" => "Không tìm thấy giao dịch"]);
-    }
-
-    $stmt->close();
-} catch (Exception $e) {
-    echo json_encode(["error" => $e->getMessage()]);
+$transactions = [];
+while ($row = $result->fetch_assoc()) {
+    $transactions[] = [
+        "transaction_id" => $row['TRANSACTION_ID'],
+        "payment_id"     => $row['PAYMENT_ID'],
+        "user_id"        => $row['USER_ID'],
+        "balance_after"  => (float)$row['BALANCE_AFTER'],
+        "type"           => $row['TYPE'],
+        "change_amount"  => (float)$row['CHANGE_AMOUNT'],
+        "description"    => $row['DESCRIPTION'],
+        "created_at"     => $row['CREATED_AT']
+    ];
 }
 
-$conn->close();
+echo json_encode($transactions);
 ?>

@@ -36,6 +36,7 @@ create table TRANSACTIONS
    CHANGE_AMOUNT        decimal  comment '',
    DESCRIPTION          text  comment '',
    CREATED_AT           datetime  comment '',
+   STATUS               text  comment '',
    primary key (TRANSACTION_ID)
 );
 

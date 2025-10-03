@@ -1,34 +1,24 @@
 <?php
-require_once 'db.php';
+header("Content-Type: application/json");
+require_once "db.php";
 
-header('Content-Type: application/json');
-
-if (!isset($_GET['id']) && !isset($_GET['email'])) {
-    echo json_encode(["error" => "Thiếu tham số id hoặc email"]);
+if (!isset($_GET['user_id'])) {
+    http_response_code(400);
+    echo json_encode(["error" => "Missing user_id"]);
     exit;
 }
 
-if (isset($_GET['id'])) {
-    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, BALANCE 
-            FROM USERS WHERE USER_ID = ?";
-    $param = $_GET['id'];
-} else {
-    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, BALANCE 
-            FROM USERS WHERE EMAIL = ?";
-    $param = $_GET['email'];
-}
+$userId = $_GET['user_id'];
 
+$sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE FROM USERS WHERE USER_ID = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $param);
+$stmt->bind_param("s", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
     echo json_encode($row);
 } else {
-    echo json_encode(["error" => "Không tìm thấy user"]);
+    http_response_code(404);
+    echo json_encode(["error" => "User not found"]);
 }
-
-$stmt->close();
-$conn->close();
-?>
