@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+<<<<<<< HEAD
 // Sample data giả sử lấy sau khi user login
 $payer_name  = "Nguyen Van A";
 $payer_phone = "0909xxxxxx";
@@ -41,6 +42,7 @@ $recent_transactions = [
     ],
 ];
 ?>
+=======
 // if (!isset($_SESSION['user_id'])) {
 //     header("Location: login.php");
 //     exit();
@@ -57,6 +59,8 @@ $payer_name       = $userData['FULL_NAME'] ?? '';
 $payer_phone      = $userData['PHONE'] ?? '';
 $payer_email      = $userData['EMAIL'] ?? '';
 $account_balance  = $userData['BALANCE'] ?? 0;
+
+$account_balance = $userData['BALANCE'] ?? 0;
 
 $transApi = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_transaction.php?user_id=" . urlencode($userId) . "&limit=4";
 $transResponse = file_get_contents($transApi);
@@ -122,6 +126,7 @@ $recent_transactions = json_decode($transResponse, true) ?? [];
     </div>
     
 
+>>>>>>> 9dd9ec6879cd605f60650665f5daa0f7ba8318de
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -258,6 +263,26 @@ h1 {
             <button class="btn-view-all" onclick="window.location.href='invoice_history.php'">Xem tất cả giao dịch</button>
         </div>
         <div class="transactions-list">
+<<<<<<< HEAD
+            <?php foreach($recent_transactions as $transaction): ?>
+                <div class="transaction-item">
+                    <div class="transaction-icon <?php echo $transaction['type']; ?>">
+                        <?php if($transaction['type'] == 'online_shopping'): ?>
+                            <i class="fas fa-shopping-cart"></i>
+                        <?php else: ?>
+                            <i class="fas fa-exchange-alt"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div class="transaction-details">
+                        <h4><?php echo $transaction['description']; ?></h4>
+                        <p><?php echo $transaction['date']; ?></p>
+                    </div>
+                    <div class="transaction-amount <?php echo $transaction['amount'] > 0 ? 'positive' : 'negative'; ?>">
+                        <?php echo $transaction['amount'] > 0 ? '+' : ''; ?><?php echo number_format($transaction['amount'], 0, ',', '.'); ?> đ
+                        <div class="transaction-status"><?php echo $transaction['status']; ?></div>
+                    </div>
+                </div>
+=======
             <?php foreach($recent_transactions as $transaction): 
                 $amount = $transaction['CHANGE_AMOUNT'] ?? 0;
                 $status = $transaction['STATUS'] ?? '';
@@ -282,6 +307,7 @@ h1 {
                     <div class="transaction-status"><?php echo $status; ?></div>
                 </div>
             </div>
+>>>>>>> 9dd9ec6879cd605f60650665f5daa0f7ba8318de
             <?php endforeach; ?>
 
         </div>
