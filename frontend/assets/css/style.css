@@ -40,7 +40,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   font-size: 1.5rem;
 }
 
@@ -272,12 +271,6 @@ body {
   font-size: 0.8rem;
   opacity: 0.8;
   margin-top: 0.25rem;
-}
-
-.sidebar-footer {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e5e5e5;
 }
 
 .settings-link,
@@ -660,6 +653,9 @@ body {
 /* Footer Styles */
 .main-footer {
   background: linear-gradient(135deg, #3e5857 100%);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400; 
+  font-style: normal;
   color: white;
 }
 
@@ -689,6 +685,7 @@ body {
 .footer-logo .logo-icon {
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
+  
 }
 
 .footer-logo h3 {

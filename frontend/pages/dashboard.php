@@ -8,7 +8,7 @@ $account_balance = 5000000;
 
 <div class="dashboard">
     <div class="dashboard-header">
-        <h1>Thanh toán học phí</h1>
+        <h1><strong>Thanh toán</strong></h1>
     </div>
     
     <!-- Account Info -->
@@ -28,7 +28,7 @@ $account_balance = 5000000;
     <!-- Payment Form -->
     <div class="payment-form">
         <form id="paymentForm">
-            <h3>Người nộp tiền</h3>
+            <h2>Người nộp tiền</h2>
             <label>Họ tên:</label>
             <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
             
@@ -38,7 +38,7 @@ $account_balance = 5000000;
             <label>Email:</label>
             <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
 
-            <h3>Thông tin học phí</h3>
+            <h2>Thông tin học phí</h2>
             <label>MSSV:</label>
             <input type="text" name="mssv" placeholder="Nhập MSSV">
             
@@ -48,18 +48,19 @@ $account_balance = 5000000;
             <label>Số tiền cần nộp:</label>
             <input type="text" name="amount" readonly>
 
-            <h3>Thông tin thanh toán</h3>
+            <h2>Thông tin thanh toán</h2>
             <label>Số dư khả dụng:</label>
             <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
             
             <label>Số tiền học phí cần thanh toán:</label>
             <input type="text" name="amount_to_pay" readonly>
             
-            <label>
-                <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
-            </label>
-
-            <button type="submit" disabled>Xác nhận giao dịch</button>
+            <div class="agree-submit">
+                <label>
+                    <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
+                </label>
+                <button type="submit" disabled>Xác nhận giao dịch</button>
+            </div>
         </form>
     </div>
     
@@ -113,21 +114,26 @@ $recent_transactions = [
     <meta charset="UTF-8">
     <title>Dashboard - Thanh toán học phí</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+
         .dashboard-header h1 { margin-bottom: 20px; }
-        .account-cards { display: flex; gap: 20px; margin-bottom: 30px; }
-        .account-card { background: #fff; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .primary { border-left: 5px solid #007bff; }
-        .card-balance { font-size: 24px; font-weight: bold; color: #007bff; }
-        .payment-form { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .payment-form h3 { margin-top: 15px; margin-bottom: 10px; }
-        .payment-form label { display: block; margin-top: 10px; }
-        .payment-form input[type="text"], .payment-form input[type="email"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; }
-        .payment-form button { margin-top: 15px; padding: 10px 20px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: not-allowed; }
+        .account-cards { display: flex; gap: 20px; margin-bottom: 30px;}
+        .account-card { background: #fff; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
+        .primary { border-left: 5px solid #131516ff; }
+        .card-balance { font-size: 24px;}
+        .payment-form{ background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .payment-form h2 { margin-top: 15px; margin-bottom: 10px; }
+        .payment-form label { margin-top: 10px;     font-weight: 400;   color: #3e5857;    }
+        .payment-form input[type="text"], .payment-form input[type="email"] { width: 250px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; }
+        .payment-form button { margin-top: 15px; padding: 10px 20px; color: #fff; border: none; border-radius: 4px; cursor: not-allowed; }
         .recent-transactions { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn-view-all { background: #28a745; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .btn-view-all { background: #3e5857; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
         .transactions-list { display: flex; flex-direction: column; gap: 15px; }
         .transaction-item { display: flex; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 6px; }
         .transaction-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-right: 15px; color: #fff; }
@@ -140,6 +146,32 @@ $recent_transactions = [
         .transaction-amount.positive { color: #28a745; }
         .transaction-amount.negative { color: #dc3545; }
         .transaction-status { font-size: 12px; color: #666; }
+
+        .agree-submit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Cách đều 2 bên */
+    margin-top: 15px;
+}
+
+.agree-submit label {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+.agree-submit button {
+    margin-top: 0; /* bỏ margin-top mặc định */
+    padding: 10px 20px;
+    background: #3e5857;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+}
+h1 {
+    font-weight: bold;
+}
     </style>
 </head>
 <body>

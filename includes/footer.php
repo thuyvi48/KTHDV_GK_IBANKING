@@ -3,7 +3,7 @@
         <div class="footer-section">
             <div class="footer-logo">
                 <div class="logo-icon">
-                    <img src="assets/images/logo.jpg" alt="Logo iMAGINE" width="40" height="40">
+                    <img src="assets/images/logo.jpg" alt="Logo iMAGINE" width="50" height="50">
                 </div>
                 <div class="logo-text">
                     <h3>iMAGINE</h3>
