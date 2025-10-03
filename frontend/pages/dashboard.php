@@ -1,75 +1,9 @@
 <?php
-// Sample data (giả sử lấy từ DB sau khi user login)
-$payer_name  = "Nguyen Van A";
-$payer_phone = "0909xxxxxx";
-$payer_email = "abc@tdtu.edu.vn";
-$account_balance = 5000000;
-?>
-
-<div class="dashboard">
-    <div class="dashboard-header">
-        <h1><strong>Thanh toán</strong></h1>
-    </div>
-    
-    <!-- Account Info -->
-    <div class="account-cards">
-        <div class="account-card primary">
-            <div class="card-header">
-                <h3>Số dư khả dụng</h3>
-            </div>
-            <div class="card-balance">
-                <span class="balance-amount">
-                    <?php echo number_format($account_balance, 0, ',', '.'); ?> đ
-                </span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Payment Form -->
-    <div class="payment-form">
-        <form id="paymentForm">
-            <h2>Người nộp tiền</h2>
-            <label>Họ tên:</label>
-            <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
-            
-            <label>Số điện thoại:</label>
-            <input type="text" name="payer_phone" value="<?php echo $payer_phone; ?>" readonly>
-            
-            <label>Email:</label>
-            <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
-
-            <h2>Thông tin học phí</h2>
-            <label>MSSV:</label>
-            <input type="text" name="mssv" placeholder="Nhập MSSV">
-            
-            <label>Họ tên sinh viên:</label>
-            <input type="text" name="student_name" readonly>
-            
-            <label>Số tiền cần nộp:</label>
-            <input type="text" name="amount" readonly>
-
-            <h2>Thông tin thanh toán</h2>
-            <label>Số dư khả dụng:</label>
-            <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
-            
-            <label>Số tiền học phí cần thanh toán:</label>
-            <input type="text" name="amount_to_pay" readonly>
-            
-            <div class="agree-submit">
-                <label>
-                    <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
-                </label>
-                <button type="submit" disabled>Xác nhận giao dịch</button>
-            </div>
-        </form>
-    </div>
-    
-    <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Sample data (giả sử lấy từ DB sau khi user login)
+// Sample data giả sử lấy sau khi user login
 $payer_name  = "Nguyen Van A";
 $payer_phone = "0909xxxxxx";
 $payer_email = "abc@tdtu.edu.vn";
@@ -107,7 +41,6 @@ $recent_transactions = [
     ],
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -175,37 +108,167 @@ h1 {
     </style>
 </head>
 <body>
-    
+
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1><strong>Thanh toán</strong></h1>
+    </div>
+
+    <!-- Account Info -->
+    <div class="account-cards">
+        <div class="account-card primary">
+            <div class="card-header">
+                <h3>Số dư khả dụng</h3>
+            </div>
+            <div class="card-balance">
+                <span class="balance-amount">
+                    <?php echo number_format($account_balance, 0, ',', '.'); ?> đ
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="payment-form">
+        <form id="paymentForm">
+            <h2>Người nộp tiền</h2>
+            <label>Họ tên:</label>
+            <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
+
+            <label>Số điện thoại:</label>
+            <input type="text" name="payer_phone" value="<?php echo $payer_phone; ?>" readonly>
+
+            <label>Email:</label>
+            <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
+
+            <h2>Thông tin học phí</h2>
+            <label>MSSV:</label>
+            <input type="text" name="mssv" placeholder="Nhập MSSV">
+
+            <label>Họ tên sinh viên:</label>
+            <input type="text" name="student_name" readonly>
+
+            <label>Số tiền cần nộp:</label>
+            <input type="text" name="amount" readonly>
+
+            <h2>Thông tin thanh toán</h2>
+            <label>Số dư khả dụng:</label>
+            <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
+
+            <label>Số tiền học phí cần thanh toán:</label>
+            <input type="text" name="amount_to_pay" readonly>
+
+            <input type="hidden" name="invoice_id" value="">
+
+            <div class="agree-submit">
+                <label>
+                    <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
+                </label>
+                <button type="submit" disabled>Xác nhận giao dịch</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Recent Transactions -->
     <div class="recent-transactions">
         <div class="section-header">
             <h2>Giao dịch gần đây</h2>
             <p>4 giao dịch mới nhất</p>
-            <button class="btn-view-all">Xem tất cả giao dịch</button>
+            <button class="btn-view-all" onclick="window.location.href='invoice_history.php'">Xem tất cả giao dịch</button>
         </div>
-        
         <div class="transactions-list">
             <?php foreach($recent_transactions as $transaction): ?>
-            <div class="transaction-item">
-                <div class="transaction-icon <?php echo $transaction['type']; ?>">
-                    <?php if($transaction['type'] == 'online_shopping'): ?>
-                        <i class="fas fa-shopping-cart"></i>
-                    <?php else: ?>
-                        <i class="fas fa-exchange-alt"></i>
-                    <?php endif; ?>
+                <div class="transaction-item">
+                    <div class="transaction-icon <?php echo $transaction['type']; ?>">
+                        <?php if($transaction['type'] == 'online_shopping'): ?>
+                            <i class="fas fa-shopping-cart"></i>
+                        <?php else: ?>
+                            <i class="fas fa-exchange-alt"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div class="transaction-details">
+                        <h4><?php echo $transaction['description']; ?></h4>
+                        <p><?php echo $transaction['date']; ?></p>
+                    </div>
+                    <div class="transaction-amount <?php echo $transaction['amount'] > 0 ? 'positive' : 'negative'; ?>">
+                        <?php echo $transaction['amount'] > 0 ? '+' : ''; ?><?php echo number_format($transaction['amount'], 0, ',', '.'); ?> đ
+                        <div class="transaction-status"><?php echo $transaction['status']; ?></div>
+                    </div>
                 </div>
-                <div class="transaction-details">
-                    <h4><?php echo $transaction['description']; ?></h4>
-                    <p><?php echo $transaction['date']; ?></p>
-                </div>
-                <div class="transaction-amount <?php echo $transaction['amount'] > 0 ? 'positive' : 'negative'; ?>">
-                    <?php echo $transaction['amount'] > 0 ? '+' : ''; ?><?php echo number_format($transaction['amount'], 0, ',', '.'); ?> đ
-                    <div class="transaction-status"><?php echo $transaction['status']; ?></div>
-                </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
 </div>
+
+<script>
+document.querySelector("[name='mssv']").addEventListener("blur", function() {
+    let mssv = this.value.trim();
+    if (!mssv) return;
+
+    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mssv: mssv })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.success) {
+            document.querySelector("[name='student_name']").value = res.student_name;
+            document.querySelector("[name='amount']").value = res.amount_due.toLocaleString("vi-VN") + " đ";
+            document.querySelector("[name='amount_to_pay']").value = res.amount_due.toLocaleString("vi-VN") + " đ";
+            document.querySelector("[name='invoice_id']").value = res.invoice_id;
+        } else {
+            alert(res.message);
+            document.querySelector("[name='student_name']").value = "";
+            document.querySelector("[name='amount']").value = "";
+            document.querySelector("[name='amount_to_pay']").value = "";
+            document.querySelector("[name='invoice_id']").value = "";
+        }
+    });
+});
+
+document.getElementById("paymentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let data = {
+        payer_name: document.querySelector("[name='payer_name']").value,
+        payer_phone: document.querySelector("[name='payer_phone']").value,
+        payer_email: document.querySelector("[name='payer_email']").value,
+        mssv: document.querySelector("[name='mssv']").value,
+        student_name: document.querySelector("[name='student_name']").value,
+        amount_to_pay: document.querySelector("[name='amount_to_pay']").value
+    };
+
+    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.success) {
+            alert("Thanh toán thành công. Mã giao dịch: " + res.payment_id);
+
+            // 👉 Chuyển hướng sang transaction.php, truyền theo payment_id
+            window.location.href = "transaction.php?payment_id=" + res.payment_id;
+        } else {
+            alert("Thanh toán thất bại: " + res.message);
+        }
+    });
+});
+
+// Bắt sự kiện tick vào "Tôi đồng ý"
+document.querySelector("[name='agree']").addEventListener("change", function() {
+    const submitBtn = document.querySelector(".agree-submit button");
+    if (this.checked) {
+        submitBtn.disabled = false;
+        submitBtn.style.cursor = "pointer"; 
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.style.cursor = "not-allowed";
+    }
+});
+</script>
+
 </body>
 </html>

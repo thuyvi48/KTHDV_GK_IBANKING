@@ -1,12 +1,11 @@
 <?php
 $host = "localhost";
-$user = "root";   // hoặc user MySQL bạn đã tạo
-$pass = "";       // password MySQL
-$db   = "paymentdb"; // database của user_service
+$user = "root";
+$pass = "";
+$db   = "payment_transac_db"; 
 
 $conn = new mysqli($host, $user, $pass, $db);
-
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
-?>
+$conn->set_charset("utf8");

@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// ========================
+// Hàm gọi API
+// ========================
 function callAPI($method, $url, $data = false) {
     $ch = curl_init();
     switch (strtoupper($method)) {
@@ -11,11 +14,11 @@ function callAPI($method, $url, $data = false) {
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             }
             break;
-            default: // GET
-                if ($data && is_array($data)) {
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-                }
-                break;
+        default: // GET
+            if ($data && is_array($data)) {
+                $url = sprintf("%s?%s", $url, http_build_query($data));
+            }
+            break;
     }
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -27,25 +30,39 @@ function callAPI($method, $url, $data = false) {
 // ========================
 // Danh sách các trang yêu cầu đăng nhập
 // ========================
-$protected_pages = ['customer-info', 'transaction-history', 'edit-profile', 'change-password', 'pay-tuition'];
+$protected_pages = [
+    'customer-info',
+    'transaction',      // ✅ đổi đúng tên file bạn có: transaction.php
+    'edit-profile',
+    'change-password',
+    'pay-tuition'
+];
 
-// Lấy trang hiện tại
+// Trang hiện tại
 $page = $_GET['page'] ?? 'dashboard';
 
-// Nếu user chưa đăng nhập và truy cập trang cần bảo vệ -> về login
-// Nếu user bấm logout
+// ========================
+// Logout
+// ========================
 if ($page === 'logout') {
-    session_destroy(); // hủy session
+    session_destroy(); 
     header("Location: pages/login.php"); 
     exit();
 }
 
+// ========================
+// Check đăng nhập
+// ========================
+if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
+    // Nếu chưa login mà vào trang cần bảo vệ → redirect login
+    header("Location: pages/login.php");
+    exit();
+}
 
 // ========================
 // Lấy thông tin user qua User Service
 // ========================
 if (isset($_SESSION['USER_ID'])) {
-    // Gọi đúng endpoint API (index.php của user_service)
     $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
     $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
     if (!$user) {
@@ -58,7 +75,7 @@ if (isset($_SESSION['USER_ID'])) {
 // ========================
 // Render giao diện
 // ========================
-$namePage = "Trang chủ";
+$namePage = ucfirst($page);
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -100,3 +117,4 @@ updateTime();
 </script>
 </body>
 </html>
+    

@@ -1,35 +1,19 @@
 <?php
-require_once 'db.php';
-header('Content-Type: application/json');
+header("Content-Type: application/json");
+require_once("db.php");
 
-// Lấy user_id từ query string
-if (!isset($_GET['user_id'])) {
-    echo json_encode(["error" => "Thiếu tham số user_id"]);
-    exit;
+$sql = "SELECT t.TRANSACTION_ID, t.PAYMENT_ID, p.STUDENT_ID, p.INVOICE_ID, p.AMOUNT, p.STATUS, t.CREATED_AT 
+        FROM TRANSACTIONS t 
+        JOIN PAYMENTS p ON t.PAYMENT_ID = p.PAYMENT_ID
+        ORDER BY t.CREATED_AT DESC";
+
+$result = $conn->query($sql);
+
+$transactions = [];
+while ($row = $result->fetch_assoc()) {
+    $transactions[] = $row;
 }
 
-$user_id = $_GET['user_id'];
-
-try {
-    $stmt = $conn->prepare("SELECT TRANSACTION_ID, PAYMENT_ID, USER_ID, CHANGE_AMOUNT, BALANCE_AFTER, TYPE, DESCRIPTION, CREATED_AT 
-                            FROM TRANSACTIONS 
-                            WHERE USER_ID = ?
-                            ORDER BY CREATED_AT DESC");
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $transactions = [];
-    while ($row = $result->fetch_assoc()) {
-        $transactions[] = $row;
-    }
-
-    echo json_encode($transactions);
-
-    $stmt->close();
-} catch (Exception $e) {
-    echo json_encode(["error" => $e->getMessage()]);
-}
+echo json_encode($transactions);
 
 $conn->close();
-?>

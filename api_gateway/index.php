@@ -37,105 +37,89 @@ switch ($service) {
 
             echo $response;
         } elseif ($action === 'reset_password') {
-        $url = "http://localhost/KTHDV_GK_IBANKING/backend/auth_service/reset_password.php";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            echo json_encode(["error" => "Không thể kết nối auth_service"]);
-        } else {
-            echo $response;
-        }
-        curl_close($ch);
-        } else {
-            echo json_encode(["error" => "Action auth không hợp lệ"]);
-        }
-        break;
-
-    /* ---------------- OTP SERVICE ---------------- */
-case 'otp':
-    if ($action === 'send') {
-        // Gửi OTP
-        $input = file_get_contents("php://input");
-        $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
-        } else {
-            echo $response;
-        }
-        curl_close($ch);
-
-    } elseif ($action === 'verify') {
-        // Xác thực OTP
-        $input = file_get_contents("php://input");
-        $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp.php";
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
-        } else {
-            echo $response;
-        }
-        curl_close($ch);
-
-    } else {
-        echo json_encode(["error" => "Action otp không hợp lệ"]);
-    }
-    break;
-
-
-    /* ---------------- TRANSACTION SERVICE ---------------- */
-     case 'transaction':
-        if ($action === 'list') {
-            $user_id = $_GET['user_id'] ?? '';
-            $url = "http://localhost/ibanking/backend/transaction_service/index.php?action=list&user_id=" . urlencode($user_id);
-            $response = @file_get_contents($url);
-
-            if ($response === false) {
-                echo json_encode(["error" => "Không thể kết nối transaction_service"]);
-            } else {
-                echo $response;
-            }
-        } else {
-            echo json_encode(["error" => "Action transaction không hợp lệ"]);
-        }
-        break;
-
-    /* ---------------- PAYMENT SERVICE ---------------- */
-    case 'payment':
-        if ($action === 'create') {
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/payment_service/create_payment.php";
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/auth_service/reset_password.php";
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
             $response = curl_exec($ch);
+
+            if ($response === false) {
+                echo json_encode(["error" => "Không thể kết nối auth_service"]);
+            } else {
+                echo $response;
+            }
+            curl_close($ch);
+        } else {
+            echo json_encode(["error" => "Action auth không hợp lệ"]);
+        }
+        break;
+
+    /* ---------------- OTP SERVICE ---------------- */
+    case 'otp':
+        if ($action === 'send') {
+            $input = file_get_contents("php://input");
+            $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+            $response = curl_exec($ch);
+
+            if ($response === false) {
+                echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
+            } else {
+                echo $response;
+            }
             curl_close($ch);
 
-            echo $response ?: json_encode(["error" => "Không thể kết nối payment_service"]);
-        } elseif ($action === 'status') {
-            $id = $_GET['id'] ?? '';
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/payment_service/get_payment_status.php?id=" . urlencode($id);
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối payment_service"]);
+        } elseif ($action === 'verify') {
+            $input = file_get_contents("php://input");
+            $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp.php";
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+            $response = curl_exec($ch);
+
+            if ($response === false) {
+                echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
+            } else {
+                echo $response;
+            }
+            curl_close($ch);
+
+        } else {
+            echo json_encode(["error" => "Action otp không hợp lệ"]);
+        }
+        break;
+
+    /* ---------------- TRANSACTION SERVICE ---------------- */
+    case '/transactions':
+        $url = 'http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=' . $_GET['user_id'];
+        echo file_get_contents($url);
+        break;
+
+    /* ---------------- PAYMENT SERVICE ---------------- */
+    case 'payment':
+        if ($action === 'create') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/create_payment.php";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+        } elseif ($action === 'list') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php";
+            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
         } else {
             echo json_encode(["error" => "Action payment không hợp lệ"]);
         }
@@ -147,9 +131,35 @@ case 'otp':
             $id = $_GET['id'] ?? '';
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_student.php?id=" . urlencode($id);
             echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối student_service"]);
+
         } elseif ($action === 'list') {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/list_students.php";
             echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối student_service"]);
+
+        } elseif ($action === 'get_invoice') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_invoice.php";
+            $opts = [
+                "http" => [
+                    "method"  => "POST",
+                    "header"  => "Content-Type: application/json",
+                    "content" => file_get_contents("php://input")
+                ]
+            ];
+            $context = stream_context_create($opts);
+            echo @file_get_contents($url, false, $context) ?: json_encode(["error" => "Không thể kết nối student_service"]);
+
+        } elseif ($action === 'update_invoice') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/update_invoice.php";
+            $opts = [
+                "http" => [
+                    "method"  => "POST",
+                    "header"  => "Content-Type: application/json",
+                    "content" => file_get_contents("php://input")
+                ]
+            ];
+            $context = stream_context_create($opts);
+            echo @file_get_contents($url, false, $context) ?: json_encode(["error" => "Không thể kết nối student_service"]);
+
         } else {
             echo json_encode(["error" => "Action student không hợp lệ"]);
         }
