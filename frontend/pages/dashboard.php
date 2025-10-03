@@ -58,8 +58,6 @@ $payer_phone      = $userData['PHONE'] ?? '';
 $payer_email      = $userData['EMAIL'] ?? '';
 $account_balance  = $userData['BALANCE'] ?? 0;
 
-$account_balance = $userData['BALANCE'] ?? 0;
-
 $transApi = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_transaction.php?user_id=" . urlencode($userId) . "&limit=4";
 $transResponse = file_get_contents($transApi);
 $recent_transactions = json_decode($transResponse, true) ?? [];
