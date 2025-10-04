@@ -7,11 +7,10 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: pages/login.php");
     exit();
 }
+$userId = $_SESSION['user_id'];
 
-$userId = $_SESSION['user_id'] ?? "U001"; 
-
-// Gọi API user_service
-$apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($userId);
+// Gọi API user_service qua API Gateway
+$apiUrl = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=user&action=get_user&user_id=" . urlencode($userId);
 $response = file_get_contents($apiUrl);
 $userData = json_decode($response, true);
 
@@ -20,9 +19,8 @@ $payer_phone      = $userData['PHONE'] ?? '';
 $payer_email      = $userData['EMAIL'] ?? '';
 $account_balance  = $userData['BALANCE'] ?? 0;
 
-$account_balance = $userData['BALANCE'] ?? 0;
-
-$transApi = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_transaction.php?user_id=" . urlencode($userId) . "&limit=4";
+// Gọi API transaction_service qua API Gateway
+$transApi = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=get_transaction&user_id=" . urlencode($userId) . "&limit=4";
 $transResponse = file_get_contents($transApi);
 $recent_transactions = json_decode($transResponse, true) ?? [];
 ?>
@@ -144,15 +142,15 @@ h1 {
             
             <div class="agree-submit">
                 <label>
-                    <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
+                    <input type="checkbox" name="agree"> Tôi đồng ý với các 
+                    <span style="color:blue; margin:0 4px;">thỏa thuận và điều khoản</span> 
+                    của hệ thống iMAGINE
                 </label>
                 <button type="submit" disabled>Xác nhận giao dịch</button>
             </div>
+            <div id="message" style="margin-top: 15px;"></div>
         </form>
     </div>
-
-
-
     <!-- Recent Transactions -->
     <div class="recent-transactions">
         <div class="section-header">
@@ -186,11 +184,25 @@ h1 {
 </div>
 
 <script>
+function formatCurrency(amount) {
+    return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
+}
+
+// Format lại số dư khả dụng khi load trang
+document.addEventListener("DOMContentLoaded", () => {
+    let balanceField = document.querySelector("[name='balance']");
+    if (balanceField && balanceField.value) {
+        let raw = balanceField.value.replace(/[^\d]/g, "");
+        balanceField.value = formatCurrency(parseInt(raw));
+    }
+});
+
+// Khi nhập MSSV -> gọi API và hiển thị thông tin học phí
 document.querySelector("[name='mssv']").addEventListener("blur", function() {
     let mssv = this.value.trim();
     if (!mssv) return;
 
-    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice", {
+   fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mssv: mssv })
@@ -199,11 +211,11 @@ document.querySelector("[name='mssv']").addEventListener("blur", function() {
     .then(res => {
         if (res.success) {
             document.querySelector("[name='student_name']").value = res.student_name;
-            document.querySelector("[name='amount']").value = res.amount_due.toLocaleString("vi-VN") + " đ";
-            document.querySelector("[name='amount_to_pay']").value = res.amount_due.toLocaleString("vi-VN") + " đ";
+            document.querySelector("[name='amount']").value = formatCurrency(res.amount_due);
+            document.querySelector("[name='amount_to_pay']").value = formatCurrency(res.amount_due);
             document.querySelector("[name='invoice_id']").value = res.invoice_id;
         } else {
-            alert(res.message);
+            document.querySelector("#message").innerText = res.message;
             document.querySelector("[name='student_name']").value = "";
             document.querySelector("[name='amount']").value = "";
             document.querySelector("[name='amount_to_pay']").value = "";
@@ -212,8 +224,30 @@ document.querySelector("[name='mssv']").addEventListener("blur", function() {
     });
 });
 
+function showMessage(text, type = "error") {
+    const msg = document.getElementById("message");
+    msg.textContent = text;
+    msg.style.color = (type === "success") ? "green" : "red";
+}
+
 document.getElementById("paymentForm").addEventListener("submit", function(e) {
     e.preventDefault();
+
+    let balance = parseInt(
+        document.querySelector("[name='balance']").value.replace(/[^\d]/g, "")
+    );
+    let amountToPay = parseInt(
+        document.querySelector("[name='amount_to_pay']").value.replace(/[^\d]/g, "")
+    );
+
+    if (isNaN(amountToPay) || amountToPay <= 0) {
+        showMessage("Chưa có thông tin học phí cần thanh toán.");
+        return;
+    }
+    if (amountToPay > balance) {
+        showMessage("Số dư khả dụng không đủ để thanh toán học phí.");
+        return;
+    }
 
     let data = {
         payer_name: document.querySelector("[name='payer_name']").value,
@@ -221,7 +255,7 @@ document.getElementById("paymentForm").addEventListener("submit", function(e) {
         payer_email: document.querySelector("[name='payer_email']").value,
         mssv: document.querySelector("[name='mssv']").value,
         student_name: document.querySelector("[name='student_name']").value,
-        amount_to_pay: document.querySelector("[name='amount_to_pay']").value
+        amount_to_pay: amountToPay
     };
 
     fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create", {
@@ -232,13 +266,16 @@ document.getElementById("paymentForm").addEventListener("submit", function(e) {
     .then(res => res.json())
     .then(res => {
         if (res.success) {
-            alert("Thanh toán thành công. Mã giao dịch: " + res.payment_id);
-
-            // 👉 Chuyển hướng sang transaction.php, truyền theo payment_id
-            window.location.href = "transaction.php?payment_id=" + res.payment_id;
+            showMessage("Thanh toán thành công. Mã giao dịch: " + res.payment_id, "success");
+            setTimeout(() => {
+                window.location.href = "transaction.php?payment_id=" + res.payment_id;
+            }, 2000);
         } else {
-            alert("Thanh toán thất bại: " + res.message);
+            showMessage("Thanh toán thất bại: " + res.message);
         }
+    })
+    .catch(() => {
+        showMessage("Có lỗi xảy ra khi kết nối hệ thống.");
     });
 });
 

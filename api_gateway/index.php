@@ -6,23 +6,24 @@ $action  = $_GET['action'] ?? '';
 
 switch ($service) {
     /* ---------------- USER SERVICE ---------------- */
-    case 'user':
-        if ($action === 'get') {
-            $id = $_GET['id'] ?? '';
-            if (!$id) {
-                echo json_encode(["error" => "Thiếu tham số id"]);
-                exit;
-            }
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?id=" . urlencode($id);
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
-        } elseif ($action === 'list') {
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/list_users.php";
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
-        } else {
-            echo json_encode(["error" => "Action user không hợp lệ"]);
+case 'user':
+    if ($action === 'get_user') {
+        $user_id = $_GET['user_id'] ?? '';
+        if (!$user_id) {
+            echo json_encode(["error" => "Thiếu tham số user_id"]);
+            exit;
         }
-        break;
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
+        echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
 
+    } elseif ($action === 'list') {
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/list_users.php";
+        echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
+
+    } else {
+        echo json_encode(["error" => "Action user không hợp lệ"]);
+    }
+    break;
     /* ---------------- AUTH SERVICE ---------------- */
     case 'auth':
         if ($action === 'login') {
@@ -100,14 +101,33 @@ switch ($service) {
         break;
 
     /* ---------------- TRANSACTION SERVICE ---------------- */
-    case '/transactions':
-        $url = 'http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=' . $_GET['user_id'];
-        echo file_get_contents($url);
-        break;
+case 'transaction':
+    if ($action === 'get_transaction') {
+        $user_id = $_GET['user_id'] ?? '';
+        $limit   = $_GET['limit'] ?? '';
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
+        if ($limit) {
+            $url .= "&limit=" . urlencode($limit);
+        }
+        echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+
+    } else {
+        echo json_encode(["error" => "Action transaction không hợp lệ"]);
+    }
+    break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */
-    case 'payment':
-        if ($action === 'create') {
+   case 'payment':
+        if ($action === 'list') {
+            $user_id = $_GET['user_id'] ?? '';
+            if (!$user_id) {
+                echo json_encode(['success'=>false,'message'=>'Missing user id']);
+                exit;
+            }
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($user_id);
+            $response = @file_get_contents($url);
+            echo $response ?: json_encode(['success'=>false,'message'=>'Cannot connect payment_service']);
+        } elseif ($action === 'create') {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/create_payment.php";
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -116,14 +136,12 @@ switch ($service) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
             $response = curl_exec($ch);
             curl_close($ch);
-            echo $response ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
-        } elseif ($action === 'list') {
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php";
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+            echo $response ?: json_encode(["success"=>false,"message"=>"Cannot connect transaction_service"]);
         } else {
-            echo json_encode(["error" => "Action payment không hợp lệ"]);
+            echo json_encode(['success'=>false,'message'=>'Invalid action for payment']);
         }
-        break;
+    break;
+
 
     /* ---------------- STUDENT SERVICE ---------------- */
     case 'student':
@@ -166,22 +184,6 @@ switch ($service) {
         break;
 
     /* ---------------- TUITION SERVICE ---------------- */
-    case 'tuition':
-        if ($action === 'get') {
-            $id = $_GET['id'] ?? '';
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/tuition_service/get_invoice.php?id=" . urlencode($id);
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối tuition_service"]);
-        } elseif ($action === 'list') {
-            $student_id = $_GET['student_id'] ?? '';
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/tuition_service/list_invoices.php";
-            if ($student_id) {
-                $url .= "?student_id=" . urlencode($student_id);
-            }
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối tuition_service"]);
-        } else {
-            echo json_encode(["error" => "Action tuition không hợp lệ"]);
-        }
-        break;
 
     /* ---------------- DEFAULT ---------------- */
     default:
