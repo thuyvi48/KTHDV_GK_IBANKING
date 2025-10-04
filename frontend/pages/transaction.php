@@ -1,11 +1,11 @@
 <?php
-// Gọi API để lấy danh sách giao dịch theo user (hoặc theo MSSV)
-$mssv = $_SESSION['MSSV'] ?? ''; // giả sử MSSV đã lưu vào session
+session_start();
+$mssv = $_SESSION['MSSV'] ?? '';
 $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=list&mssv=" . urlencode($mssv);
 $data = json_decode(file_get_contents($url), true);
 ?>
 
-<h2>Lịch sử thanh toán học phí</h2>
+<h2>Lịch sử giao dịch</h2>
 <table border="1" cellpadding="8">
     <tr>
         <th>Mã giao dịch</th>
