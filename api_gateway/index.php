@@ -106,6 +106,42 @@ switch ($service) {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
             echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
         }
+
+        if ($service === 'transaction' && $action === 'recent') {
+            $user_id = $_GET['user_id'] ?? '';
+            if (!$user_id) {
+                echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+                exit;
+            }
+
+            // Gọi service backend
+            $url = __DIR__ . '/../backend/transaction_service/get_transaction.php?user_id=' . urlencode($user_id);
+            $response = @file_get_contents($url);
+            $transactionsRaw = json_decode($response, true) ?? [];
+
+            // Map trạng thái và type
+            $status_map = [
+                'PENDING' => 'Đang chờ xử lý',
+                'DONE'    => 'Hoàn tất',
+                'FAILED'  => 'Thất bại'
+            ];
+
+            $recent_transactions = [];
+            foreach ($transactionsRaw as $t) {
+                $recent_transactions[] = [
+                    'transaction_id' => $t['TRANSACTION_ID'],
+                    'description'    => $t['DESCRIPTION'],
+                    'date'           => date('d/m/Y H:i', strtotime($t['CREATED_AT'])),
+                    'amount'         => $t['CHANGE_AMOUNT'],
+                    'type'           => strtolower($t['TYPE']), // online_shopping, transfer...
+                    'status'         => $status_map[$t['STATUS'] ?? 'PENDING'] ?? ($t['STATUS'] ?? 'Chưa xác định')
+                ];
+            }
+
+            echo json_encode(['success'=>true,'data'=>$recent_transactions]);
+            exit;
+        }
+
         break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */

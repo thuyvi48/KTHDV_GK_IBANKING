@@ -10,6 +10,21 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'] ?? "U001"; 
 
+$recent_transactions = [];
+
+$apiUrl = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=recent&user_id=" . urlencode($userId);
+$response = @file_get_contents($apiUrl);
+$data = json_decode($response, true);
+
+if ($data['success'] ?? false) {
+    $recent_transactions = $data['data'];
+}
+
+$status_class = [
+    'Đang chờ xử lý' => 'pending',
+    'Hoàn tất'       => 'success',
+    'Thất bại'       => 'failed'
+];
 // Gọi API user_service
 $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($userId);
 $response = file_get_contents($apiUrl);
@@ -154,35 +169,41 @@ h1 {
 
 
     <!-- Recent Transactions -->
-    <div class="recent-transactions">
+   <div class="recent-transactions">
         <div class="section-header">
             <h2>Giao dịch gần đây</h2>
-            <p>4 giao dịch mới nhất</p>
+            <p><?php echo count($recent_transactions); ?> giao dịch mới nhất</p>
             <button class="btn-view-all" onclick="window.location.href='invoice_history.php'">Xem tất cả giao dịch</button>
         </div>
         <div class="transactions-list">
-            <?php foreach($recent_transactions as $transaction): ?>
-                <div class="transaction-item">
-                    <div class="transaction-icon <?php echo $transaction['type']; ?>">
-                        <?php if($transaction['type'] == 'online_shopping'): ?>
-                            <i class="fas fa-shopping-cart"></i>
-                        <?php else: ?>
-                            <i class="fas fa-exchange-alt"></i>
-                        <?php endif; ?>
+            <?php if(!empty($recent_transactions)): ?>
+                <?php foreach($recent_transactions as $transaction): ?>
+                    <div class="transaction-item">
+                        <div class="transaction-icon <?php echo $transaction['type']; ?>">
+                            <?php if($transaction['type'] === 'online_shopping'): ?>
+                                <i class="fas fa-shopping-cart"></i>
+                            <?php else: ?>
+                                <i class="fas fa-exchange-alt"></i>
+                            <?php endif; ?>
+                        </div>
+                        <div class="transaction-details">
+                            <h4><?php echo htmlspecialchars($transaction['description']); ?></h4>
+                            <p><?php echo $transaction['date']; ?></p>
+                            <span class="transaction-status <?php echo $status_class[$transaction['status']] ?? ''; ?>">
+                                <?php echo $transaction['status']; ?>
+                            </span>
+                        </div>
+                        <div class="transaction-amount <?php echo $transaction['amount'] > 0 ? 'positive' : 'negative'; ?>">
+                            <?php echo $transaction['amount'] > 0 ? '+' : ''; ?><?php echo number_format($transaction['amount'], 0, ',', '.'); ?> đ
+                        </div>
                     </div>
-                    <div class="transaction-details">
-                        <h4><?php echo $transaction['description']; ?></h4>
-                        <p><?php echo $transaction['date']; ?></p>
-                    </div>
-                    <div class="transaction-amount <?php echo $transaction['amount'] > 0 ? 'positive' : 'negative'; ?>">
-                        <?php echo $transaction['amount'] > 0 ? '+' : ''; ?><?php echo number_format($transaction['amount'], 0, ',', '.'); ?> đ
-                        <div class="transaction-status"><?php echo $transaction['status']; ?></div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Chưa có giao dịch nào</p>
+            <?php endif; ?>
         </div>
     </div>
+
 </div>
 
 <script>
