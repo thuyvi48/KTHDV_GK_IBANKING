@@ -10,10 +10,6 @@ switch ($action) {
         require_once 'get_user.php';
         break;
 
-    case 'list':
-        require_once 'list_users.php';
-        break;
-
     default:
         echo json_encode(["error" => "Action không hợp lệ"]);
 }

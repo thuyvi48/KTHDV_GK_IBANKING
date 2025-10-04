@@ -25,12 +25,7 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
                         <span><strong>Lịch sử <br>giao dịch</strong></span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span><strong>Cài đặt</strong></span>
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a href="<?= BASE_URL ?>index.php?page=logout" class="nav-link">
                         <i class="fas fa-sign-out-alt"></i>

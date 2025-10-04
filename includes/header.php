@@ -60,12 +60,6 @@ if (isset($_SESSION['user_id'])) {
 
     <div class="header-right">
         <div class="user-info">
-            <div class="notification">
-                <a href="<?php echo BASE_URL; ?>pages/notification.php">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge">1</span>
-                </a>
-            </div>
             <div class="user-profile">
                 <a href="<?php echo isset($_SESSION['user_id']) ? BASE_URL.'pages/customer_info.php' : BASE_URL.'pages/login.php'; ?>" 
                 class="user-link" style="color:black; text-decoration:none;">

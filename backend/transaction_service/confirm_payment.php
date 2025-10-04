@@ -10,27 +10,19 @@ if (!$payment_id) {
     exit;
 }
 
-// Update PAYMENTS thành success
-$update = $conn->prepare("UPDATE PAYMENTS SET STATUS = 'success', CONFIRM_AT = NOW() WHERE PAYMENT_ID = ?");
-$update->bind_param("s", $payment_id);
-$update->execute();
+// Lấy thông tin payment
+$otp_service_url = "http://localhost/backend/otp_service/create_otp.php"; 
 
-// Thêm record vào TRANSACTIONS
-$transaction_id = "TRANS" . time();
-$type = "tuition_payment";
-$desc = "Thanh toán học phí";
+$response = file_get_contents($otp_service_url . "?payment_id=" . urlencode($payment_id));
+$otp_result = json_decode($response, true);
 
-$sql = "INSERT INTO TRANSACTIONS (TRANSACTION_ID, PAYMENT_ID, USER_ID, BALANCE_AFTER, TYPE, CHANGE_AMOUNT, DESCRIPTION, CREATED_AT) 
-        VALUES (?, ?, '', 0, ?, 0, ?, NOW())";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $transaction_id, $payment_id, $type, $desc);
-$stmt->execute();
+if (!$otp_result['success']) {
+    echo json_encode(["success" => false, "message" => "Không thể tạo OTP"]);
+    exit;
+}
 
 echo json_encode([
     "success" => true,
-    "message" => "Xác nhận thanh toán thành công",
-    "transaction_id" => $transaction_id
+    "message" => "OTP đã được gửi, vui lòng xác nhận",
+    "payment_id" => $payment_id
 ]);
-
-$stmt->close();
-$conn->close();

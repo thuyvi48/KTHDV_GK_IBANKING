@@ -1,14 +1,23 @@
 <?php
 session_start();
 
+$error_username = "";
+$error_password = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    if (empty($username) || empty($password)) {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
-    } else {
-        // Gọi API Gateway
+    // Kiểm tra rỗng trước
+    if (empty($username)) {
+        $error_username = "Vui lòng nhập tên đăng nhập hoặc email";
+    }
+    if (empty($password)) {
+        $error_password = "Vui lòng nhập mật khẩu";
+    }
+
+    // Nếu không có lỗi rỗng mới gọi API
+    if (empty($error_username) && empty($error_password)) {
         $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=auth&action=login";
 
         $ch = curl_init($url);
@@ -20,32 +29,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "password" => $password
         ]));
 
-       $response = curl_exec($ch);
+        $response = curl_exec($ch);
 
         if ($response === false) {
-            $error = 'Curl error: ' . curl_error($ch);
+            $error_username = 'Không thể kết nối server: ' . curl_error($ch);
         } else {
             $data = json_decode($response, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $error = "Lỗi phản hồi từ server: " . $response;
-            } else if (!empty($data['success'])) {
-                // Chú ý: đặt session ID trùng với file dashboard
+                $error_username = "Lỗi phản hồi từ server";
+            } elseif (!empty($data['success'])) {
+                // Thành công
                 $_SESSION['user_id'] = $data['user_id'];
                 $_SESSION['username'] = $data['username'];
 
                 header("Location: ../index.php?page=dashboard");
                 exit();
             } else {
-                $error = $data['error'] ?? "Đăng nhập thất bại: " . $response;
+                // Sai username hoặc mật khẩu
+                $message = $data['message'] ?? "Đăng nhập thất bại";
+                if (stripos($message, 'user') !== false || stripos($message, 'tồn tại') !== false) {
+                    $error_username = "Tên đăng nhập không tồn tại";
+                } elseif (stripos($message, 'mật khẩu') !== false) {
+                    $error_password = "Sai mật khẩu";
+                } else {
+                    $error_username = $message;
+                }
             }
         }
 
         curl_close($ch);
     }
 }
-?>
-
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -133,14 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="login-body">
-                        <?php if (!empty($error)): ?>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <?php echo htmlspecialchars($error); ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                        
                         <form method="POST" action="">
                             <div class="mb-3">
                                 <label for="username" class="form-label fw-semibold">
@@ -183,6 +190,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <i class="fas fa-eye" id="passwordIcon"></i>
                                     </button>
                                 </div>
+                                    <?php if (!empty($error_username) || !empty($error_password)): ?>
+                                        <p style="color: red; font-size: 13px; margin-top: 5px;">
+                                            <?php 
+                                                if (!empty($error_username)) {
+                                                    echo $error_username;
+                                                } elseif (!empty($error_password)) {
+                                                    echo $error_password;
+                                                }
+                                            ?>
+                                        </p>
+                                    <?php endif; ?>
                             </div>
                             
                             <div class="mb-3 form-check">
