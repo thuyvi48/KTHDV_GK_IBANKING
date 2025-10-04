@@ -45,21 +45,3 @@ if ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 $conn->close();
-
-    document.querySelector("[name='mssv']").addEventListener("blur", function() {
-        let mssv = this.value.trim();
-        if (!mssv) return;
-
-        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get&mssv=" + encodeURIComponent(mssv))
-        .then(res => res.json())
-        .then(data => {
-            if (data && data.success) {
-                document.querySelector("[name='student_name']").value = data.student.FULL_NAME;
-                document.querySelector("[name='amount']").value = data.invoice.AMOUNT_DUE + " đ";
-                document.querySelector("[name='amount_to_pay']").value = data.invoice.AMOUNT_DUE + " đ";
-                document.querySelector("[name='invoice_id']").value = data.invoice.INVOICE_ID; // ẩn
-            } else {
-                alert(data.message || "Không tìm thấy MSSV");
-            }
-        });
-    });

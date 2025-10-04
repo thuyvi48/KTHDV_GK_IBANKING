@@ -3,46 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-<<<<<<< HEAD
-// Sample data giả sử lấy sau khi user login
-$payer_name  = "Nguyen Van A";
-$payer_phone = "0909xxxxxx";
-$payer_email = "abc@tdtu.edu.vn";
-$account_balance = 5000000;
-
-// Fake data cho recent transactions
-$recent_transactions = [
-    [
-        "type" => "online_shopping",
-        "description" => "Thanh toán Shopee",
-        "date" => "2025-10-01 14:30",
-        "amount" => -250000,
-        "status" => "Hoàn tất"
-    ],
-    [
-        "type" => "online_shopping",
-        "description" => "Nạp tiền điện thoại",
-        "date" => "2025-09-29 19:20",
-        "amount" => -100000,
-        "status" => "Hoàn tất"
-    ],
-    [
-        "type" => "transfer",
-        "description" => "Nhận tiền từ Bùi Văn B",
-        "date" => "2025-09-28 10:15",
-        "amount" => 1500000,
-        "status" => "Hoàn tất"
-    ],
-    [
-        "type" => "transfer",
-        "description" => "Chuyển tiền đến Nguyễn Thị C",
-        "date" => "2025-09-27 08:45",
-        "amount" => -500000,
-        "status" => "Đang xử lý"
-    ],
-];
-?>
-=======
 // if (!isset($_SESSION['user_id'])) {
 //     header("Location: login.php");
 //     exit();
@@ -66,67 +26,6 @@ $transApi = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_
 $transResponse = file_get_contents($transApi);
 $recent_transactions = json_decode($transResponse, true) ?? [];
 ?>
-
-<div class="dashboard">
-    <div class="dashboard-header">
-        <h1><strong>Thanh toán</strong></h1>
-    </div>
-    
-    <!-- Account Info -->
-   <div class="account-cards">
-    <div class="account-card primary">
-        <div class="card-header">
-            <h3>Số dư khả dụng</h3>
-        </div>
-        <div class="card-balance">
-            <span class="balance-amount">
-                <?php echo number_format($account_balance, 0, ',', '.'); ?> đ
-            </span>
-        </div>
-    </div>
-</div>
-    <!-- Payment Form -->
-    <div class="payment-form">
-        <form id="paymentForm">
-            <h2>Người nộp tiền</h2>
-            <label>Họ tên:</label>
-            <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
-            
-            <label>Số điện thoại:</label>
-            <input type="text" name="payer_phone" value="<?php echo $payer_phone; ?>" readonly>
-            
-            <label>Email:</label>
-            <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
-
-            <h2 style="grid-column:1 / -1">Thông tin học phí</h2>
-
-                <label>MSSV:</label>
-                <input type="text" id="mssv" name="mssv" placeholder="Nhập MSSV">
-
-                <label>Họ tên sinh viên:</label>
-                <input type="text" id="student_name" name="student_name" readonly>
-
-                <label>Số tiền cần nộp:</label>
-                <input type="text" id="amount" name="amount" readonly>
-
-            <h2>Thông tin thanh toán</h2>
-            <label>Số dư khả dụng:</label>
-            <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
-            
-            <label>Số tiền học phí cần thanh toán:</label>
-            <input type="text" name="amount_to_pay" readonly>
-            
-            <div class="agree-submit">
-                <label>
-                    <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
-                </label>
-                <button type="submit" disabled>Xác nhận giao dịch</button>
-            </div>
-        </form>
-    </div>
-    
-
->>>>>>> 9dd9ec6879cd605f60650665f5daa0f7ba8318de
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -194,58 +93,55 @@ h1 {
     </style>
 </head>
 <body>
-
 <div class="dashboard">
     <div class="dashboard-header">
         <h1><strong>Thanh toán</strong></h1>
     </div>
-
+    
     <!-- Account Info -->
-    <div class="account-cards">
-        <div class="account-card primary">
-            <div class="card-header">
-                <h3>Số dư khả dụng</h3>
-            </div>
-            <div class="card-balance">
-                <span class="balance-amount">
-                    <?php echo number_format($account_balance, 0, ',', '.'); ?> đ
-                </span>
-            </div>
+   <div class="account-cards">
+    <div class="account-card primary">
+        <div class="card-header">
+            <h3>Số dư khả dụng</h3>
+        </div>
+        <div class="card-balance">
+            <span class="balance-amount">
+                <?php echo number_format($account_balance, 0, ',', '.'); ?> đ
+            </span>
         </div>
     </div>
-
+</div>
     <!-- Payment Form -->
     <div class="payment-form">
         <form id="paymentForm">
             <h2>Người nộp tiền</h2>
             <label>Họ tên:</label>
             <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
-
+            
             <label>Số điện thoại:</label>
             <input type="text" name="payer_phone" value="<?php echo $payer_phone; ?>" readonly>
-
+            
             <label>Email:</label>
             <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
 
-            <h2>Thông tin học phí</h2>
-            <label>MSSV:</label>
-            <input type="text" name="mssv" placeholder="Nhập MSSV">
+            <h2 style="grid-column:1 / -1">Thông tin học phí</h2>
 
-            <label>Họ tên sinh viên:</label>
-            <input type="text" name="student_name" readonly>
+                <label>MSSV:</label>
+                <input type="text" id="mssv" name="mssv" placeholder="Nhập MSSV">
 
-            <label>Số tiền cần nộp:</label>
-            <input type="text" name="amount" readonly>
+                <label>Họ tên sinh viên:</label>
+                <input type="text" id="student_name" name="student_name" readonly>
+
+                <label>Số tiền cần nộp:</label>
+                <input type="text" id="amount" name="amount" readonly>
 
             <h2>Thông tin thanh toán</h2>
             <label>Số dư khả dụng:</label>
             <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
-
+            
             <label>Số tiền học phí cần thanh toán:</label>
             <input type="text" name="amount_to_pay" readonly>
-
-            <input type="hidden" name="invoice_id" value="">
-
+            
             <div class="agree-submit">
                 <label>
                     <input type="checkbox" name="agree"> Tôi đồng ý với điều khoản
@@ -255,6 +151,8 @@ h1 {
         </form>
     </div>
 
+
+
     <!-- Recent Transactions -->
     <div class="recent-transactions">
         <div class="section-header">
@@ -263,7 +161,6 @@ h1 {
             <button class="btn-view-all" onclick="window.location.href='invoice_history.php'">Xem tất cả giao dịch</button>
         </div>
         <div class="transactions-list">
-<<<<<<< HEAD
             <?php foreach($recent_transactions as $transaction): ?>
                 <div class="transaction-item">
                     <div class="transaction-icon <?php echo $transaction['type']; ?>">
@@ -282,32 +179,6 @@ h1 {
                         <div class="transaction-status"><?php echo $transaction['status']; ?></div>
                     </div>
                 </div>
-=======
-            <?php foreach($recent_transactions as $transaction): 
-                $amount = $transaction['CHANGE_AMOUNT'] ?? 0;
-                $status = $transaction['STATUS'] ?? '';
-                $description = $transaction['DESCRIPTION'] ?? '';
-                $type = strtolower($transaction['TYPE'] ?? 'transfer'); // DEBIT/CREDIT
-                $date = $transaction['CREATED_AT'] ?? '';
-            ?>
-            <div class="transaction-item">
-                <div class="transaction-icon <?php echo $type; ?>">
-                    <?php if($type == 'online_shopping'): ?>
-                        <i class="fas fa-shopping-cart"></i>
-                    <?php else: ?>
-                        <i class="fas fa-exchange-alt"></i>
-                    <?php endif; ?>
-                </div>
-                <div class="transaction-details">
-                    <h4><?php echo $description; ?></h4>
-                    <p><?php echo $date; ?></p>
-                </div>
-                <div class="transaction-amount <?php echo $amount > 0 ? 'positive' : 'negative'; ?>">
-                    <?php echo $amount > 0 ? '+' : ''; ?><?php echo number_format($amount, 0, ',', '.'); ?> đ
-                    <div class="transaction-status"><?php echo $status; ?></div>
-                </div>
-            </div>
->>>>>>> 9dd9ec6879cd605f60650665f5daa0f7ba8318de
             <?php endforeach; ?>
 
         </div>
@@ -386,28 +257,4 @@ document.querySelector("[name='agree']").addEventListener("change", function() {
 
 </body>
 </html>
-<script>
-document.getElementById("mssv").addEventListener("blur", function() {
-    let mssv = this.value.trim();
-    if (mssv.length === 0) return;
 
-    fetch("http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_student.php?mssv=" + encodeURIComponent(mssv))
-        .then(resp => resp.json())
-        .then(data => {
-            if (data && !data.error) {
-                // Fill form
-                document.getElementById("student_name").value = data.FULL_NAME || "";
-                document.getElementById("amount").value = 
-                    (data.AMOUNT ? new Intl.NumberFormat('vi-VN').format(data.AMOUNT) : 0) + " đ";
-            } else {
-                alert("Không tìm thấy thông tin sinh viên!");
-                document.getElementById("student_name").value = "";
-                document.getElementById("amount").value = "";
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Lỗi khi lấy thông tin sinh viên!");
-        });
-});
-</script>
