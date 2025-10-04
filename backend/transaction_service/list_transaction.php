@@ -14,6 +14,7 @@ while ($row = $result->fetch_assoc()) {
     $transactions[] = $row;
 }
 
-echo json_encode($transactions);
-
+echo json_encode([
+    "transactions" => $transactions
+]);
 $conn->close();
