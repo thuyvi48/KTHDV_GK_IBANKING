@@ -101,23 +101,22 @@ switch ($service) {
 
     /* ---------------- TRANSACTION SERVICE ---------------- */
    case 'transaction':
-    if ($action === 'list') {
-        $mssv = $_GET['mssv'] ?? '';
-        if (!$mssv) { echo json_encode(['success'=>false,'message'=>'Missing MSSV']); exit; }
-        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($mssv);
-        $response = @file_get_contents($url);
-        echo $response ?: json_encode(['success'=>false,'message'=>'Cannot connect transaction_service']);
-    } else {
-        echo json_encode(['success'=>false,'message'=>'Invalid action for transaction']);
-    }
-    break;
+        if ($action === 'list') {
+            $user_id = $_GET['user_id'] ?? '';
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
+            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+        }
+        break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */
    case 'payment':
         if ($action === 'list') {
-            $mssv = $_GET['mssv'] ?? '';
-            if (!$mssv) { echo json_encode(['success'=>false,'message'=>'Missing MSSV']); exit; }
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($mssv);
+            $user_id = $_GET['user_id'] ?? '';
+            if (!$user_id) {
+                echo json_encode(['success'=>false,'message'=>'Missing user id']);
+                exit;
+            }
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($user_id);
             $response = @file_get_contents($url);
             echo $response ?: json_encode(['success'=>false,'message'=>'Cannot connect payment_service']);
         } elseif ($action === 'create') {

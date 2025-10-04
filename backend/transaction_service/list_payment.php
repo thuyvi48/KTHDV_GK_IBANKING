@@ -2,18 +2,29 @@
 header('Content-Type: application/json');
 require_once "db.php";
 
-$sql = "SELECT * FROM PAYMENTS ORDER BY CREATED_AT DESC";
-$result = $conn->query($sql);
-
-if ($result && $result->num_rows > 0) {
-    $payments = [];
-    while ($row = $result->fetch_assoc()) {
-        $payments[] = $row;
-    }
-    echo json_encode(["success" => true, "data" => $payments]);
-} else {
-    echo json_encode(["success" => false, "message" => "Không có dữ liệu"]);
+$user_id = $_GET['user_id'] ?? '';
+if (!$user_id) {
+    echo json_encode(['success'=>false,'message'=>'Missing user id']);
+    exit;
 }
 
-$conn->close();
+try {
+    $sql = "SELECT t.TRANSACTION_ID, t.PAYMENT_ID, t.USER_ID, t.BALANCE_AFTER, t.TYPE, t.CHANGE_AMOUNT,
+               t.DESCRIPTION, t.CREATED_AT, t.STATUS,
+               p.AMOUNT AS PAYMENT_AMOUNT, p.STATUS AS PAYMENT_STATUS
+        FROM TRANSACTIONS t
+        LEFT JOIN PAYMENTS p ON t.PAYMENT_ID = p.PAYMENT_ID
+        WHERE t.USER_ID = :user_id
+        ORDER BY t.CREATED_AT DESC";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['user_id' => $user_id]);
+    $transactions = $stmt->fetchAll();
+
+    echo json_encode(['success'=>true,'data'=>$transactions]);
+
+} catch (PDOException $e) {
+    echo json_encode(['success'=>false, 'message'=>'Query failed: '.$e->getMessage()]);
+}
+
 ?>
