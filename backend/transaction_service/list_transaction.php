@@ -6,12 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-<<<<<<< HEAD
-echo json_encode([
-    "transactions" => $transactions
-]);
-$conn->close();
-=======
 $user_id = $_SESSION['User_ID'] ?? $_GET['user_id'] ?? '';
 if (!$user_id) {
     echo json_encode(['success'=>false,'message'=>'Missing user id']);
@@ -37,4 +31,3 @@ try {
     echo json_encode(['success'=>false,'message'=>'Query failed: '.$e->getMessage()]);
 }
 ?>
->>>>>>> 1b3cfeec964d30c13d9b396ad10f84b85e9dc211

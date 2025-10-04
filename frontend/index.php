@@ -31,8 +31,8 @@ function callAPI($method, $url, $data = false) {
 // Danh sách các trang yêu cầu đăng nhập
 // ========================
 $protected_pages = [
-    'customer-info',
-    'transaction',      // ✅ đổi đúng tên file bạn có: transaction.php
+    //'customer-info',
+    //'transaction',
     'edit-profile',
     'change-password',
     'pay-tuition'
@@ -53,7 +53,7 @@ if ($page === 'logout') {
 // ========================
 // Check đăng nhập
 // ========================
-if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
+if (in_array($page, $protected_pages) && !isset($_SESSION['user_id'])) {
     // Nếu chưa login mà vào trang cần bảo vệ → redirect login
     header("Location: pages/login.php");
     exit();
@@ -62,17 +62,16 @@ if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
 // ========================
 // Lấy thông tin user qua User Service
 // ========================
-if (isset($_SESSION['USER_ID'])) {
+if (isset($_SESSION['user_id'])) {
     $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
-    $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+    $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['user_id']]);
 
     if (!$user) {
-        $user = ['full_name' => $_SESSION['USERNAME'] ?? 'Không tải được thông tin user'];
+        $user = ['full_name' => $_SESSION['username'] ?? 'Không tải được thông tin user'];
     }
 } else {
-    $user = ['full_name' => 'Khách '];
+    $user = ['full_name' => 'Khách'];
 }
-
 
 // ========================
 // Render giao diện
@@ -119,4 +118,3 @@ updateTime();
 </script>
 </body>
 </html>
-    

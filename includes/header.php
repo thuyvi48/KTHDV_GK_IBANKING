@@ -58,15 +58,12 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <div class="header-right">
-        <div class="user-info">
-            <div class="user-profile">
-                <a href="<?php echo isset($_SESSION['user_id']) ? BASE_URL.'pages/customer_info.php' : BASE_URL.'pages/login.php'; ?>" 
-                class="user-link" style="color:black; text-decoration:none;">
+        <div class="header-right">
+            <div class="user-info">
+                <div class="user-profile" style="display:flex; align-items:center; gap:6px; color:black;">
                     <i class="fas fa-user"></i>
                     <span class="user-name"><?php echo htmlspecialchars($user['full_name']); ?></span>
-                </a>
+                </div>
             </div>
         </div>
-    </div>
 </header>

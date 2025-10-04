@@ -20,28 +20,6 @@
         </div>
         
         <div class="footer-section">
-            <h4>Dịch vụ</h4>
-            <ul class="footer-links">
-                <li><a href="#">Chuyển khoản</a></li>
-                <li><a href="#">Thanh toán hóa đơn</a></li>
-                <li><a href="#">Vay vốn</a></li>
-                <li><a href="#">Tiết kiệm online</a></li>
-                <li><a href="#">Thẻ tín dụng</a></li>
-            </ul>
-        </div>
-        
-        <div class="footer-section">
-            <h4>Hỗ trợ</h4>
-            <ul class="footer-links">
-                <li><a href="#">Trung tâm trợ giúp</a></li>
-                <li><a href="#">Câu hỏi thường gặp</a></li>
-                <li><a href="#">Bảo mật</a></li>
-                <li><a href="#">Điều khoản sử dụng</a></li>
-                <li><a href="#">Chính sách bảo mật</a></li>
-            </ul>
-        </div>
-        
-        <div class="footer-section">
             <h4>Liên hệ</h4>
             <div class="contact-info">
                 <div class="contact-item">

@@ -672,12 +672,18 @@ body {
 }
 
 .footer-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 3rem;
-  padding: 3rem 2rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* hai cột cách xa nhau */
+    align-items: flex-start;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 3rem;
+    padding: 3rem 2rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto; /* khoảng cách giữa các cột */
+}
+
+.footer-section {
+    flex: 1;
 }
 
 .footer-section h4 {
@@ -722,24 +728,6 @@ body {
   gap: 0.5rem;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.9rem;
-}
-
-.footer-links {
-  list-style: none;
-}
-
-.footer-links li {
-  margin-bottom: 0.75rem;
-}
-
-.footer-links a {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.footer-links a:hover {
-  color: white;
 }
 
 .footer-bottom {
