@@ -2,17 +2,23 @@
 require_once 'db.php';
 header('Content-Type: application/json');
 
-// Lấy dữ liệu JSON từ frontend
 $input = json_decode(file_get_contents("php://input"), true);
-$username = $input['username'] ?? '';
-$password = $input['password'] ?? '';
+$username = trim($input['username'] ?? '');
+$password = trim($input['password'] ?? '');
 
-if (!$username || !$password) {
-    echo json_encode(["error" => "Thiếu username hoặc password"]);
+if (empty($username) && empty($password)) {
+    echo json_encode(["success" => false, "message" => "Vui lòng nhập tên đăng nhập và mật khẩu"]);
+    exit;
+}
+if (empty($username)) {
+    echo json_encode(["success" => false, "message" => "Vui lòng nhập tên đăng nhập hoặc email"]);
+    exit;
+}
+if (empty($password)) {
+    echo json_encode(["success" => false, "message" => "Vui lòng nhập mật khẩu"]);
     exit;
 }
 
-// Kiểm tra trong bảng USERS_AUTH
 $sql = "SELECT USER_ID, USERNAME, PASSWORD FROM USERS_AUTH WHERE USERNAME = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
@@ -27,12 +33,11 @@ if ($row = $result->fetch_assoc()) {
             "username" => $row['USERNAME']
         ]);
     } else {
-        echo json_encode(["error" => "Sai mật khẩu"]);
+        echo json_encode(["success" => false, "message" => "Sai mật khẩu"]);
     }
 } else {
-    echo json_encode(["error" => "Không tìm thấy user"]);
+    echo json_encode(["success" => false, "message" => "Tên đăng nhập không tồn tại"]);
 }
 
 $stmt->close();
 $conn->close();
-?>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 $userId = $_SESSION['USER_ID'] ?? '';
+var_dump($userId);
 if (!$userId) {
     header("Location: login.php");
     exit;

@@ -65,12 +65,14 @@ if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
 if (isset($_SESSION['USER_ID'])) {
     $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
     $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+
     if (!$user) {
-        $user = ['full_name' => 'Không tải được thông tin user'];
+        $user = ['full_name' => $_SESSION['USERNAME'] ?? 'Không tải được thông tin user'];
     }
 } else {
-    $user = ['full_name' => 'Khách vãng lai'];
+    $user = ['full_name' => 'Khách '];
 }
+
 
 // ========================
 // Render giao diện
