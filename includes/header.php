@@ -9,19 +9,24 @@ require_once __DIR__ . "/../frontend/config.php";
  // file chứa callAPI()
 
 // Lấy thông tin user mặc định
-$user = ['full_name' => 'Khách vãng lai'];
+$user = ['full_name' => 'Khách'];
 
-if (isset($_SESSION['USER_ID'])) {
-$apiUrl = BASE_URL . "backend/user_service/index.php?action=get";
-$resp = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
 
+    // Gọi API y hệt dashboard
+    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($userId);
+    $response = file_get_contents($apiUrl);
+    $resp = json_decode($response, true);
 
-if ($resp && isset($resp['full_name'])) {
-    $user = $resp;
-} else {
-    $user = ['full_name' => 'Không tải được thông tin user'];
-}
-
+    if ($resp && isset($resp['FULL_NAME'])) {
+        $user = [
+            'full_name' => $resp['FULL_NAME'],
+            'email'     => $resp['EMAIL'] ?? '',
+        ];
+    } else {
+        $user = ['full_name' => 'Không tải được thông tin user'];
+    }
 }
 
 ?>
@@ -31,7 +36,7 @@ if ($resp && isset($resp['full_name'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iMAGINE - <?php echo isset($namePage) ? $namePage : ''; ?></title>
-    <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg">
+    <link rel="icon" type="image/png" href="../frontend/assets/images/logo.png">
 
     <!-- CSS chung -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
@@ -45,7 +50,7 @@ if ($resp && isset($resp['full_name'])) {
     <div class="header-left">
         <div class="logo">
             <div class="logo-icon">
-                <img src="<?php echo BASE_URL; ?>assets/images/logo.jpg" alt="Logo iMAGINE" width="60" height="60">
+                <img src="<?php echo BASE_URL; ?>assets/images/logo.png" alt="Logo iMAGINE" width="60" height="60">
             </div>
             <div class="logo-text">
                 <h2>iMAGINE</h2>
@@ -62,16 +67,11 @@ if ($resp && isset($resp['full_name'])) {
                 </a>
             </div>
             <div class="user-profile">
-                <div class="user-avatar">
-                    <a href="<?php echo isset($_SESSION['USER_ID']) ? BASE_URL.'pages/customer-info.php' : BASE_URL.'pages/login.php'; ?>">
-                        <i class="fas fa-user"></i>
-                    </a>
-                </div>
-                <span class="user-name">
-                    <a href="<?php echo isset($_SESSION['USER_ID']) ? BASE_URL.'pages/customer-info.php' : BASE_URL.'pages/login.php'; ?>" class="text-decoration-none">
-                        <?php echo htmlspecialchars($user['full_name']); ?>
-                    </a>
-                </span>
+                <a href="<?php echo isset($_SESSION['user_id']) ? BASE_URL.'pages/customer_info.php' : BASE_URL.'pages/login.php'; ?>" 
+                class="user-link" style="color:black; text-decoration:none;">
+                    <i class="fas fa-user"></i>
+                    <span class="user-name"><?php echo htmlspecialchars($user['full_name']); ?></span>
+                </a>
             </div>
         </div>
     </div>

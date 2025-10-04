@@ -19,26 +19,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "username" => $username,
             "password" => $password
         ]));
-            $response = curl_exec($ch);
-            if ($response === false) {
-                $error = 'Curl error: ' . curl_error($ch);
-            } else {
-                $data = json_decode($response, true);
-                if (!empty($data['success'])) {
-                    $_SESSION['USER_ID'] = $data['user_id'];
-                    $_SESSION['USERNAME'] = $data['username'];
-                    header("Location: ../index.php?page=dashboard");
-                    exit();
 
-                
-                } else {
-                    $error = $data['error'] ?? "Lỗi không xác định: " . $response;
-                }
+       $response = curl_exec($ch);
+
+        if ($response === false) {
+            $error = 'Curl error: ' . curl_error($ch);
+        } else {
+            $data = json_decode($response, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $error = "Lỗi phản hồi từ server: " . $response;
+            } else if (!empty($data['success'])) {
+                // Chú ý: đặt session ID trùng với file dashboard
+                $_SESSION['user_id'] = $data['user_id'];
+                $_SESSION['username'] = $data['username'];
+
+                header("Location: ../index.php?page=dashboard");
+                exit();
+            } else {
+                $error = $data['error'] ?? "Đăng nhập thất bại: " . $response;
             }
-            curl_close($ch);
+        }
+
+        curl_close($ch);
     }
 }
-
 ?>
 
 ?>
