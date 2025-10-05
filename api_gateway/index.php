@@ -103,27 +103,40 @@ case 'user':
 
     /* ---------------- TRANSACTION SERVICE ---------------- */
 case 'transaction':
-    if ($action === 'get_transaction') {
-        $user_id = $_GET['user_id'] ?? '';
-        $limit   = $_GET['limit'] ?? '';
-        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
-        if ($limit) {
-            $url .= "&limit=" . urlencode($limit);
-        }
+    $user_id = $_GET['user_id'] ?? '';
+    $limit   = $_GET['limit'] ?? '';
 
-        if ($service === 'transaction' && $action === 'recent') {
-            $user_id = $_GET['user_id'] ?? '';
-            if (!$user_id) {
-                echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+    if (!$user_id) {
+        echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+        exit;
+    }
+
+    switch ($action) {
+        case 'list':
+        case 'get_transaction':
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
+            if ($action === 'get_transaction' && $limit) {
+                $url .= "&limit=" . urlencode($limit);
+            }
+            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+            exit;
+
+        case 'get_payment_status':
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_payment_status.php?user_id=" . urlencode($user_id);
+            $response = @file_get_contents($url);
+            echo $response ?: json_encode(['error' => 'Không thể kết nối transaction_service']);
+            exit;
+
+        case 'recent':
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id) . "&limit=5";
+            $response = @file_get_contents($url);
+            $transactionsRaw = json_decode($response, true);
+
+            if (!is_array($transactionsRaw)) {
+                echo json_encode(['success'=>false,'message'=>'Dữ liệu không hợp lệ']);
                 exit;
             }
 
-            // Gọi service backend
-            $url = __DIR__ . '/../backend/transaction_service/get_transaction.php?user_id=' . urlencode($user_id);
-            $response = @file_get_contents($url);
-            $transactionsRaw = json_decode($response, true) ?? [];
-
-            // Map trạng thái và type
             $status_map = [
                 'PENDING' => 'Đang chờ xử lý',
                 'DONE'    => 'Hoàn tất',
@@ -137,33 +150,19 @@ case 'transaction':
                     'description'    => $t['DESCRIPTION'],
                     'date'           => date('d/m/Y H:i', strtotime($t['CREATED_AT'])),
                     'amount'         => $t['CHANGE_AMOUNT'],
-                    'type'           => strtolower($t['TYPE']), // online_shopping, transfer...
+                    'type'           => strtolower($t['TYPE']),
                     'status'         => $status_map[$t['STATUS'] ?? 'PENDING'] ?? ($t['STATUS'] ?? 'Chưa xác định')
                 ];
             }
 
             echo json_encode(['success'=>true,'data'=>$recent_transactions]);
             exit;
-        }
-    }
 
-    /* Thêm phần mới ở đây */
-    elseif ($action === 'get_payment_status') {
-        $user_id = $_GET['user_id'] ?? '';
-        if (!$user_id) {
-            echo json_encode(['error' => 'Thiếu tham số user_id']);
+        default:
+            echo json_encode(['success'=>false,'message'=>'Action không hợp lệ']);
             exit;
-        }
-
-        // Gọi sang backend transaction_service
-        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_payment_status.php?user_id=" . urlencode($user_id);
-        $response = @file_get_contents($url);
-
-        echo $response ?: json_encode(['error' => 'Không thể kết nối transaction_service']);
     }
-
     break;
-
 
     /* ---------------- PAYMENT SERVICE ---------------- */
    case 'payment':
