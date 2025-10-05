@@ -16,9 +16,10 @@ if (isset($_SESSION['USER_ID'])) {
     $userId = $_SESSION['USER_ID'];
 
     // Gọi API y hệt dashboard
-    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($userId);
+    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=user&action=get_user&user_id=" . urlencode($userId);
     $response = file_get_contents($apiUrl);
     $resp = json_decode($response, true);
+
 
     if ($resp && isset($resp['FULL_NAME'])) {
         $user = [

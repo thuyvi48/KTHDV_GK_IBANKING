@@ -10,7 +10,7 @@ if (!isset($_GET['user_id'])) {
 
 $userId = $_GET['user_id'];
 
-$sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE, PASSWORD FROM USERS WHERE USER_ID = ?";
+$sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE FROM USERS WHERE USER_ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $userId);
 $stmt->execute();

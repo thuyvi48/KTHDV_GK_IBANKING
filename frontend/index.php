@@ -61,8 +61,8 @@ if ($page === 'logout') {
 // ========================
 if (isset($_SESSION['USER_ID'])) {
     if (!isset($_SESSION['USER_INFO'])) {
-        $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
-        $userInfo = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+        $apiUrl = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=user&action=get_user&user_id=" . urlencode($_SESSION['USER_ID']);
+        $userInfo = callAPI("GET", $apiUrl);
         if (!empty($userInfo)) {
             $_SESSION['USER_INFO'] = $userInfo;
         } else {
