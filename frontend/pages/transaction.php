@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-$user_id = $_SESSION['User_ID'] ?? 'U001'; // test hardcode nếu session trống
+$user_id = $_SESSION['user_id']; // test hardcode nếu session trống
 
 $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=list&user_id=" . urlencode($user_id);
 $response = @file_get_contents($url);
