@@ -1,4 +1,7 @@
-/* === FORM STYLING (customer-info, payment, support) === */
+/* === FORM STYLING (customer_info, payment, support) === */
+* {
+      font-family: 'Roboto', sans-serif;
+}
 .form-section {
   background: #fff;
   padding: 20px;
@@ -106,10 +109,17 @@
 /* === STYLES CHỈ CHO CUSTOMER-INFO PAGE === */
 /* ============================================ */
 
-.customer-info-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+
+/* .info-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    text-align: left; 
+}
+.cust-security-label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .customer-info-page .cust-page-header {
@@ -388,6 +398,7 @@
   font-size: 12px;
   font-weight: 600;
 }
+ */
 
 /* ======================================= */
 /* === STYLES CHỈ CHO PAYMENT PAGE === */
@@ -930,7 +941,6 @@
 .transaction-page .trans-ref {
   font-size: 11px;
   color: #999;
-  font-family: "Courier New", monospace;
 }
 
 .transaction-page .trans-amount {

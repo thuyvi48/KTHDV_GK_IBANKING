@@ -9,8 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 $userId = $_SESSION['user_id'];
 
-$userId = $_SESSION['user_id'] ?? "U001"; 
-
 $recent_transactions = [];
 
 $apiUrl = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=recent&user_id=" . urlencode($userId);
@@ -48,64 +46,7 @@ $recent_transactions = json_decode($transResponse, true) ?? [];
     <title>Dashboard - Thanh toán học phí</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <style>
-body {
-    font-family: 'Roboto', sans-serif;
-}
-
-
-        .dashboard-header h1 { margin-bottom: 20px; }
-        .account-cards { display: flex; gap: 20px; margin-bottom: 30px;}
-        .account-card { background: #fff; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
-        .primary { border-left: 5px solid #131516ff; }
-        .card-balance { font-size: 24px;}
-        .payment-form{ background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .payment-form h2 { margin-top: 15px; margin-bottom: 10px; }
-        .payment-form label { margin-top: 10px;     font-weight: 400;   color: #3e5857;    }
-        .payment-form input[type="text"], .payment-form input[type="email"] { width: 250px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; }
-        .payment-form button { margin-top: 15px; padding: 10px 20px; color: #fff; border: none; border-radius: 4px; cursor: not-allowed; }
-        .recent-transactions { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn-view-all { background: #3e5857; color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        .transactions-list { display: flex; flex-direction: column; gap: 15px; }
-        .transaction-item { display: flex; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 6px; }
-        .transaction-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-right: 15px; color: #fff; }
-        .transaction-icon.online_shopping { background: #007bff; }
-        .transaction-icon.transfer { background: #17a2b8; }
-        .transaction-details { flex: 1; }
-        .transaction-details h4 { margin: 0; font-size: 14px; }
-        .transaction-details p { margin: 2px 0 0; font-size: 12px; color: #666; }
-        .transaction-amount { font-weight: bold; }
-        .transaction-amount.positive { color: #28a745; }
-        .transaction-amount.negative { color: #dc3545; }
-        .transaction-status { font-size: 12px; color: #666; }
-
-        .agree-submit {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Cách đều 2 bên */
-    margin-top: 15px;
-}
-
-.agree-submit label {
-    display: flex;
-    align-items: center;
-    font-weight: normal;
-}
-
-.agree-submit button {
-    margin-top: 0; /* bỏ margin-top mặc định */
-    padding: 10px 20px;
-    background: #3e5857;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: not-allowed;
-}
-h1 {
-    font-weight: bold;
-}
-    </style>
+    <link rel="stylesheet" href="../frontend/assets/css/dashboard.css">
 </head>
 <body>
 <div class="dashboard">

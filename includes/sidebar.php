@@ -13,10 +13,10 @@ $page = $page ?? ($_GET['page'] ?? 'dashboard');
                         <span><strong>Thanh toán</strong></span>
                     </a>
                 </li>
-                <li class="nav-item <?php echo ($page=='customer-info') ? 'active' : ''; ?>">
-                    <a href="<?= BASE_URL ?>index.php?page=customer-info" class="nav-link">
+                <li class="nav-item <?php echo ($page=='customer_info') ? 'active' : ''; ?>">
+                    <a href="<?= BASE_URL ?>index.php?page=customer_info" class="nav-link">
                         <i class="fas fa-user"></i>
-                        <span><strong>Thông tin khách hàng</strong></span>
+                        <span><strong>Thông tin tài khoản</strong></span>
                     </a>
                 </li>
                 <li class="nav-item <?php echo ($page=='transaction') ? 'active' : ''; ?>">

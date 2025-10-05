@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // ========================
 // Hàm gọi API
@@ -28,18 +30,22 @@ function callAPI($method, $url, $data = false) {
 }
 
 // ========================
+// Trang hiện tại
+// ========================
+$page = $_GET['page'] ?? 'dashboard';
+
+// ========================
 // Danh sách các trang yêu cầu đăng nhập
 // ========================
-$protected_pages = [
-    //'customer-info',
-    //'transaction',
-    'edit-profile',
-    'change-password',
-    'pay-tuition'
-];
+$protected_pages = ['dashboard', 'customer-info', 'transaction'];
 
-// Trang hiện tại
-$page = $_GET['page'] ?? 'dashboard';
+// ========================
+// Check đăng nhập
+// ========================
+if (in_array($page, $protected_pages) && !isset($_SESSION['USER_ID'])) {
+    header("Location: pages/login.php");
+    exit();
+}
 
 // ========================
 // Logout
@@ -51,26 +57,21 @@ if ($page === 'logout') {
 }
 
 // ========================
-// Check đăng nhập
-// ========================
-if (in_array($page, $protected_pages) && !isset($_SESSION['user_id'])) {
-    // Nếu chưa login mà vào trang cần bảo vệ → redirect login
-    header("Location: pages/login.php");
-    exit();
-}
-
-// ========================
 // Lấy thông tin user qua User Service
 // ========================
-if (isset($_SESSION['user_id'])) {
-    $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
-    $user = callAPI("GET", $apiUrl, ["id" => $_SESSION['user_id']]);
-
-    if (!$user) {
-        $user = ['full_name' => $_SESSION['username'] ?? 'Không tải được thông tin user'];
+if (isset($_SESSION['USER_ID'])) {
+    if (!isset($_SESSION['USER_INFO'])) {
+        $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/index.php";
+        $userInfo = callAPI("GET", $apiUrl, ["id" => $_SESSION['USER_ID']]);
+        if (!empty($userInfo)) {
+            $_SESSION['USER_INFO'] = $userInfo;
+        } else {
+            $_SESSION['USER_INFO'] = ['full_name' => $_SESSION['USERNAME'] ?? 'Không tải được thông tin user'];
+        }
     }
+    $user = $_SESSION['USER_INFO'];
 } else {
-    $user = ['full_name' => 'Khách'];
+    $user = ['full_name' => 'Khách '];
 }
 
 // ========================
@@ -101,20 +102,5 @@ require_once __DIR__ . '/../includes/header.php';
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
 
-<script>
-function updateTime() {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    const timeElement = document.querySelector('.time-display');
-    if (timeElement) {
-        timeElement.textContent = 'Cập nhật: ' + timeStr;
-    }
-}
-setInterval(updateTime, 1000);
-updateTime();
-</script>
 </body>
 </html>

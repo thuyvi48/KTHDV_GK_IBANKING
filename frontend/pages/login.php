@@ -8,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    // Kiểm tra rỗng trước
     if (empty($username)) {
         $error_username = "Vui lòng nhập tên đăng nhập hoặc email";
     }
@@ -16,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_password = "Vui lòng nhập mật khẩu";
     }
 
-    // Nếu không có lỗi rỗng mới gọi API
     if (empty($error_username) && empty($error_password)) {
         $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=auth&action=login";
 
@@ -30,35 +28,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]));
 
         $response = curl_exec($ch);
+        curl_close($ch);
 
         if ($response === false) {
-            $error_username = 'Không thể kết nối server: ' . curl_error($ch);
+            $error_username = "Không thể kết nối server";
         } else {
             $data = json_decode($response, true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $error_username = "Lỗi phản hồi từ server";
-            } elseif (!empty($data['success'])) {
-                // Thành công
-                $_SESSION['user_id'] = $data['user_id'];
-                $_SESSION['username'] = $data['username'];
+            if (!empty($data['success'])) {
+                $_SESSION['USER_ID'] = $data['user_id'];
+                $_SESSION['USERNAME'] = $data['username'];
 
                 header("Location: ../index.php?page=dashboard");
                 exit();
             } else {
-                // Sai username hoặc mật khẩu
                 $message = $data['message'] ?? "Đăng nhập thất bại";
-                if (stripos($message, 'user') !== false || stripos($message, 'tồn tại') !== false) {
-                    $error_username = "Tên đăng nhập không tồn tại";
-                } elseif (stripos($message, 'mật khẩu') !== false) {
+                if (stripos($message, 'mật khẩu') !== false) {
                     $error_password = "Sai mật khẩu";
                 } else {
                     $error_username = $message;
                 }
             }
         }
-
-        curl_close($ch);
     }
 }
 ?>
