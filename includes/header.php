@@ -12,8 +12,8 @@ require_once __DIR__ . "/../frontend/config.php";
 // Lấy thông tin user mặc định
 $user = ['full_name' => 'Khách'];
 
-if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
+if (isset($_SESSION['USER_ID'])) {
+    $userId = $_SESSION['USER_ID'];
 
     // Gọi API y hệt dashboard
     $apiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($userId);

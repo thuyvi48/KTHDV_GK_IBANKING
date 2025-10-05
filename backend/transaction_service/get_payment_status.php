@@ -1,27 +1,32 @@
 <?php
-require_once 'db.php';
+require_once __DIR__ . '/db.php';
+
 header('Content-Type: application/json');
 
-// Lấy payment_id từ query string
-if (!isset($_GET['payment_id'])) {
-    echo json_encode(["error" => "Thiếu tham số payment_id"]);
+// Nhận user_id thay vì payment_id
+if (!isset($_GET['user_id'])) {
+    echo json_encode(["error" => "Thiếu tham số user_id"]);
     exit;
 }
 
-$payment_id = $_GET['payment_id'];
+$user_id = $_GET['user_id'];
 
 try {
-    $stmt = $conn->prepare("SELECT PAYMENT_ID, USER_ID, STUDENT_ID, INVOICE_ID, AMOUNT, STATUS, CREATED_AT, CONFIRM_AT 
-                            FROM PAYMENTS 
-                            WHERE PAYMENT_ID = ?");
-    $stmt->bind_param("s", $payment_id);
+    $stmt = $conn->prepare("
+        SELECT STATUS 
+        FROM PAYMENTS 
+        WHERE USER_ID = ? 
+        ORDER BY CREATED_AT DESC 
+        LIMIT 1
+    ");
+    $stmt->bind_param("s", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
-        echo json_encode($row);
+        echo json_encode(["STATUS" => $row['STATUS']]);
     } else {
-        echo json_encode(["error" => "Không tìm thấy payment"]);
+        echo json_encode(["STATUS" => "pending"]);
     }
 
     $stmt->close();

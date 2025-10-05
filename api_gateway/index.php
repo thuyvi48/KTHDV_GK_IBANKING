@@ -147,7 +147,23 @@ case 'transaction':
         }
     }
 
-        break;
+    /* Thêm phần mới ở đây */
+    elseif ($action === 'get_payment_status') {
+        $user_id = $_GET['user_id'] ?? '';
+        if (!$user_id) {
+            echo json_encode(['error' => 'Thiếu tham số user_id']);
+            exit;
+        }
+
+        // Gọi sang backend transaction_service
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_payment_status.php?user_id=" . urlencode($user_id);
+        $response = @file_get_contents($url);
+
+        echo $response ?: json_encode(['error' => 'Không thể kết nối transaction_service']);
+    }
+
+    break;
+
 
     /* ---------------- PAYMENT SERVICE ---------------- */
    case 'payment':

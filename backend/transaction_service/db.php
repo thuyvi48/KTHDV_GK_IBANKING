@@ -1,20 +1,12 @@
 <?php
-$host = 'localhost';
-$db   = 'paymentdb';
-$user = 'root';
-$pass = '';
-$charset = 'utf8mb4';
+$host = "localhost";
+$user = "root";   // hoặc user MySQL bạn đã tạo
+$pass = "";       // password MySQL
+$db   = "paymentdb"; // database của user_service
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$conn = new mysqli($host, $user, $pass, $db);
 
-try {
-    $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-} catch (PDOException $e) {
-    die(json_encode([
-        'success' => false,
-        'message' => 'Database connection failed: ' . $e->getMessage()
-    ]));
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
 }
+?>

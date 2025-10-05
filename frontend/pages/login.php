@@ -194,13 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <?php endif; ?>
                             </div>
                             
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember">
-                                <label class="form-check-label" for="rememberMe">
-                                    Ghi nhớ đăng nhập
-                                </label>
-                            </div>
-                            
                             <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
                                 <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                             </button>
@@ -237,15 +230,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 passwordIcon.className = 'fas fa-eye';
             }
         }
-
-        // Auto dismiss alerts after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            });
-        }, 5000);
 
         // Focus on first input
         document.addEventListener('DOMContentLoaded', function() {
