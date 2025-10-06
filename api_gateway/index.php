@@ -102,67 +102,88 @@ case 'user':
         break;
 
     /* ---------------- TRANSACTION SERVICE ---------------- */
-case 'transaction':
-    $user_id = $_GET['user_id'] ?? '';
-    $limit   = $_GET['limit'] ?? '';
+        /* ---------------- TRANSACTION SERVICE ---------------- */
+    case 'transaction':
+        switch ($action) {
+            case 'list':
+            case 'get_transaction':
+                $user_id = $_GET['user_id'] ?? '';
+                $limit   = $_GET['limit'] ?? '';
 
-    if (!$user_id) {
-        echo json_encode(['success'=>false,'message'=>'Missing user_id']);
-        exit;
-    }
+                if (!$user_id) {
+                    echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+                    exit;
+                }
 
-    switch ($action) {
-        case 'list':
-        case 'get_transaction':
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
-            if ($action === 'get_transaction' && $limit) {
-                $url .= "&limit=" . urlencode($limit);
-            }
-            echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
-            exit;
+                $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
+                if ($action === 'get_transaction' && $limit) {
+                    $url .= "&limit=" . urlencode($limit);
+                }
+                echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối transaction_service"]);
+                exit;
 
-        case 'get_payment_status':
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_payment_status.php?user_id=" . urlencode($user_id);
-            $response = @file_get_contents($url);
-            echo $response ?: json_encode(['error' => 'Không thể kết nối transaction_service']);
-            exit;
+            case 'get_payment_status':
+                $user_id = $_GET['user_id'] ?? '';
+                if (!$user_id) {
+                    echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+                    exit;
+                }
+                $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/get_payment_status.php?user_id=" . urlencode($user_id);
+                $response = @file_get_contents($url);
+                echo $response ?: json_encode(['error' => 'Không thể kết nối transaction_service']);
+                exit;
 
-        case 'recent':
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id) . "&limit=5";
-            $response = @file_get_contents($url);
-            $transactionsRaw = json_decode($response, true);
+            case 'recent':
+                $user_id = $_GET['user_id'] ?? '';
+                if (!$user_id) {
+                    echo json_encode(['success'=>false,'message'=>'Missing user_id']);
+                    exit;
+                }
 
-            if (!is_array($transactionsRaw)) {
-                echo json_encode(['success'=>false,'message'=>'Dữ liệu không hợp lệ']);
+                $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id) . "&limit=5";
+                $response = @file_get_contents($url);
+                $transactionsRaw = json_decode($response, true);
+
+                if (!is_array($transactionsRaw) || !isset($transactionsRaw['data'])) {
+                    echo json_encode(['success'=>false,'message'=>'Dữ liệu không hợp lệ']);
+                    exit;
+                }
+
+                $status_map = [
+                    'PENDING' => 'Đang chờ xử lý',
+                    'DONE'    => 'Hoàn tất',
+                    'FAILED'  => 'Thất bại'
+                ];
+
+                $recent_transactions = [];
+                foreach ($transactionsRaw['data'] as $t) {
+                    $recent_transactions[] = [
+                        'transaction_id' => $t['TRANSACTION_ID'],
+                        'description'    => $t['DESCRIPTION'],
+                        'date'           => date('d/m/Y H:i', strtotime($t['CREATED_AT'])),
+                        'amount'         => $t['CHANGE_AMOUNT'],
+                        'type'           => strtolower($t['TYPE']),
+                        'status'         => $status_map[$t['STATUS'] ?? 'PENDING'] ?? ($t['STATUS'] ?? 'Chưa xác định')
+                    ];
+                }
+
+                echo json_encode(['success'=>true,'data'=>$recent_transactions]);
+                exit;
+
+               case 'create_transaction':
+                $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/add_transaction.php";
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                echo $response ?: json_encode(["success"=>false,"message"=>"Cannot connect transaction_service"]);
                 exit;
             }
-
-            $status_map = [
-                'PENDING' => 'Đang chờ xử lý',
-                'DONE'    => 'Hoàn tất',
-                'FAILED'  => 'Thất bại'
-            ];
-
-            $recent_transactions = [];
-            foreach ($transactionsRaw as $t) {
-                $recent_transactions[] = [
-                    'transaction_id' => $t['TRANSACTION_ID'],
-                    'description'    => $t['DESCRIPTION'],
-                    'date'           => date('d/m/Y H:i', strtotime($t['CREATED_AT'])),
-                    'amount'         => $t['CHANGE_AMOUNT'],
-                    'type'           => strtolower($t['TYPE']),
-                    'status'         => $status_map[$t['STATUS'] ?? 'PENDING'] ?? ($t['STATUS'] ?? 'Chưa xác định')
-                ];
-            }
-
-            echo json_encode(['success'=>true,'data'=>$recent_transactions]);
-            exit;
-
-        default:
-            echo json_encode(['success'=>false,'message'=>'Action không hợp lệ']);
-            exit;
-    }
-    break;
+        break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */
    case 'payment':
