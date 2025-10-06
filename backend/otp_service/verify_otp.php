@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/../db.php';
+require __DIR__ . '/db.php'; // kết nối otpdb
 
 $input = json_decode(file_get_contents("php://input"), true);
 $email = isset($input['email']) ? trim($input['email']) : '';
@@ -11,20 +11,28 @@ if (!$email || !$otp) {
     exit;
 }
 
-// Lấy USER_ID
-$stmt = $conn->prepare("SELECT USER_ID FROM USERS WHERE EMAIL=?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
+// Lấy USER_ID từ user_service
+$userApiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?email=" . urlencode($email);
+$userResponse = @file_get_contents($userApiUrl);
+if ($userResponse === false) {
+    echo json_encode(["error" => "Không kết nối user_service"]);
+    exit;
+}
+$userData = json_decode($userResponse, true);
+if (!isset($userData['USER_ID'])) {
     echo json_encode(["error" => "Không tìm thấy user"]);
     exit;
 }
-$user_id = $result->fetch_assoc()['USER_ID'];
-$stmt->close();
+$user_id = $userData['USER_ID'];
 
-// Lấy OTP mới nhất còn pending và chưa dùng
-$stmt = $conn->prepare("SELECT OTP_ID, CODE, STATUS, IS_USED, EXPIRES_AT FROM OTPS WHERE USER_ID=? AND STATUS='pending' AND IS_USED=0 ORDER BY CREATED_AT DESC LIMIT 1");
+// Lấy OTP mới nhất còn ACTIVE và chưa dùng
+$stmt = $conn->prepare("
+    SELECT OTP_ID, CODE, STATUS, IS_USED, EXPIRES_AT 
+    FROM OTPS 
+    WHERE USER_ID=? AND STATUS='ACTIVE' AND IS_USED=0 
+    ORDER BY CREATED_AT DESC 
+    LIMIT 1
+");
 $stmt->bind_param("s", $user_id);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -45,17 +53,17 @@ if ($expires_at < $current_time) {
     exit;
 }
 
-// So sánh OTP
-if (trim((string)$otp_row['CODE']) !== trim((string)$otp)) {
+// So sánh OTP (so sánh string, giữ leading zero)
+if (strcmp(trim($otp_row['CODE']), trim((string)$otp)) !== 0) {
     echo json_encode(["error" => "OTP không hợp lệ"]);
     exit;
 }
 
 // Cập nhật OTP đã dùng
-$stmt = $conn->prepare("UPDATE OTPS SET IS_USED=1, STATUS='used' WHERE OTP_ID=?");
-$stmt->bind_param("s", $otp_row['OTP_ID']);
-$stmt->execute();
-$stmt->close();
+$upd = $conn->prepare("UPDATE OTPS SET IS_USED=1, STATUS='USED' WHERE OTP_ID=?");
+$upd->bind_param("s", $otp_row['OTP_ID']);
+$upd->execute();
+$upd->close();
 $conn->close();
 
 echo json_encode(["success" => "OTP hợp lệ"]);

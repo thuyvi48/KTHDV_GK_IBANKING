@@ -23,13 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: url('../assets/images/bg-login.jpg') no-repeat center center fixed;
+            background: url('../assets/images/videoframe_3875.png') no-repeat center center fixed;
             background-size: cover; 
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         .forgot-container {
             background: rgba(255, 255, 255, 0.9); 
@@ -141,18 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $context  = stream_context_create($options);
                                 $result = file_get_contents($url, false, $context);
 
-                                if ($result === FALSE) {
-                                    echo "<p style='color:red'>Không thể gửi OTP. Vui lòng thử lại.</p>";
+                                $res = json_decode($result, true);
+                                if ($res && isset($res['success'])) {
+                                    $_SESSION['email_reset'] = $email;
+                                    $_SESSION['otp_sent_time'] = $res['otp_sent_time'] ?? time();
+                                    header("Location: ./verify_otp.php");
+                                    exit;
                                 } else {
-                                    echo "<pre>API Response: $result</pre>";
-                                    $res = json_decode($result, true);
-                                    if (isset($res['success'])) {
-                                        $_SESSION['email_reset'] = $email; 
-                                        header("Location: ./verify_otp.php");
-                                        exit;
-                                    } else {
-                                        echo "<p style='color:red'>" . ($res['error'] ?? 'Có lỗi xảy ra') . "</p>";
-                                    }
+                                // xử lý lỗi
                                 }
                             }
                             ?>

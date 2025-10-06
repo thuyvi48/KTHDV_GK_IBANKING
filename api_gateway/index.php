@@ -9,7 +9,7 @@ switch ($service) {
 case 'user':
     if ($action === 'get_user') {
         $user_id = $_GET['user_id'] ?? '';
-        if (!$user_id) {
+        if (!$user_id) {    
             echo json_encode(["error" => "Thiếu tham số user_id"]);
             exit;
         }

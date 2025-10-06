@@ -2,17 +2,22 @@
 header("Content-Type: application/json");
 require_once "db.php";
 
-if (!isset($_GET['user_id'])) {
+if (!isset($_GET['user_id']) && !isset($_GET['email'])) {
     http_response_code(400);
-    echo json_encode(["error" => "Missing user_id"]);
+    echo json_encode(["error" => "Missing user_id or email"]);
     exit;
 }
 
-$userId = $_GET['user_id'];
+if (isset($_GET['user_id'])) {
+    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE FROM USERS WHERE USER_ID = ?";
+    $param = $_GET['user_id'];
+} else {
+    $sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE FROM USERS WHERE EMAIL = ?";
+    $param = $_GET['email'];
+}
 
-$sql = "SELECT USER_ID, FULL_NAME, EMAIL, PHONE, BALANCE FROM USERS WHERE USER_ID = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $userId);
+$stmt->bind_param("s", $param);
 $stmt->execute();
 $result = $stmt->get_result();
 

@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: url('../assets/images/bg-login.jpg') no-repeat center center fixed;
+            background: url('../assets/images/videoframe_3875.png') no-repeat center center fixed;
             background-size: cover; 
             min-height: 100vh;
             display: flex;

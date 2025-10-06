@@ -26,7 +26,7 @@
                     <i class="fas fa-phone"></i>
                     <div>
                         <strong>Hotline 24/7</strong>
-                        <p>1900 xxxx</p>
+                        <p>1900 1010</p>
                     </div>
                 </div>
                 <div class="contact-item">
