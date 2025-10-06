@@ -1,0 +1,52 @@
+/* === LOGIN === */
+        body{
+            background: url('../images/videoframe_3875.png') no-repeat center center fixed;
+            background-size: cover; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        .login-container, .forgot-container, .reset-container, .verify-container {
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+        .login-header, .forgot-header, .reset-header, .verify-header {
+            background: linear-gradient(135deg, #3e5857 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .login-body, .forgot-body, .reset-body, .verify-body {
+            padding: 2rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        .btn-login, .btn-forgot, .btn-reset, .btn-verify {
+            background: linear-gradient(135deg, #3e5857 100%);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover , .btn-forgot:hover, .btn-reset:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #f0f0f0;
+            border-right: none;
+        }

@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-$user_id = $_SESSION['USER_ID'];
+
+$user_id = $_SESSION['USER_ID'] ?? null;
 
 $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=list&user_id=" . urlencode($user_id);
 $response = @file_get_contents($url);

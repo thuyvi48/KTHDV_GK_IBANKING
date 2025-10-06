@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $error = "Mật khẩu xác nhận không khớp!";
     } else {
         // Gọi API để reset mật khẩu
-        $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=reset_pwd";
+        $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=auth&action=reset_pwd";
         $data = ["email" => $email, "password" => $password];
 
         $options = [
@@ -32,21 +32,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             ]
         ];
         $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+$result = file_get_contents($url, false, $context);
 
-        if ($result === FALSE) {
-            $error = "Không thể kết nối server!";
-        } else {
-            $res = json_decode($result, true);
-            if (isset($res['success'])) {
-                $success = "Đặt lại mật khẩu thành công! Đang chuyển về trang đăng nhập...";
-                unset($_SESSION['email_reset']);
-                header("Refresh: 2; URL=login.php");
-                exit;
-            } else {
-                $error = $res['error'] ?? "Có lỗi xảy ra!";
-            }
-        }
+if ($result === FALSE) {
+    $error = "Không thể kết nối server!";
+} else {
+    // Debug để xem API trả gì
+    file_put_contents("debug_reset_frontend.txt", $result);
+
+    $res = json_decode($result, true);
+    if ($res === null) {
+        $error = "Phản hồi từ server không hợp lệ: " . htmlspecialchars($result);
+    } elseif (isset($res['success'])) {
+        $success = "Đặt lại mật khẩu thành công! Đang chuyển về trang đăng nhập...";
+        unset($_SESSION['email_reset']);
+        header("Refresh: 2; URL=login.php");
+        exit;
+    } else {
+        $error = $res['error'] ?? "Có lỗi xảy ra!";
+    }
+}
+
     }
 }
 ?>
@@ -55,79 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iMAGINE - Đặt lại mật khẩu</title>
-    <link rel="icon" type="image/jpg" href="../frontend/assets/images/logo.jpg">
+    <title>iMAGINE - Đổi mật khẩu</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: url('../assets/images/videoframe_3875.png') no-repeat center center fixed;
-            background-size: cover; 
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .forgot-container {
-            background: rgba(255, 255, 255, 0.9); 
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
-            backdrop-filter: blur(8px);
-        }
-        .forgot-header {
-            background: linear-gradient(135deg, #3e5857 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        .forgot-body {
-            padding: 2rem;
-        }
-        .form-control {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 2px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .btn-forgot {
-            background: linear-gradient(135deg, #3e5857 100%);
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-        .btn-forgot:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        .alert {
-            border-radius: 10px;
-            border: none;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/login.css">
 </head>
 <body>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
-            <div class="forgot-container">
-                <div class="forgot-header">
+            <div class="reset-container">
+                <div class="reset-header">
                     <h2 class="mb-0">
                         <i class="fas fa-lock me-2"></i>
-                        ĐẶT LẠI MẬT KHẨU
+                        ĐỔI MẬT KHẨU
                     </h2>
                 </div>
 
-                <div class="forgot-body">
+                <div class="reset-body">
                     <p class="text-center mb-4">
                         Email đang đặt lại mật khẩu: <br>
                         <b><?php echo htmlspecialchars($email); ?></b>
@@ -172,13 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                                    required>
                         </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary btn-forgot w-100 mb-3">
-                            Đặt lại mật khẩu
+                        <button type="submit" name="submit" class="btn btn-primary btn-reset w-100 mb-3">
+                            Đổi mật khẩu
                         </button>
                     </form>
 
                     <div class="text-center">
-                        <a href="login.php" class="text-decoration-none">
+                        <a href="verify_otp.php" class="text-decoration-none" style="color:#3e5857";>
                             <i class="fas fa-arrow-left me-1"></i> Quay lại đăng nhập
                         </a>
                     </div>

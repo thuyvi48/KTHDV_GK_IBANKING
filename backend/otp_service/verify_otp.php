@@ -45,7 +45,6 @@ $otp_row = $res->fetch_assoc();
 $stmt->close();
 
 // Kiểm tra hết hạn
-date_default_timezone_set('Asia/Ho_Chi_Minh');
 $current_time = new DateTime();
 $expires_at   = new DateTime($otp_row['EXPIRES_AT']);
 if ($expires_at < $current_time) {

@@ -55,36 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>iMAGINE - Xác thực OTP</title>
+<link rel="icon" type="image/png" href="../assets/images/logo.png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<style>
-/* (giữ nguyên CSS của bạn) */
-body {
-    background: url('../assets/images/videoframe_3875.png') no-repeat center center fixed;
-    background-size: cover;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Roboto', sans-serif;
-}
-.forgot-container { background: rgba(255,255,255,0.9); border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.2); overflow:hidden; }
-.forgot-header { background: linear-gradient(135deg,#3e5857 100%); color:white; padding:2rem; text-align:center; }
-.forgot-body { padding:2rem; }
-.form-control { border-radius:10px; padding:12px 15px; border:2px solid #f0f0f0; }
-.btn-forgot { background: linear-gradient(135deg,#3e5857 100%); border:none; padding:12px; border-radius:10px; font-weight:600; text-transform:uppercase; }
-.alert { border-radius:10px; border:none; }
-</style>
+<link rel="stylesheet" href="../assets/css/login.css">
 </head>
 <body>
 <div class="container">
  <div class="row justify-content-center">
   <div class="col-md-6 col-lg-4">
-   <div class="forgot-container">
-    <div class="forgot-header">
+   <div class="verify-container">
+    <div class="verify-header">
       <h2 class="mb-0"><i class="fas fa-key me-2"></i>XÁC THỰC OTP</h2>
     </div>
-    <div class="forgot-body">
+    <div class="verify-body">
         <p class="text-center mb-4">
             Mã OTP đã được gửi tới email: <br>
             <b><?php echo htmlspecialchars($email); ?></b>
@@ -115,7 +99,7 @@ body {
                 </div>
             </div>
 
-            <button type="submit" name="submit" class="btn btn-primary btn-forgot w-100 mb-3">Xác nhận</button>
+            <button type="submit" name="submit" class="btn btn-primary btn-verify w-100 mb-3">Xác nhận</button>
         </form>
 
         <div class="text-center"><a href="forgot_pwd.php" class="text-decoration-none" style="color:#3e5857"><i class="fas fa-arrow-left me-1"></i> Quay lại</a></div>
