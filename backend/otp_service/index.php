@@ -14,6 +14,10 @@ switch ($action) {
         require_once 'verify_otp.php';
         break;
 
+    case 'reset_pwd':
+        require_once 'reset_pwd.php';
+        break;
+        
     default:
         echo json_encode(["error" => "Action OTP không hợp lệ"]);
 }

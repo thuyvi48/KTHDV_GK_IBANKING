@@ -38,8 +38,8 @@ case 'user':
             curl_close($ch);
 
             echo $response;
-        } elseif ($action === 'reset_password') {
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/auth_service/reset_password.php";
+        } elseif ($action === 'reset_pwd') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/auth_service/reset_pwd.php";
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
