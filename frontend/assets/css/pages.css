@@ -110,295 +110,72 @@
 /* ============================================ */
 
 
-/* .info-box {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    text-align: left; 
+.customer-info-page.container {
+    max-width: 100%;
+    padding: 0px;
+    margin-top: -5px; 
 }
-.cust-security-label {
+
+.customer-info-page, 
+.customer-info-page * {
+    font-family: 'Roboto', sans-serif;
+}
+
+.cust-form-card, .cust-security-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.cust-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cust-form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.cust-form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 200px;
+}
+
+.customer-info-page label {
     font-weight: 500;
-    display: block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    color: #014d2e;
+    font-size: 14px;
 }
 
-.customer-info-page .cust-page-header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding: 20px 0;
+.customer-info-page input {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f8f9fa;
+    color: #333;
 }
 
-.customer-info-page .cust-page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #014d2e;
-  margin-bottom: 8px;
+.customer-info-page input:focus {
+    outline: none;
+    border-color: #65b806;
+    background: white;
 }
 
-.customer-info-page .cust-page-subtitle {
-  font-size: 16px;
-  color: #666;
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 6px;
 }
 
-.customer-info-page .cust-main-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 30px;
-  align-items: start;
-}
-
-.customer-info-page .cust-info-section {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.customer-info-page .cust-section-header {
-  position: relative;
-  margin-bottom: 30px;
-}
-
-.customer-info-page .cust-section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #014d2e;
-  margin-bottom: 8px;
-}
-
-.customer-info-page .cust-section-subtitle {
-  color: #666;
-  font-size: 14px;
-}
-
-.customer-info-page .cust-edit-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.customer-info-page .cust-edit-btn:hover {
-  background: #e9ecef;
-}
-
-.customer-info-page .cust-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.customer-info-page .cust-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.customer-info-page .cust-form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.customer-info-page .cust-form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-.customer-info-page .cust-form-group label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #014d2e;
-  font-size: 14px;
-}
-
-.customer-info-page .cust-form-group input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: border-color 0.3s;
-  background: #f8f9fa;
-}
-
-.customer-info-page .cust-form-group input:focus {
-  outline: none;
-  border-color: #65b806;
-  background: white;
-}
-
-.customer-info-page .cust-form-group input[readonly] {
-  background: #f8f9fa;
-  color: #666;
-}
-
-.customer-info-page .cust-form-group input.editable {
-  background: white;
-  border-color: #65b806;
-}
-
-.customer-info-page .cust-form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.customer-info-page .cust-btn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s;
-  font-size: 14px;
-}
-
-.customer-info-page .cust-btn-primary {
-  background: #65b806;
-  color: white;
-}
-
-.customer-info-page .cust-btn-primary:hover {
-  background: #5aa005;
-}
-
-.customer-info-page .cust-btn-secondary {
-  background: #f8f9fa;
-  color: #666;
-  border: 1px solid #e9ecef;
-}
-
-.customer-info-page .cust-btn-secondary:hover {
-  background: #e9ecef;
-}
-
-.customer-info-page .cust-btn-outline {
-  background: transparent;
-  border: 1px solid #65b806;
-  color: #65b806;
-}
-
-.customer-info-page .cust-btn-outline:hover {
-  background: #65b806;
-  color: white;
-}
-
-.customer-info-page .cust-btn-small {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.customer-info-page .cust-right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.customer-info-page .cust-account-card,
-.customer-info-page .cust-security-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.customer-info-page .cust-card-header {
-  margin-bottom: 16px;
-}
-
-.customer-info-page .cust-card-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #014d2e;
-}
-
-.customer-info-page .cust-account-info {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.customer-info-page .cust-account-number {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.customer-info-page .cust-account-number .label {
-  font-size: 12px;
-  color: #666;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.customer-info-page .cust-account-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #014d2e;
-  border-radius: 8px;
-  color: white;
-  font-family: "Courier New", monospace;
-  font-weight: 600;
-}
-
-.customer-info-page .cust-toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  margin-left: auto;
-}
-
-.customer-info-page .cust-security-items {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.customer-info-page .cust-security-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.customer-info-page .cust-security-item:last-child {
-  border-bottom: none;
-}
-
-.customer-info-page .cust-security-label {
-  font-size: 14px;
-  color: #333;
-}
-
-.customer-info-page .cust-status-badge.verified {
-  background: #d4edda;
-  color: #155724;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.customer-info-page .cust-status-badge.pending {
-  background: #fff3cd;
-  color: #856404;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
- */
 
 /* ======================================= */
 /* === STYLES CHỈ CHO PAYMENT PAGE === */
