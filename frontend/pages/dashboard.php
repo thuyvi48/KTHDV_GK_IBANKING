@@ -44,8 +44,14 @@ $status_map = [
     <meta charset="UTF-8">
     <title>Dashboard - Thanh toán học phí</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../frontend/assets/css/dashboard.css">
+        <style>
+      /* nhỏ gọn style cho modal nếu css global ko cover */
+      .modal-readonly { background:#f8f9fa; padding:12px; border-radius:6px; }
+      .modal .modal-footer { border-top:0; }
+    </style>
 </head>
 <body>
 <div class="dashboard">
@@ -93,15 +99,15 @@ $status_map = [
             <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
             <label>Số tiền học phí cần thanh toán:</label>
             <input type="text" name="amount_to_pay" readonly>
-            
+            <input type="hidden" name="invoice_id">
+            <input type="hidden" name="student_id">
             <div class="agree-submit">
                 <label>
                     <input type="checkbox" name="agree"> Tôi đồng ý với các 
                     <span style="color:blue; margin:0 4px; cursor:pointer;">thỏa thuận và điều khoản</span> 
                     của hệ thống iMAGINE
                 </label>
-                <button type="submit" onclick="window.location.href='tuition.php'">Xác nhận giao dịch</button>
-
+                    <button type="submit">Xác nhận giao dịch</button>
             </div>
             <div id="message" style="margin-top: 15px;"></div>
         </form>
@@ -147,100 +153,240 @@ $status_map = [
     </div>
 </div>
 
+<!-- MODAL: Confirm payment & nhập OTP -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận giao dịch</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-readonly">
+          <p><strong>MSSV:</strong> <span id="confirm_mssv"></span></p>
+          <p><strong>Họ tên sinh viên:</strong> <span id="confirm_student_name"></span></p>
+          <p><strong>Invoice ID:</strong> <span id="confirm_invoice_id"></span></p>
+          <p><strong>Số tiền:</strong> <span id="confirm_amount_display"></span></p>
+        </div>
+
+        <div id="confirmMessage" class="mt-2"></div>
+
+        <!-- Form nhập OTP (ẩn ban đầu, sẽ hiện sau khi gửi OTP) -->
+        <div id="otpSection" style="display:none; margin-top:20px;">
+          <hr>
+          <p>Mã OTP đã được gửi đến email của bạn. Vui lòng nhập mã để xác nhận thanh toán.</p>
+          <input type="text" id="otp_input" class="form-control" placeholder="Nhập mã OTP">
+          <div id="otpMessage" class="mt-2" style="color:red;"></div>
+          <button type="button" class="btn btn-success w-100 mt-3" id="verifyOtpBtn">Xác thực OTP</button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="createPaymentBtn" type="button" class="btn btn-primary w-100">Tạo giao dịch & Gửi OTP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 function formatCurrency(amount) {
     return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    let balanceField = document.querySelector("[name='balance']");
+    const balanceField = document.querySelector("[name='balance']");
+    const submitBtn = document.querySelector(".agree-submit button");
+    const agreeCheck = document.querySelector("[name='agree']");
+    const mssvInput = document.querySelector("[name='mssv']");
+    const messageBox = document.getElementById("message");
+
+    // Modal
+    const confirmModalEl = document.getElementById('confirmModal');
+    const confirmModal = new bootstrap.Modal(confirmModalEl);
+    const createPaymentBtn = document.getElementById('createPaymentBtn');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const otpSection = document.getElementById('otpSection');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const otpMessage = document.getElementById('otpMessage');
+
+    let currentPaymentId = null;
+    let isInvoiceValid = false;
+
+    // Disable nút gửi ban đầu
+    submitBtn.disabled = true;
+    submitBtn.style.cursor = "not-allowed";
+    submitBtn.style.opacity = "0.6";
+
+    // Format tiền
     if (balanceField && balanceField.value) {
         let raw = balanceField.value.replace(/[^\d]/g, "");
         balanceField.value = formatCurrency(parseInt(raw));
     }
-});
 
-document.querySelector("[name='mssv']").addEventListener("blur", function() {
-    let mssv = this.value.trim();
-    if (!mssv) return;
-    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mssv: mssv })
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res.success) {
-            document.querySelector("[name='student_name']").value = res.student_name;
-            document.querySelector("[name='amount']").value = formatCurrency(res.amount_due);
-            document.querySelector("[name='amount_to_pay']").value = formatCurrency(res.amount_due);
-            document.querySelector("[name='invoice_id']").value = res.invoice_id;
-            document.querySelector("[name='student_id']").value = res.student_id; // <-- thêm dòng này
+    function toggleSubmitButton() {
+        if (agreeCheck.checked && isInvoiceValid) {
+            submitBtn.disabled = false;
+            submitBtn.style.cursor = "pointer";
+            submitBtn.style.opacity = "1";
         } else {
-            document.querySelector("#message").innerText = res.message;
-            document.querySelector("[name='student_name']").value = "";
-            document.querySelector("[name='amount']").value = "";
-            document.querySelector("[name='amount_to_pay']").value = "";
-            document.querySelector("[name='invoice_id']").value = "";
+            submitBtn.disabled = true;
+            submitBtn.style.cursor = "not-allowed";
+            submitBtn.style.opacity = "0.6";
+        }
+    }
+
+    // Khi MSSV mất focus → gọi API học phí
+    mssvInput.addEventListener("blur", function() {
+        const mssv = this.value.trim();
+        if (!mssv) {
+            isInvoiceValid = false;
+            toggleSubmitButton();
+            return;
+        }
+
+        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mssv })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                document.querySelector("[name='student_name']").value = res.student_name;
+                document.querySelector("[name='amount']").value = formatCurrency(res.amount_due);
+                document.querySelector("[name='amount_to_pay']").value = formatCurrency(res.amount_due);
+                document.querySelector("[name='invoice_id']").value = res.invoice_id;
+                document.querySelector("[name='student_id']").value = res.student_id;
+                messageBox.textContent = "";
+                isInvoiceValid = true;
+            } else {
+                messageBox.textContent = res.message;
+                messageBox.style.color = "red";
+                isInvoiceValid = false;
+            }
+            toggleSubmitButton();
+        })
+        .catch(() => {
+            messageBox.textContent = "Không thể kết nối máy chủ.";
+            messageBox.style.color = "red";
+            isInvoiceValid = false;
+            toggleSubmitButton();
+        });
+    });
+
+    agreeCheck.addEventListener("change", toggleSubmitButton);
+
+    function showMessage(text, type = "error") {
+        messageBox.textContent = text;
+        messageBox.style.color = (type === "success") ? "green" : "red";
+        setTimeout(() => (messageBox.textContent = ""), 5000);
+    }
+
+    // Gửi form
+    document.getElementById("paymentForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        if (submitBtn.disabled) return;
+
+        const balance = parseInt(balanceField.value.replace(/[^\d]/g, ""));
+        const amountToPay = parseInt(document.querySelector("[name='amount_to_pay']").value.replace(/[^\d]/g, ""));
+
+        if (isNaN(amountToPay) || amountToPay <= 0) {
+            showMessage("Chưa có thông tin học phí cần thanh toán.");
+            return;
+        }
+
+        if (balance >= amountToPay) {
+            document.getElementById('confirm_mssv').textContent = mssvInput.value;
+            document.getElementById('confirm_student_name').textContent = document.querySelector("[name='student_name']").value;
+            document.getElementById('confirm_invoice_id').textContent = document.querySelector("[name='invoice_id']").value;
+            document.getElementById('confirm_amount_display').textContent = document.querySelector("[name='amount_to_pay']").value;
+            confirmMessage.innerHTML = "";
+            otpSection.style.display = "none";
+            confirmModal.show();
+        } else {
+            showMessage("Số dư khả dụng không đủ để thanh toán học phí.");
         }
     });
-});
 
-function showMessage(text, type = "error") {
-    const msg = document.getElementById("message");
-    msg.textContent = text;
-    msg.style.color = (type === "success") ? "green" : "red";
-}
+    // Gửi OTP
+    createPaymentBtn.addEventListener('click', function() {
+        createPaymentBtn.disabled = true;
+        confirmMessage.innerHTML = "⏳ Đang tạo giao dịch và gửi OTP...";
 
-document.getElementById("paymentForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    let balance = parseInt(document.querySelector("[name='balance']").value.replace(/[^\d]/g, ""));
-    let amountToPay = parseInt(document.querySelector("[name='amount_to_pay']").value.replace(/[^\d]/g, ""));
-    if (isNaN(amountToPay) || amountToPay <= 0) {
-        showMessage("Chưa có thông tin học phí cần thanh toán.");
-        return;
-    }
-    if (amountToPay > balance) {
-        showMessage("Số dư khả dụng không đủ để thanh toán học phí.");
-        return;
-    }
-    let data = {
-        student_id: document.querySelector("[name='student_id']").value, // lấy từ hidden input khi get_invoice thành công
-        user_id: "<?php echo $userId; ?>", // lấy từ SESSION PHP (USER_ID trong session)
-        invoice_id: document.querySelector("[name='invoice_id']").value,
-        amount: amountToPay
-    };
-    fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res.success) {
-            showMessage("Thanh toán thành công. Mã giao dịch: " + res.payment_id, "success");
-            setTimeout(() => {
-                window.location.href = "transaction.php?payment_id=" + res.payment_id;
-            }, 2000);
-        } else {
-            showMessage("Thanh toán thất bại: " + res.message);
-        }
-    })
-    .catch(() => {
-        showMessage("Có lỗi xảy ra khi kết nối hệ thống.");
+        const student_id = document.querySelector("[name='student_id']").value;
+        const invoice_id = document.querySelector("[name='invoice_id']").value;
+        const amount = parseInt(document.querySelector("[name='amount_to_pay']").value.replace(/[^\d]/g, ""));
+
+        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                student_id,
+                user_id: "<?php echo $userId; ?>",
+                invoice_id,
+                amount
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            createPaymentBtn.disabled = false;
+            if (data.success || data.status === "success") {
+                currentPaymentId = data.payment_id ?? data.paymentId ?? null;
+                confirmMessage.innerHTML = "<p class='text-success'>✅ Giao dịch tạo thành công. OTP đã gửi đến email.</p>";
+                otpSection.style.display = "block";
+                document.querySelector("#createPaymentBtn").style.display = "none";
+            } else {
+                confirmMessage.innerHTML = `<p class='text-danger'>❌ ${data.message || "Không thể tạo giao dịch."}</p>`;
+            }
+        })
+        .catch(err => {
+            createPaymentBtn.disabled = false;
+            confirmMessage.innerHTML = "<p class='text-danger'>Lỗi kết nối máy chủ.</p>";
+            console.error(err);
+        });
     });
-});
 
-document.querySelector("[name='agree']").addEventListener("change", function() {
-    const submitBtn = document.querySelector(".agree-submit button");
-    if (this.checked) {
-        submitBtn.disabled = false;
-        submitBtn.style.cursor = "pointer"; 
-    } else {
-        submitBtn.disabled = true;
-        submitBtn.style.cursor = "not-allowed";
-    }
+    // Xác thực OTP
+    verifyOtpBtn.addEventListener('click', function() {
+        const otp = document.getElementById('otp_input').value.trim();
+        otpMessage.textContent = "";
+
+        if (!otp) {
+            otpMessage.textContent = "Vui lòng nhập mã OTP.";
+            return;
+        }
+
+        otpMessage.innerHTML = "🔄 Đang xác thực OTP...";
+
+        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                payment_id: currentPaymentId,
+                user_id: "<?php echo $userId; ?>",
+                otp_code: otp
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success || data.status === "success") {
+                otpMessage.innerHTML = "<p class='text-success'>✅ Thanh toán thành công!</p>";
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                otpMessage.innerHTML = `<p class='text-danger'>❌ ${data.message || "Mã OTP không đúng."}</p>`;
+            }
+        })
+        .catch(() => {
+            otpMessage.innerHTML = "<p class='text-danger'>Không thể xác thực OTP.</p>";
+        });
+    });
 });
 </script>
+
+
 </body>
 </html>

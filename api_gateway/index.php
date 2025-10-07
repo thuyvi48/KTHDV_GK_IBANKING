@@ -208,36 +208,60 @@ case 'user':
         break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */
-   case 'payment':
-        if ($action === 'list') {
-            $user_id = $_GET['user_id'] ?? '';
-            if (!$user_id) {
-                echo json_encode(['success'=>false,'message'=>'Missing user id']);
-                exit;
-            }
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($user_id);
-            $response = @file_get_contents($url);
-            echo $response ?: json_encode(['success'=>false,'message'=>'Cannot connect payment_service']);
-        } elseif ($action === 'create') {
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/create_payment.php";
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
-            $response = curl_exec($ch);
-            if (curl_errno($ch)) {
-                file_put_contents("debug_gateway_error.txt", "CURL ERROR: " . curl_error($ch) . PHP_EOL, FILE_APPEND);
-            }
-            curl_close($ch);
-            curl_close($ch);
-            echo $response ?: json_encode(["success"=>false,"message"=>"Cannot connect transaction_service"]);
-        } else {
-            echo json_encode(['success'=>false,'message'=>'Invalid action for payment']);
+case 'payment':
+    if ($action === 'list') {
+        $user_id = $_GET['user_id'] ?? '';
+        if (!$user_id) {
+            echo json_encode(['success' => false, 'message' => 'Missing user id']);
+            exit;
         }
+
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($user_id);
+        $response = @file_get_contents($url);
+
+        echo $response ?: json_encode(['success' => false, 'message' => 'Cannot connect to payment_service']);
+    }
+
+    elseif ($action === 'create') {
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/index.php?action=create";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            file_put_contents("debug_gateway_error.txt", "[" . date("Y-m-d H:i:s") . "] CURL ERROR: " . $error . PHP_EOL, FILE_APPEND);
+            echo json_encode(["success" => false, "message" => "Gateway CURL Error: $error"]);
+            curl_close($ch);
+            exit;
+        }
+
+        curl_close($ch);
+
+        // Ghi log phản hồi thực tế để debug
+        file_put_contents("debug_gateway_response.txt", "[" . date("Y-m-d H:i:s") . "] " . $response . PHP_EOL, FILE_APPEND);
+
+        if (!$response) {
+            echo json_encode(["success" => false, "message" => "No response from transaction_service"]);
+        } else {
+            // Nếu response không phải JSON hợp lệ, cũng thông báo lỗi
+            $jsonTest = json_decode($response, true);
+            if ($jsonTest === null && json_last_error() !== JSON_ERROR_NONE) {
+                echo json_encode(["success" => false, "message" => "Invalid JSON returned from transaction_service"]);
+            } else {
+                echo $response;
+            }
+        }
+    }
+
+    else {
+        echo json_encode(['success' => false, 'message' => 'Invalid action for payment']);
+    }
     break;
-
-
     /* ---------------- STUDENT SERVICE ---------------- */
     case 'student':
         if ($action === 'get') {
