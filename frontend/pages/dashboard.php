@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 student_id,
-                user_id: "<?php echo $userId; ?>",
+                userId: "<?php echo $userId; ?>",
                 invoice_id,
                 amount
             })
@@ -362,15 +362,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         otpMessage.innerHTML = "🔄 Đang xác thực OTP...";
 
-        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=transaction&action=confirm", {
+        fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=confirm", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 payment_id: currentPaymentId,
                 user_id: "<?php echo $userId; ?>",
-                otp_code: otp
+                otpCode: otp
             })
         })
+
         .then(res => res.json())
         .then(data => {
             if (data.success || data.status === "success") {

@@ -2,9 +2,10 @@
 $GLOBAL_INPUT = file_get_contents('php://input');
 file_put_contents(
     __DIR__ . '/debug_gateway_input.txt',
-    date('Y-m-d H:i:s') . " - " . file_get_contents('php://input') . PHP_EOL,
+    date('Y-m-d H:i:s') . " - " . $GLOBAL_INPUT . PHP_EOL,
     FILE_APPEND
 );
+
 header('Content-Type: application/json');
 
 $service = $_GET['service'] ?? '';
@@ -24,7 +25,7 @@ case 'user':
 
         } elseif ($action === 'update_user') {
         // API cập nhật email và số điện thoại
-        $input = json_decode(file_get_contents("php://input"), true);
+        $input = json_decode($GLOBAL_INPUT, true);
 
         // Chuyển request POST đến user_service/update_user.php
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_user.php";
@@ -54,7 +55,7 @@ case 'user':
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
             curl_close($ch);
 
@@ -65,7 +66,7 @@ case 'user':
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
 
             if ($response === false) {
@@ -82,7 +83,6 @@ case 'user':
     /* ---------------- OTP SERVICE ---------------- */
     case 'otp':
         if ($action === 'send') {
-            $input = file_get_contents("php://input");
 
             $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
 
@@ -90,7 +90,7 @@ case 'user':
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
 
             if ($response === false) {
@@ -101,14 +101,13 @@ case 'user':
             curl_close($ch);
 
         } elseif ($action === 'verify') {
-            $input = file_get_contents("php://input");
             $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp.php";
 
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
 
             if ($response === false) {
@@ -198,7 +197,7 @@ case 'user':
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
                 $response = curl_exec($ch);
                 curl_close($ch);
 
@@ -218,7 +217,6 @@ case 'payment':
 
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_payments.php?user_id=" . urlencode($user_id);
         $response = @file_get_contents($url);
-
         echo $response ?: json_encode(['success' => false, 'message' => 'Cannot connect to payment_service']);
     }
 
@@ -229,7 +227,7 @@ case 'payment':
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
@@ -239,16 +237,13 @@ case 'payment':
             curl_close($ch);
             exit;
         }
-
         curl_close($ch);
 
-        // Ghi log phản hồi thực tế để debug
         file_put_contents("debug_gateway_response.txt", "[" . date("Y-m-d H:i:s") . "] " . $response . PHP_EOL, FILE_APPEND);
 
         if (!$response) {
             echo json_encode(["success" => false, "message" => "No response from transaction_service"]);
         } else {
-            // Nếu response không phải JSON hợp lệ, cũng thông báo lỗi
             $jsonTest = json_decode($response, true);
             if ($jsonTest === null && json_last_error() !== JSON_ERROR_NONE) {
                 echo json_encode(["success" => false, "message" => "Invalid JSON returned from transaction_service"]);
@@ -258,10 +253,36 @@ case 'payment':
         }
     }
 
+    elseif ($action === 'confirm') {
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/index.php?action=confirm";
+
+        global $GLOBAL_INPUT;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
+
+        // GỌI CURL
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            echo json_encode(["success" => false, "message" => "CURL error: " . curl_error($ch)]);
+            curl_close($ch);
+            exit;
+        }
+
+        curl_close($ch);
+
+        // Kiểm tra phản hồi từ backend
+        echo $response ?: json_encode(["success" => false, "message" => "No response from backend"]);
+    }
     else {
         echo json_encode(['success' => false, 'message' => 'Invalid action for payment']);
     }
     break;
+
     /* ---------------- STUDENT SERVICE ---------------- */
     case 'student':
         if ($action === 'get') {
@@ -275,12 +296,11 @@ case 'payment':
 
         } elseif ($action === 'get_invoice') {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_invoice.php";
-            $jsonInput = file_get_contents("php://input");
             $opts = [
                 "http" => [
                     "method"  => "POST",
                     "header"  => "Content-Type: application/json",
-                    "content" => $jsonInput
+                    "content" => $GLOBAL_INPUT
                 ]
             ];
             $context = stream_context_create($opts);
@@ -292,7 +312,7 @@ case 'payment':
                 "http" => [
                     "method"  => "POST",
                     "header"  => "Content-Type: application/json",
-                    "content" => file_get_contents("php://input")
+                    "content" => $GLOBAL_INPUT
                 ]
             ];
             $context = stream_context_create($opts);

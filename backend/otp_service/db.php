@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";   // hoặc user MySQL bạn đã tạo
 $pass = "";       // password MySQL
-$db   = "otpdb"; // database của user_service
+$db   = "otpsdb"; // database của user_service
 
 $conn = new mysqli($host, $user, $pass, $db);
 

@@ -7,7 +7,7 @@ $raw = file_get_contents("php://input");
 file_put_contents("debug_input_student.txt", $raw);
 
 $input = json_decode($raw, true);
-$mssv = $input['mssv'] ?? ($_GET['id'] ?? '');
+$mssv = $input['mssv'] ?? ($_GET['id'] ?? ''); 
 
 if (!$mssv) {
     echo json_encode(["success" => false, "message" => "Thiếu MSSV"]);

@@ -15,7 +15,20 @@ switch ($action) {
         break;
 
     case 'confirm': 
-        require_once 'confirm_payment.php';  
+        $raw = file_get_contents("php://input");
+        $input = json_decode($raw, true);
+
+        $paymentId = $input['paymentId'] ?? '';
+        $userId = $input['userId'] ?? '';
+        $code = $input['code'] ?? '';
+
+        if (!$paymentId || !$userId || !$code) {
+            echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
+            exit;
+        }
+
+        // Xử lý xác thực OTP ở đây
+        require_once("confirm_payment.php");
         break;
 
     case 'transactions': 
