@@ -1,16 +1,22 @@
 <?php
-$raw = file_get_contents("php://input");
-file_put_contents("debug_input_student.txt", $raw);
-
 header("Content-Type: application/json");
 require_once("db.php");
 
-$input = json_decode($raw, true);
-$mssv = $input['mssv'] ?? '';
+// 1️⃣ Nhận MSSV từ POST JSON hoặc GET
+$raw = file_get_contents("php://input");
+file_put_contents("debug_input_student.txt", $raw);
 
-// B1: Lấy student_id từ MSSV
+$input = json_decode($raw, true);
+$mssv = $input['mssv'] ?? ($_GET['id'] ?? '');
+
+if (!$mssv) {
+    echo json_encode(["success" => false, "message" => "Thiếu MSSV"]);
+    exit;
+}
+
+// 2️⃣ Lấy student_id từ MSSV
 $stmt = $conn->prepare("SELECT STUDENT_ID, FULL_NAME FROM STUDENTS WHERE MSSV = ?");
-$stmt->bind_param("d", $mssv);
+$stmt->bind_param("s", $mssv); // MSSV thường là string
 $stmt->execute();
 $res = $stmt->get_result();
 
@@ -24,7 +30,7 @@ $student_id = $student['STUDENT_ID'];
 $student_name = $student['FULL_NAME'];
 $stmt->close();
 
-// B2: Lấy hóa đơn gần nhất theo student_id
+// 3️⃣ Lấy hóa đơn gần nhất theo student_id
 $stmt2 = $conn->prepare("
     SELECT INVOICE_ID, AMOUNT_DUE, STATUS 
     FROM TUITION_INVOICES 
@@ -41,8 +47,10 @@ if ($res2->num_rows === 0) {
 }
 
 $invoice = $res2->fetch_assoc();
+$stmt2->close();
+$conn->close();
 
-// B3: Trả dữ liệu ra
+// 4️⃣ Trả dữ liệu ra
 echo json_encode([
     "success" => true,
     "student_id"   => $student_id,
@@ -51,6 +59,3 @@ echo json_encode([
     "amount_due"   => $invoice['AMOUNT_DUE'],
     "status"       => $invoice['STATUS']
 ]);
-
-$stmt2->close();
-$conn->close();

@@ -242,7 +242,7 @@ case 'user':
     case 'student':
         if ($action === 'get') {
             $id = $_GET['id'] ?? '';
-            $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_student.php?id=" . urlencode($id);
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_student.php?mssv=" . urlencode($id);
             echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối student_service"]);
 
         } elseif ($action === 'list') {
