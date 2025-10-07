@@ -7,7 +7,7 @@ body {
 .primary { border-left: 5px solid #131516ff; }
 .card-balance { font-size: 24px;}
 .payment-form{ background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-.payment-form h2 { margin-top: 15px; margin-bottom: 10px; }
+.payment-form h3 { margin-top: 15px; margin-bottom: 10px; font-weight: bold;}
 .payment-form label { margin-top: 10px;     font-weight: 400;   color: #3e5857;    }
 .payment-form input[type="text"], .payment-form input[type="email"] { width: 250px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px; }
 .payment-form button { margin-top: 15px; padding: 10px 20px; color: #fff; border: none; border-radius: 4px; cursor: not-allowed; }

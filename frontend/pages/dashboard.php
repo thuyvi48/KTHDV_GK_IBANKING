@@ -76,7 +76,7 @@ $status_map = [
     <!-- Payment Form -->
     <div class="payment-form">
         <form id="paymentForm">
-            <h2>Người nộp tiền</h2>
+            <h3>Người nộp tiền</h3>
             <label>Họ tên:</label>
             <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
             
@@ -86,7 +86,7 @@ $status_map = [
             <label>Email:</label>
             <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
 
-            <h2 style="grid-column:1 / -1">Thông tin học phí</h2>
+            <h3 style="grid-column:1 / -1">Thông tin học phí</h3>
             <label>MSSV:</label>
             <input type="text" id="mssv" name="mssv" placeholder="Nhập MSSV">
             <label>Họ tên sinh viên:</label>
@@ -94,7 +94,7 @@ $status_map = [
             <label>Số tiền cần nộp:</label>
             <input type="text" id="amount" name="amount" readonly>
 
-            <h2>Thông tin thanh toán</h2>
+            <h3>Thông tin thanh toán</h3>
             <label>Số dư khả dụng:</label>
             <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
             <label>Số tiền học phí cần thanh toán:</label>
@@ -165,7 +165,7 @@ $status_map = [
         <div class="modal-readonly">
           <p><strong>MSSV:</strong> <span id="confirm_mssv"></span></p>
           <p><strong>Họ tên sinh viên:</strong> <span id="confirm_student_name"></span></p>
-          <p><strong>Invoice ID:</strong> <span id="confirm_invoice_id"></span></p>
+          <p><strong>Mã hóa đơn:</strong> <span id="confirm_invoice_id"></span></p>
           <p><strong>Số tiền:</strong> <span id="confirm_amount_display"></span></p>
         </div>
 
@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Gửi OTP
     createPaymentBtn.addEventListener('click', function() {
         createPaymentBtn.disabled = true;
-        confirmMessage.innerHTML = "⏳ Đang tạo giao dịch và gửi OTP...";
+        confirmMessage.innerHTML = "Đang tạo giao dịch và gửi OTP...";
 
         const student_id = document.querySelector("[name='student_id']").value;
         const invoice_id = document.querySelector("[name='invoice_id']").value;
@@ -336,11 +336,11 @@ document.addEventListener("DOMContentLoaded", () => {
             createPaymentBtn.disabled = false;
             if (data.success || data.status === "success") {
                 currentPaymentId = data.payment_id ?? data.paymentId ?? null;
-                confirmMessage.innerHTML = "<p class='text-success'>✅ Giao dịch tạo thành công. OTP đã gửi đến email.</p>";
+                confirmMessage.innerHTML = "<p class='text-success'> Giao dịch tạo thành công. OTP đã gửi đến email.</p>";
                 otpSection.style.display = "block";
                 document.querySelector("#createPaymentBtn").style.display = "none";
             } else {
-                confirmMessage.innerHTML = `<p class='text-danger'>❌ ${data.message || "Không thể tạo giao dịch."}</p>`;
+                confirmMessage.innerHTML = `<p class='text-danger'>${data.message || "Không thể tạo giao dịch."}</p>`;
             }
         })
         .catch(err => {
@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        otpMessage.innerHTML = "🔄 Đang xác thực OTP...";
+        otpMessage.innerHTML = "Đang xác thực OTP...";
 
         fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=confirm", {
             method: "POST",
@@ -375,10 +375,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             if (data.success || data.status === "success") {
-                otpMessage.innerHTML = "<p class='text-success'>✅ Thanh toán thành công!</p>";
+                otpMessage.innerHTML = "<p class='text-success'>Thanh toán thành công!</p>";
                 setTimeout(() => location.reload(), 1500);
             } else {
-                otpMessage.innerHTML = `<p class='text-danger'>❌ ${data.message || "Mã OTP không đúng."}</p>`;
+                otpMessage.innerHTML = `<p class='text-danger'>${data.message || "Mã OTP không đúng."}</p>`;
             }
         })
         .catch(() => {

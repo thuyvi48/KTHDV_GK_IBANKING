@@ -3,10 +3,11 @@ header('Content-Type: application/json');
 require __DIR__ . '/db.php';
 
 $input = json_decode(file_get_contents("php://input"), true);
+$payment_id = $input['payment_id'] ?? $input['paymentId'] ?? null;
+$user_id    = $input['user_id'] ?? $input['userId'] ?? null;
+$otpCode       = $input['code'] ?? $input['otpCode'] ?? $input['otp'] ?? null;
+file_put_contents(__DIR__ . "/debug_input_confirm.txt", json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-$payment_id = trim($input['payment_id'] ?? '');
-$user_id    = trim($input['user_id'] ?? '');
-$otpCode       = trim($input['otpCode'] ?? '');
 
 if (!$payment_id || !$user_id || !$otpCode) {
     echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
