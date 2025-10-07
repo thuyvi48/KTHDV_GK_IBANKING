@@ -9,7 +9,9 @@ switch ($action) {
     case 'get':
         require_once 'get_user.php';
         break;
-
+    case 'update_user':
+        require_once 'update_user.php';
+        break;
     default:
         echo json_encode(["error" => "Action không hợp lệ"]);
 }
