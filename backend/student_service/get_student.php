@@ -1,10 +1,9 @@
 <?php
 header("Content-Type: application/json");
 require_once("db.php"); // file db.php kết nối tới database studentdb
-
+error_log(print_r($_GET, true));
 // Lấy id từ query string (có thể là STUDENT_ID hoặc MSSV)
 $id = $_GET['id'] ?? '';
-
 if (!$id) {
     echo json_encode(["success" => false, "message" => "Thiếu tham số id"]);
     exit;

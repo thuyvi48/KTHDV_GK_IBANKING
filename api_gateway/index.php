@@ -1,4 +1,5 @@
 <?php 
+$GLOBAL_INPUT = file_get_contents('php://input');
 file_put_contents(
     __DIR__ . '/debug_gateway_input.txt',
     date('Y-m-d H:i:s') . " - " . file_get_contents('php://input') . PHP_EOL,
@@ -66,13 +67,7 @@ case 'user':
     /* ---------------- OTP SERVICE ---------------- */
     case 'otp':
         if ($action === 'send') {
-            $rawInput = file_get_contents("php://input");
-
-            // lưu log để xem dữ liệu nhận từ frontend
-            file_put_contents(__DIR__ . "/debug_gateway_input.txt", $rawInput);
-
-            // nếu input rỗng (trường hợp gửi form urlencoded), thì lấy $_POST
-            $input = !empty($rawInput) ? $rawInput : json_encode($_POST);
+            $input = file_get_contents("php://input");
 
             $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
 
@@ -216,6 +211,10 @@ case 'user':
             curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
             curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
             $response = curl_exec($ch);
+            if (curl_errno($ch)) {
+                file_put_contents("debug_gateway_error.txt", "CURL ERROR: " . curl_error($ch) . PHP_EOL, FILE_APPEND);
+            }
+            curl_close($ch);
             curl_close($ch);
             echo $response ?: json_encode(["success"=>false,"message"=>"Cannot connect transaction_service"]);
         } else {
@@ -237,11 +236,12 @@ case 'user':
 
         } elseif ($action === 'get_invoice') {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/get_invoice.php";
+            $jsonInput = file_get_contents("php://input");
             $opts = [
                 "http" => [
                     "method"  => "POST",
                     "header"  => "Content-Type: application/json",
-                    "content" => file_get_contents("php://input")
+                    "content" => $jsonInput
                 ]
             ];
             $context = stream_context_create($opts);

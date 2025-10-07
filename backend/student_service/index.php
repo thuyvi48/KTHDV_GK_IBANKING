@@ -24,7 +24,7 @@ $sql = "
 ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $mssv);
+$stmt->bind_param("d", $mssv);
 $stmt->execute();
 $result = $stmt->get_result();
 

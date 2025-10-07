@@ -7,7 +7,7 @@ include 'customer-info.php'; // để lấy thông tin user đăng nhập
 $payer = $_SESSION['user'];
 
 // Nếu submit form
-if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     $mssv = $_POST['mssv'];
     $student_name = $_POST['student_name'];
     $amount = $_POST['tuition_amount'];
@@ -18,40 +18,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     } else {
         $transaction_id = uniqid("TRANS");
         $user_id = $payer['user_id'];
+        $student_service_url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=student&action=get_invoice";
+        $invoice_payload = json_encode(["mssv" => $mssv]);
 
-        $otp_url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=send";
-        $payload = json_encode([
-            "transaction_id" => $transaction_id,
+        $ch = curl_init($student_service_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $invoice_payload);
+        $invoice_response = curl_exec($ch);
+        curl_close($ch);
+
+        $invoice_data = json_decode($invoice_response, true);
+        $invoice_id = $invoice_data['invoice_id'] ?? "INV" . time();
+        $student_id = $invoice_data['student_id'] ?? '';
+        $payment_payload = json_encode([
+            "student_id" => $student_id,
             "user_id" => $user_id,
-            "email" => $payer['payer_email'],  // CHỖ NÀY RẤT QUAN TRỌNG
+            "invoice_id" => $invoice_id,
             "amount" => $amount
         ]);
 
-        $ch = curl_init($otp_url);
+        $payment_url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create";
+
+        $ch = curl_init($payment_url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        $response = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payment_payload);
+        $payment_response = curl_exec($ch);
         curl_close($ch);
 
-        $data = json_decode($response, true);
+        $payment_result = json_decode($payment_response, true);
 
-        if (!empty($data['success'])) {
+        if (!empty($payment_result['success'])) {
             // Lưu thông tin giao dịch chờ xác nhận OTP
             $_SESSION['tuition_pending'] = [
-                'transaction_id' => $transaction_id,
+                'transaction_id' => $payment_result['payment_id'] ?? uniqid("PAY"),
                 'mssv' => $mssv,
                 'student_name' => $student_name,
-                'amount' => $amount
+                'amount' => $amount,
+                'invoice_id' => $invoice_id
             ];
 
-            header("Location: tuition-otp.php");
+            echo "
+            <script>
+                sessionStorage.setItem('payment_id', '{$payment_result['payment_id']}');
+                sessionStorage.setItem('user_id', '{$user_id}');
+                sessionStorage.setItem('mssv', '$mssv');
+                sessionStorage.setItem('student_name', '$student_name');
+                sessionStorage.setItem('amount', '$amount');
+                sessionStorage.setItem('invoice_id', '$invoice_id');
+                window.location.href = 'tuition-otp.php';
+            </script>";
             exit;
         } else {
-            $error = "Không thể gửi mã OTP. Vui lòng thử lại!";
+            $error = $payment_result['message'] ?? "Không thể tạo payment hoặc gửi OTP!";
         }
-        }
+    }
+}
 ?>
 
 <div class="container mt-4">
@@ -108,7 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         <p><input type="checkbox" required> Tôi đồng ý với các điều khoản & điều kiện</p>
       </div>
     </div>
-
+    <input type="hidden" name="student_id">
+    <input type="hidden" name="invoice_id">
     <button type="submit" class="btn btn-success">Xác nhận giao dịch</button>
   </form>
 </div>

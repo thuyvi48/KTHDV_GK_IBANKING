@@ -172,6 +172,7 @@ document.querySelector("[name='mssv']").addEventListener("blur", function() {
             document.querySelector("[name='amount']").value = formatCurrency(res.amount_due);
             document.querySelector("[name='amount_to_pay']").value = formatCurrency(res.amount_due);
             document.querySelector("[name='invoice_id']").value = res.invoice_id;
+            document.querySelector("[name='student_id']").value = res.student_id; // <-- thêm dòng này
         } else {
             document.querySelector("#message").innerText = res.message;
             document.querySelector("[name='student_name']").value = "";
@@ -201,12 +202,10 @@ document.getElementById("paymentForm").addEventListener("submit", function(e) {
         return;
     }
     let data = {
-        payer_name: document.querySelector("[name='payer_name']").value,
-        payer_phone: document.querySelector("[name='payer_phone']").value,
-        payer_email: document.querySelector("[name='payer_email']").value,
-        mssv: document.querySelector("[name='mssv']").value,
-        student_name: document.querySelector("[name='student_name']").value,
-        amount_to_pay: amountToPay
+        student_id: document.querySelector("[name='student_id']").value, // lấy từ hidden input khi get_invoice thành công
+        user_id: "<?php echo $userId; ?>", // lấy từ SESSION PHP (USER_ID trong session)
+        invoice_id: document.querySelector("[name='invoice_id']").value,
+        amount: amountToPay
     };
     fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=create", {
         method: "POST",
