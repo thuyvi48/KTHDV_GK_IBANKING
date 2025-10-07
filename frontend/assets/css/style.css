@@ -602,11 +602,11 @@ body {
   font-size: 1.2rem;
 }
 
-.transaction-icon.debit {
+.transaction-icon.DEBIT {
   background: linear-gradient(135deg, #dc3545, #e4606d);
 }
 
-.transaction-icon.credit {
+.transaction-icon.CREDIT {
   background: linear-gradient(135deg, #28a745, #55d6a5);
 }
 
@@ -652,7 +652,7 @@ body {
   font-weight: 600;
 }
 
-.transaction-status.success {
+.transaction-status.done {
   color: #28a745; /* xanh lá */
   font-weight: 600;
 }
@@ -672,18 +672,18 @@ body {
 }
 
 .footer-content {
-    display: flex;
-    justify-content: space-between; /* hai cột cách xa nhau */
-    align-items: flex-start;
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
-    gap: 3rem;
-    padding: 3rem 2rem 2rem;
-    max-width: 1400px;
-    margin: 0 auto; /* khoảng cách giữa các cột */
+  display: flex;
+  justify-content: space-between; /* hai cột cách xa nhau */
+  align-items: flex-start;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  padding: 3rem 2rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto; /* khoảng cách giữa các cột */
 }
 
 .footer-section {
-    flex: 1;
+  flex: 1;
 }
 
 .footer-section h4 {

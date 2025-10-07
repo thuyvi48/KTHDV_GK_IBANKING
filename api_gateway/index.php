@@ -1,4 +1,9 @@
 <?php 
+file_put_contents(
+    __DIR__ . '/debug_gateway_input.txt',
+    date('Y-m-d H:i:s') . " - " . file_get_contents('php://input') . PHP_EOL,
+    FILE_APPEND
+);
 header('Content-Type: application/json');
 
 $service = $_GET['service'] ?? '';
@@ -76,7 +81,14 @@ case 'user':
     /* ---------------- OTP SERVICE ---------------- */
     case 'otp':
         if ($action === 'send') {
-            $input = file_get_contents("php://input");
+            $rawInput = file_get_contents("php://input");
+
+            // lưu log để xem dữ liệu nhận từ frontend
+            file_put_contents(__DIR__ . "/debug_gateway_input.txt", $rawInput);
+
+            // nếu input rỗng (trường hợp gửi form urlencoded), thì lấy $_POST
+            $input = !empty($rawInput) ? $rawInput : json_encode($_POST);
+
             $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
 
             $ch = curl_init($url);

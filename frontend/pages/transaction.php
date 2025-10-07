@@ -9,7 +9,7 @@ $data = json_decode($response, true);
 
 $status_map = [
     'PENDING' => ['label' => 'Đang chờ xử lý', 'class' => 'pending'],
-    'DONE'    => ['label' => 'Hoàn tất', 'class' => 'success'],
+    'DONE'    => ['label' => 'Hoàn tất', 'class' => 'done'],
     'FAILED'  => ['label' => 'Thất bại', 'class' => 'failed'],
 ];
 ?>
@@ -23,7 +23,7 @@ $status_map = [
         <?php if (!empty($data['data'])): ?>
             <?php foreach ($data['data'] as $tran): ?>
                 <div class="transaction-item">
-                    <div class="transaction-icon <?= strtolower($tran['TYPE']) ?>">
+                    <div class="transaction-icon <?= strtoupper($tran['TYPE']) ?>">
                         <?= strtoupper($tran['TYPE'][0]) ?>
                     </div>
                     <div class="transaction-details">
