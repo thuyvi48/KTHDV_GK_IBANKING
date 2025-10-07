@@ -3,20 +3,19 @@
 /* Created on:     25/09/2025 9:31:16 PM                        */
 /*==============================================================*/
 
-
-drop table if exists OTPS;
+DROP TABLE IF EXISTS OTPS;
 
 /*==============================================================*/
 /* Table: OTPS                                                  */
 /*==============================================================*/
-create table OTPS
-(
-   OTP_ID               varchar(10) not null  comment '',
-   USER_ID              varchar(10)  comment '',
-   CODE                 varchar(10)  comment '',
-   CREATED_AT           datetime  comment '',
-   EXPIRES_AT           datetime  comment '',
-   IS_USED              bool  comment '',
-   STATUS               text  comment '',
-   primary key (OTP_ID)
+CREATE TABLE OTPS (
+   OTP_ID       VARCHAR(10) NOT NULL,
+   USER_ID      VARCHAR(10),
+   PAYMENT_ID   VARCHAR(50),
+   CODE         VARCHAR(10),
+   CREATED_AT   DATETIME,
+   EXPIRES_AT   DATETIME,
+   IS_USED      BOOL,
+   STATUS       TEXT,
+   PRIMARY KEY (OTP_ID)
 );

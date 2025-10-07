@@ -1,88 +1,118 @@
 <?php
-header("Content-Type: application/json");
-require_once("db.php"); // connection to paymentdb
+header('Content-Type: application/json');
+require_once 'db.php';
 
-$input = json_decode(file_get_contents("php://input"), true);
+$raw = file_get_contents("php://input");
+$input = json_decode($raw, true);
 
-$student_id = $input['student_id'] ?? '';
-$user_id    = $input['user_id'] ?? '';
-$invoice_id = $input['invoice_id'] ?? '';
-$amount     = floatval($input['amount'] ?? 0);
+// Nhận input
+$student_id    = $input['student_id'] ?? null;
+$invoice_id    = $input['invoice_id'] ?? null;
+$amount_to_pay = $input['amount'] ?? null;
+$userId        = $input['userId'] ?? null;
 
-if (!$student_id || !$user_id || !$invoice_id || $amount <= 0) {
-    echo json_encode(["success" => false, "message" => "Thiếu dữ liệu hợp lệ"]);
+if (!$student_id || !$invoice_id || !$amount_to_pay || !$userId) {
+    echo json_encode(['success' => false, 'message' => 'Thiếu dữ liệu bắt buộc']);
     exit;
 }
 
-// Tạo payment id
-$payment_id = "PAY" . time() . rand(100,999);
+// --- Tạo payment ID ---
+$paymentId = "PAY_" . substr(uniqid(), -6); // Ví dụ: PAY_ab12cd
 
-// Insert payment (status pending)
-$sql = "INSERT INTO PAYMENTS (PAYMENT_ID, STUDENT_ID, USER_ID, INVOICE_ID, AMOUNT, STATUS, CREATED_AT) 
-        VALUES (?, ?, ?, ?, ?, 'pending', NOW())";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssd", $payment_id, $student_id, $user_id, $invoice_id, $amount);
+// --- Chuẩn bị INSERT ---
+$stmt = $conn->prepare("
+    INSERT INTO PAYMENTS
+    (PAYMENT_ID, STUDENT_ID, USER_ID, INVOICE_ID, AMOUNT, IDEMPOTENCY, STATUS, CREATED_AT)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+");
 
+$idempotency = null;
+$status = 'pending';
+$createdAt = date("Y-m-d H:i:s");
+
+$stmt->bind_param(
+    "ssssdsss",
+    $paymentId,
+    $student_id,
+    $userId,
+    $invoice_id,
+    $amount_to_pay,
+    $idempotency,
+    $status,
+    $createdAt
+);
+
+// --- GỌI USER SERVICE LẤY EMAIL ---
+$user_api_url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_email.php?user_id=" . urlencode($userId);
+
+$ch = curl_init($user_api_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$user_response = curl_exec($ch);
+$curl_err = curl_error($ch);
+curl_close($ch);
+
+if ($curl_err) {
+    echo json_encode(['success' => false, 'message' => "Không thể kết nối user service: $curl_err"]);
+    exit;
+}
+
+$user_data = json_decode($user_response, true);
+if (!$user_data || empty($user_data['success']) || !$user_data['success']) {
+    echo json_encode(['success' => false, 'message' => 'Không thể lấy email người dùng']);
+    exit;
+}
+
+$email = $user_data['email'] ?? null;
+if (!$email) {
+    echo json_encode(['success' => false, 'message' => 'Không tìm thấy email của người dùng']);
+    exit;
+}
+
+// --- Ghi vào bảng PAYMENTS ---
 if (!$stmt->execute()) {
-    echo json_encode(["success" => false, "message" => "Lỗi khi tạo payment: " . $stmt->error]);
+    echo json_encode(['success' => false, 'message' => 'Không thể tạo giao dịch']);
     exit;
 }
 $stmt->close();
 
-// Lấy email người nộp tiền từ user_service
-$userApiUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
-$userResponse = @file_get_contents($userApiUrl);
-if ($userResponse === false) {
-    // không gây lỗi nhiệt đột, nhưng trả về failure để frontend biết
-    echo json_encode(["success" => false, "message" => "Không kết nối được User Service"]);
-    exit;
-}
-$userData = json_decode($userResponse, true);
-$email = $userData['EMAIL'] ?? '';
-$fullname = $userData['FULL_NAME'] ?? '';
+// --- GỌI OTP SERVICE ---
+$otpUrl = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/create_otp.php";
 
-if (!$email) {
-    echo json_encode(["success" => false, "message" => "Không tìm thấy email người dùng"]);
-    exit;
-}
+$payload = [
+    "payment_id" => $paymentId,
+    "user_id"    => $userId,
+    "email"      => $email,
+    "ttlSeconds" => 300
+];
 
-// Gọi OTP service để tạo + gửi OTP cho giao dịch (khoá payment_id)
-$otp_service_url = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/create_otp.php";
-// payload: payment_id + user_id + email + ttl (giây)
-$otp_payload = json_encode([
-    "payment_id" => $payment_id,
-    "user_id" => $user_id,
-    "email" => $email,
-    "ttl_seconds" => 300 // 5 phút
-]);
-
-$ch = curl_init($otp_service_url);
+$ch = curl_init($otpUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $otp_payload);
-$otp_response = curl_exec($ch);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+$otpRes = curl_exec($ch);
 $curl_err = curl_error($ch);
 curl_close($ch);
 
-if ($otp_response === false || $otp_response === null) {
-    echo json_encode(["success" => false, "message" => "Không thể kết nối tới OTP service: $curl_err"]);
+// Debug: lưu response
+file_put_contents("debug_otp.txt", $otpRes ?: $curl_err);
+
+if ($curl_err) {
+    echo json_encode(['success' => false, 'message' => "Không thể kết nối OTP service: $curl_err"]);
     exit;
 }
 
-$otp_result = json_decode($otp_response, true);
-if (!$otp_result || empty($otp_result['success'])) {
-    $msg = $otp_result['error'] ?? ($otp_result['message'] ?? 'Gửi OTP thất bại');
-    echo json_encode(["success" => false, "message" => "Gửi OTP thất bại: $msg"]);
+// Parse phản hồi từ OTP service
+$otpJson = json_decode($otpRes, true);
+if (!$otpJson || empty($otpJson['success']) || !$otpJson['success']) {
+    echo json_encode(['success' => false, 'message' => $otpJson['message'] ?? 'Lỗi OTP']);
     exit;
 }
 
-// Thành công: trả về payment_id và trạng thái pending
+// --- Trả về frontend ---
 echo json_encode([
-    "success" => true,
-    "message" => "Payment created. OTP đã gửi đến email.",
-    "payment_id" => $payment_id,
-    "status" => "pending"
+    'success' => true,
+    'message' => 'Giao dịch tạo thành công. OTP đã gửi.',
+    'payment_id' => $paymentId,
+    'otpExpiresIn' => $otpJson['expiresIn'] ?? 300
 ]);
-$conn->close();
-?>
