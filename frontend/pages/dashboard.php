@@ -34,7 +34,7 @@ if ($transResult && isset($transResult['success']) && $transResult['success'] ==
 // Map class cho trạng thái
 $status_map = [
     'DONE'    => 'Hoàn tất',
-    'PENDING' => 'Đang xử lý',
+    'PENDING' => 'Đang chờ xử lý',
     'FAILED'  => 'Thất bại'
 ];
 ?>
@@ -111,13 +111,15 @@ $status_map = [
         <div class="section-header">
             <h2>Giao dịch gần đây</h2>
             <p><?php echo count($recent_transactions); ?> giao dịch mới nhất</p>
-            <button class="btn-view-all" onclick="window.location.href='transaction.php'">Xem tất cả giao dịch</button>
+            <button class="btn-view-all" onclick="window.location.href='/KTHDV_GK_IBANKING/frontend/index.php?page=transaction'">
+                Xem tất cả giao dịch
+            </button>
         </div>
         <div class="transactions-list">
             <?php if(!empty($recent_transactions)): ?>
                 <?php foreach($recent_transactions as $transaction): ?>
                     <div class="transaction-item">
-                        <div class="transaction-icon <?php echo $transaction['TYPE'] === 'CREDIT' ? 'credit' : 'debit'; ?>">
+                        <div class="transaction-icon <?php echo $transaction['TYPE'] === 'CREDIT' ? 'CREDIT' : 'DEBIT'; ?>">
                             <?php if($transaction['TYPE'] === 'CREDIT'): ?>
                                 <i class="fas fa-arrow-down"></i>
                             <?php else: ?>
@@ -127,7 +129,7 @@ $status_map = [
                         <div class="transaction-details">
                             <h4><?php echo htmlspecialchars($transaction['DESCRIPTION']); ?></h4>
                             <p class="date"><?php echo $transaction['CREATED_AT']; ?></p>
-                            <span class="status-badge <?php echo strtolower($transaction['STATUS']); ?>">
+                            <span class="transaction-status <?php echo strtolower($transaction['STATUS']); ?>">
                                 <?php echo $status_map[$transaction['STATUS']] ?? $transaction['STATUS']; ?>
                             </span>
                         </div>
