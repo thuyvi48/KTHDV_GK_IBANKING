@@ -88,7 +88,6 @@ if ($userId) {
         </form>
     </div>
 </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const btnEdit = document.getElementById("btnEdit");
@@ -96,6 +95,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCancel = document.getElementById("btnCancel");
     const emailInput = document.getElementById("email");
     const phoneInput = document.getElementById("phone");
+
+    // 🔹 Thêm phần hiển thị thông báo
+    const messageBox = document.createElement("p");
+    messageBox.id = "updateMessage";
+    messageBox.style.marginTop = "15px";
+    messageBox.style.fontWeight = "bold";
+    messageBox.style.textAlign = "center";
+    messageBox.style.transition = "opacity 0.5s ease";
+    document.querySelector(".cust-form-card").appendChild(messageBox);
+
+    function showMessage(text, color) {
+        messageBox.textContent = text;
+        messageBox.style.color = color;
+        messageBox.style.opacity = "1";
+
+        // 🔸 Tự động ẩn sau 5 giây
+        setTimeout(() => {
+            messageBox.style.opacity = "0";
+        }, 5000);
+    }
 
     // Khi nhấn "Chỉnh sửa"
     btnEdit.addEventListener("click", () => {
@@ -107,9 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
         btnCancel.style.display = "inline-block";
     });
 
-    // Khi nhấn "Hủy" — quay lại giao diện ban đầu
+    // Khi nhấn "Hủy"
     btnCancel.addEventListener("click", () => {
-        window.location.href = window.location.href;
+        window.location.reload();
     });
 
     // Khi nhấn "Lưu thay đổi"
@@ -118,11 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const phone = phoneInput.value.trim();
 
         if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
-            alert("Email không hợp lệ!");
+            showMessage("Email không hợp lệ!", "red");
             return;
         }
         if (!phone.match(/^[0-9]{9,11}$/)) {
-            alert("Số điện thoại không hợp lệ (phải từ 9–11 số)!");
+            showMessage("Số điện thoại không hợp lệ (9–11 số)!", "red");
             return;
         }
 
@@ -141,14 +160,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await res.json();
 
             if (result.success) {
-                alert("Cập nhật thành công!");
-                window.location.href = window.location.href; // quay lại trang gốc
+                showMessage("Cập nhật thành công!", "red");
+
+                emailInput.setAttribute("readonly", true);
+                phoneInput.setAttribute("readonly", true);
+                btnSave.style.display = "none";
+                btnCancel.style.display = "none";
+                btnEdit.style.display = "inline-block";
             } else {
-                alert(result.message || "Cập nhật thất bại!");
+                showMessage(result.message || "Cập nhật thất bại!", "red");
             }
         } catch (err) {
-            alert("Không thể kết nối máy chủ!");
+            showMessage("Không thể kết nối máy chủ!", "red");
         }
     });
 });
 </script>
+

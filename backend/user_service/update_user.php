@@ -23,7 +23,7 @@ if (!preg_match('/^[0-9]{9,11}$/', $phone)) {
 }
 
 $stmt = $conn->prepare("UPDATE USERS SET EMAIL=?, PHONE=? WHERE USER_ID=?");
-$stmt->bind_param("sss", $email, $phone, $userId); // 🔧 đã sửa 'i' thành 's'
+$stmt->bind_param("sss", $email, $phone, $userId); //
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
@@ -31,7 +31,7 @@ if ($stmt->execute()) {
     } else {
         echo json_encode([
             "success" => false,
-            "message" => "Không có dữ liệu nào được thay đổi (USER_ID không tồn tại hoặc giá trị giống hệt cũ)",
+            "message" => "Không có dữ liệu nào được thay đổi",
             "debug_user_id" => $userId
         ]);
     }
