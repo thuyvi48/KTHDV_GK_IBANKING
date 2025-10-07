@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $error = "Mật khẩu xác nhận không khớp!";
     } else {
         // Gọi API để reset mật khẩu
-        $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=reset_pwd";
+        $url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=auth&action=reset_pwd";
         $data = ["email" => $email, "password" => $password];
 
         $options = [
@@ -32,21 +32,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             ]
         ];
         $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+$result = file_get_contents($url, false, $context);
 
-        if ($result === FALSE) {
-            $error = "Không thể kết nối server!";
-        } else {
-            $res = json_decode($result, true);
-            if (isset($res['success'])) {
-                $success = "Đặt lại mật khẩu thành công! Đang chuyển về trang đăng nhập...";
-                unset($_SESSION['email_reset']);
-                header("Refresh: 2; URL=login.php");
-                exit;
-            } else {
-                $error = $res['error'] ?? "Có lỗi xảy ra!";
-            }
-        }
+if ($result === FALSE) {
+    $error = "Không thể kết nối server!";
+} else {
+    // Debug để xem API trả gì
+    file_put_contents("debug_reset_frontend.txt", $result);
+
+    $res = json_decode($result, true);
+    if ($res === null) {
+        $error = "Phản hồi từ server không hợp lệ: " . htmlspecialchars($result);
+    } elseif (isset($res['success'])) {
+        $success = "Đặt lại mật khẩu thành công! Đang chuyển về trang đăng nhập...";
+        unset($_SESSION['email_reset']);
+        header("Refresh: 2; URL=login.php");
+        exit;
+    } else {
+        $error = $res['error'] ?? "Có lỗi xảy ra!";
+    }
+}
+
     }
 }
 ?>
@@ -55,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iMAGINE - Đặt lại mật khẩu</title>
-    <link rel="icon" type="image/jpg" href="../assets/images/logo.png">
+    <title>iMAGINE - Đổi mật khẩu</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/login.css">
@@ -69,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                 <div class="reset-header">
                     <h2 class="mb-0">
                         <i class="fas fa-lock me-2"></i>
-                        ĐẶT LẠI MẬT KHẨU
+                        ĐỔI MẬT KHẨU
                     </h2>
                 </div>
 
@@ -119,12 +125,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                         </div>
 
                         <button type="submit" name="submit" class="btn btn-primary btn-reset w-100 mb-3">
-                            Đặt lại mật khẩu
+                            Đổi mật khẩu
                         </button>
                     </form>
 
                     <div class="text-center">
-                        <a href="login.php" class="text-decoration-none">
+                        <a href="verify_otp.php" class="text-decoration-none" style="color:#3e5857";>
                             <i class="fas fa-arrow-left me-1"></i> Quay lại đăng nhập
                         </a>
                     </div>

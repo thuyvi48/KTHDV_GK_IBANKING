@@ -7,7 +7,7 @@ include 'customer-info.php'; // để lấy thông tin user đăng nhập
 $payer = $_SESSION['user'];
 
 // Nếu submit form
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     $mssv = $_POST['mssv'];
     $student_name = $_POST['student_name'];
     $amount = $_POST['tuition_amount'];
@@ -16,23 +16,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($payer['balance'] < $amount) {
         $error = "Số dư không đủ để thanh toán học phí!";
     } else {
-        // Sinh OTP
-        $otp = rand(100000, 999999);
-        $_SESSION['otp'] = $otp;
-        $_SESSION['otp_expire'] = time() + 300; // hiệu lực 5 phút
-        $_SESSION['tuition_pending'] = [
-            'mssv' => $mssv,
-            'student_name' => $student_name,
-            'amount' => $amount
-        ];
+        $transaction_id = uniqid("TRANS");
+        $user_id = $payer['user_id'];
 
-        // Gửi email OTP
-        mail($payer['email'], "Xác thực OTP", "Mã OTP của bạn: $otp");
+        $otp_url = "http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=otp&action=send";
+        $payload = json_encode([
+            "transaction_id" => $transaction_id,
+            "user_id" => $user_id,
+            "email" => $payer['payer_email'],  // CHỖ NÀY RẤT QUAN TRỌNG
+            "amount" => $amount
+        ]);
 
-        header("Location: tuition-otp.php");
-        exit;
-    }
-}
+        $ch = curl_init($otp_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+
+        if (!empty($data['success'])) {
+            // Lưu thông tin giao dịch chờ xác nhận OTP
+            $_SESSION['tuition_pending'] = [
+                'transaction_id' => $transaction_id,
+                'mssv' => $mssv,
+                'student_name' => $student_name,
+                'amount' => $amount
+            ];
+
+            header("Location: tuition-otp.php");
+            exit;
+        } else {
+            $error = "Không thể gửi mã OTP. Vui lòng thử lại!";
+        }
+        }
 ?>
 
 <div class="container mt-4">
