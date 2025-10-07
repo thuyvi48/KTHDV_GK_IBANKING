@@ -100,7 +100,8 @@ $status_map = [
                     <span style="color:blue; margin:0 4px; cursor:pointer;">thỏa thuận và điều khoản</span> 
                     của hệ thống iMAGINE
                 </label>
-                <button type="submit" disabled>Xác nhận giao dịch</button>
+                <button type="submit" onclick="window.location.href='tuition.php'">Xác nhận giao dịch</button>
+
             </div>
             <div id="message" style="margin-top: 15px;"></div>
         </form>

@@ -14,7 +14,7 @@ $sql = "SELECT s.STUDENT_ID, s.MSSV, s.FULL_NAME, s.EMAIL, t.INVOICE_ID, t.SEMES
                t.AMOUNT_DUE, t.AMOUNT_PAID, t.STATUS
         FROM STUDENTS s
         LEFT JOIN TUITION_INVOICES t ON s.STUDENT_ID = t.STUDENT_ID
-        WHERE s.MSSV = ? OR s.STUDENT_ID = ?";
+        WHERE CAST(s.MSSV AS UNSIGNED) = ? OR s.STUDENT_ID = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ss", $id, $id);
