@@ -48,9 +48,9 @@ if (!$balance_data || !$balance_data['success']) {
 $current_balance = (float)$balance_data['balance'];
 
 // 2️⃣ Tính balance_after
-if ($type === "deposit") {
+if ($type === "CREDIT") {
     $balance_after = $current_balance + $change_amount;
-} elseif ($type === "withdraw") {
+} elseif ($type === "DEBIT") {
     if ($current_balance < $change_amount) {
         echo json_encode(["success"=>false,"message"=>"Số dư không đủ"]);
         exit;
@@ -67,7 +67,7 @@ if ($res && $row = $res->fetch_assoc()) {
     $num = (int)substr($row['TRANSACTION_ID'], 2)+1;
     $transaction_id = "TX".str_pad($num,4,"0",STR_PAD_LEFT);
 } else {
-    $transaction_id = "TX0001";
+    $transaction_id = "TX001";
 }
 
 // 4️⃣ Thêm vào bảng transactions
@@ -77,7 +77,7 @@ $description   = (string)$description;
 
 $stmt = $conn->prepare("INSERT INTO transactions 
     (TRANSACTION_ID, PAYMENT_ID, USER_ID, BALANCE_AFTER, TYPE, CHANGE_AMOUNT, DESCRIPTION, CREATED_AT, STATUS) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 'pending')");
+    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 'DONE')");
 
 // bind_param theo kiểu chính xác: sssdsis
 $stmt->bind_param(
@@ -100,7 +100,7 @@ if (!$stmt->execute()) {
 $update_url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
 $update_payload = json_encode([
     "user_id" => $user_id,
-    "balance_after" => $balance_after // <-- gửi đúng key
+    "balance_after" => $balance_after
 ]);
 
 $ch = curl_init();
@@ -120,13 +120,14 @@ if (!$update_data || !$update_data['success']) {
 
 // 6️⃣ Trả về JSON
 echo json_encode([
-    "success"=>true,
-    "transaction_id"=>$transaction_id,
-    "user_id"=>$user_id,
-    "balance_before"=>$current_balance,
-    "balance_after"=>$balance_after,
-    "type"=>$type,
-    "change_amount"=>$change_amount,
-    "description"=>$description
+    "success" => true,
+    "transaction_id" => $transaction_id,
+    "user_id" => $user_id,
+    "balance_before" => $current_balance,
+    "balance_after" => $balance_after,
+    "type" => $type,
+    "change_amount" => $change_amount,
+    "description" => $description
 ]);
+
 ?>

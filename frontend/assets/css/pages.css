@@ -830,3 +830,20 @@
     text-align: left;
   }
 }
+#btnEdit{
+    padding: 10px; /* Ngắn gọn hơn mặc định */
+    font-size: 15px;
+    width: 110px;
+}
+
+#btnSave{
+    padding: 10px;
+    font-size: 15px;
+    width: 120px;
+}
+
+#btnCancel{
+    padding: 10px;
+    font-size: 15px;
+    width: 110px;
+}

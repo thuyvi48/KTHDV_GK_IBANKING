@@ -22,9 +22,24 @@ case 'user':
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
         echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
 
-    } elseif ($action === 'list') {
-        $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/list_users.php";
-        echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
+        } elseif ($action === 'update_user') {
+        // API cập nhật email và số điện thoại
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        // Chuyển request POST đến user_service/update_user.php
+        $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_user.php";
+        
+        $opts = [
+            'http' => [
+                'method'  => 'POST',
+                'header'  => "Content-Type: application/json\r\n",
+                'content' => json_encode($input)
+            ]
+        ];
+
+        $context = stream_context_create($opts);
+        $response = @file_get_contents($url, false, $context);
+        echo $response ?: json_encode(["error" => "Không thể kết nối user_service"]);
 
     } else {
         echo json_encode(["error" => "Action user không hợp lệ"]);
@@ -263,8 +278,6 @@ case 'user':
             echo json_encode(["error" => "Action student không hợp lệ"]);
         }
         break;
-
-    /* ---------------- TUITION SERVICE ---------------- */
 
     /* ---------------- DEFAULT ---------------- */
     default:
