@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/../db.php'; // kết nối tới userdb
+require __DIR__ . '/db.php'; // kết nối tới userdb
 
 $input = json_decode(file_get_contents("php://input"), true);
 $userId = $input['user_id'] ?? null;

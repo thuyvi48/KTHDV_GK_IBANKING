@@ -279,8 +279,6 @@ case 'user':
         }
         break;
 
-    /* ---------------- TUITION SERVICE ---------------- */
-
     /* ---------------- DEFAULT ---------------- */
     default:
         echo json_encode(["error" => "Service không hợp lệ"]);

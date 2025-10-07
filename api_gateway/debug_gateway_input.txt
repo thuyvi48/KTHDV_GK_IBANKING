@@ -23,3 +23,59 @@
 2025-10-06 17:27:39 - {"payer_name":"Nguyen Van A","payer_phone":"0901234567","payer_email":"a.nguyen@example.com","mssv":"52100001","student_name":"Le Van C","amount_to_pay":1500000}
 2025-10-06 17:27:39 - {"payer_name":"Nguyen Van A","payer_phone":"0901234567","payer_email":"a.nguyen@example.com","mssv":"52100001","student_name":"Le Van C","amount_to_pay":1500000}
 2025-10-06 17:27:39 - {"payer_name":"Nguyen Van A","payer_phone":"0901234567","payer_email":"a.nguyen@example.com","mssv":"52100001","student_name":"Le Van C","amount_to_pay":1500000}
+2025-10-07 06:13:42 - 
+2025-10-07 06:13:42 - 
+2025-10-07 06:13:47 - 
+2025-10-07 06:13:47 - 
+2025-10-07 06:13:49 - 
+2025-10-07 06:13:49 - 
+2025-10-07 06:13:49 - 
+2025-10-07 06:14:00 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@example.com","phone":"0907654321"}
+2025-10-07 06:14:03 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@example.com","phone":"0907654321"}
+2025-10-07 06:14:05 - 
+2025-10-07 06:14:05 - 
+2025-10-07 06:14:05 - 
+2025-10-07 06:18:10 - 
+2025-10-07 06:19:28 - 
+2025-10-07 06:20:23 - 
+{
+    "service": "update_info",
+    "user_id": "U002",
+    "new_data": "..."
+}
+2025-10-07 06:26:51 - 
+2025-10-07 06:27:49 - 
+2025-10-07 06:28:08 - 
+2025-10-07 06:28:27 - 
+2025-10-07 06:29:13 - 
+2025-10-07 06:30:06 - 
+2025-10-07 06:30:24 - 
+2025-10-07 06:30:24 - 
+2025-10-07 06:30:24 - 
+2025-10-07 06:30:37 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@gmail.com","phone":"0907654321"}
+2025-10-07 06:31:55 - {
+    "user_id": "U002", 
+    "email": "test@newmail.com",
+    "phone": "0901234567"
+}
+2025-10-07 06:32:12 - 
+2025-10-07 06:32:12 - 
+2025-10-07 06:32:12 - 
+2025-10-07 06:32:27 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@gmail.com","phone":"0901234567"}
+2025-10-07 06:33:01 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@gmail.com","phone":"0901234567"}
+2025-10-07 06:35:03 - {"service":"user","action":"update_user","user_id":"U002","email":"tranb@gmail.com","phone":"0901234567"}
+2025-10-07 06:36:23 - 
+2025-10-07 06:36:23 - 
+2025-10-07 06:36:23 - 
+2025-10-07 06:36:34 - {"service":"user","action":"update_user","user_id":"U002","email":"tranthib@newmail.com","phone":"0901234567"}
+2025-10-07 06:39:44 - 
+2025-10-07 06:39:44 - 
+2025-10-07 06:39:44 - 
+2025-10-07 06:39:56 - {"user_id":"U002","email":"tranthib@newmail.com","phone":"0901234567"}
+2025-10-07 06:39:58 - 
+2025-10-07 06:39:58 - 
+2025-10-07 06:39:58 - 
+2025-10-07 06:40:16 - {"user_id":"U002","email":"tranthib@newmail.com","phone":"0123456789"}
+2025-10-07 06:40:17 - 
+2025-10-07 06:40:17 - 
+2025-10-07 06:40:17 - 

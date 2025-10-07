@@ -127,15 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const data = {
-            service: "user",
-            action: "update_user",
             user_id: "<?php echo $userId; ?>",
             email,
             phone
         };
 
         try {
-            const res = await fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php", {
+            const res = await fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=user&action=update_user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
