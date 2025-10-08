@@ -104,10 +104,19 @@ $updateRes = json_decode($response, true);
 /* 6 Gạch nợ học phí */
 $invoiceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/update_invoice.php";
 $payload2 = [
-    "invoice_id" => $row['INVOICE_ID'],
-    "status"     => "PAID"
+    "invoice_id"  => $row['INVOICE_ID'],
+    "amount_paid" => $row['AMOUNT']  // số tiền vừa thanh toán
 ];
-file_get_contents($invoiceUrl . '?' . http_build_query($payload2));
+
+$options = [
+    "http" => [
+        "header"  => "Content-Type: application/json\r\n",
+        "method"  => "POST",
+        "content" => json_encode($payload2),
+    ]
+];
+$context = stream_context_create($options);
+$response = file_get_contents($invoiceUrl, false, $context);
 
 /* 7 Gửi email xác nhận giao dịch */
 $userUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
