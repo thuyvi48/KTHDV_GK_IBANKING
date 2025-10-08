@@ -15,21 +15,25 @@ switch ($action) {
         break;
 
     case 'confirm': 
-        $raw = file_get_contents("php://input");
-        $input = json_decode($raw, true);
+    $raw = file_get_contents("php://input");
+    $input = json_decode($raw, true);
 
-        $paymentId = $input['paymentId'] ?? '';
-        $userId = $input['userId'] ?? '';
-        $code = $input['code'] ?? '';
+    // Hỗ trợ cả hai dạng key: snake_case và camelCase
+    $payment_id = $input['payment_id'] ?? $input['paymentId'] ?? '';
+    $user_id    = $input['user_id'] ?? $input['userId'] ?? '';
+    $otpCode    = $input['otpCode'] ?? $input['code'] ?? $input['otp'] ?? '';
 
-        if (!$paymentId || !$userId || !$code) {
-            echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
-            exit;
-        }
+    // Log để kiểm tra dữ liệu thực tế
+    file_put_contents(__DIR__ . "/debug_transaction_confirm.txt", json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        // Xử lý xác thực OTP ở đây
-        require_once("confirm_payment.php");
-        break;
+    if (!$payment_id || !$user_id || !$otpCode) {
+        echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
+        exit;
+    }
+
+    // Gọi file xử lý chính
+    require_once("confirm_payment.php");
+    break;
 
     case 'transactions': 
         require_once 'get_transactions.php';  

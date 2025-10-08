@@ -1,1 +1,0 @@
-{"success":true,"message":"OTP \u0111\u00e3 \u0111\u01b0\u1ee3c g\u1eedi \u0111\u1ebfn email huynhminhthudt04@gmail.com","otpSentTime":1759861702,"expiresIn":90,"payment_id":"PAY_352245"}
