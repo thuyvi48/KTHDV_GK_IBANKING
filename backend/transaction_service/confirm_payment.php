@@ -145,4 +145,30 @@ if ($payer_email) {
     error_log("Không tìm thấy email của user_id=$user_id để gửi xác nhận giao dịch");
 }
 
+/* 8️ Ghi log giao dịch vào transaction_service */
+$transactionUrl = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/add_transaction.php";
+
+$txnPayload = [
+    "payment_id"    => $payment_id,
+    "user_id"       => $user_id,
+    "type"          => "DEBIT",  // vì là thanh toán học phí → trừ tiền
+    "change_amount" => (float)$row['AMOUNT'],
+    "description"   => "Thanh toán học phí - Invoice ".$row['INVOICE_ID']
+];
+
+$opts = [
+    "http" => [
+        "method"  => "POST",
+        "header"  => "Content-Type: application/json",
+        "content" => json_encode($txnPayload)
+    ]
+];
+$context = stream_context_create($opts);
+$txnRes = file_get_contents($transactionUrl, false, $context);
+$txnJson = json_decode($txnRes, true);
+
+if (!$txnJson || !$txnJson['success']) {
+    error_log("Không ghi được transaction: ".($txnJson['message'] ?? 'Unknown error'));
+}
+
 exit;
