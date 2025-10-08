@@ -2,14 +2,19 @@
 header('Content-Type: application/json');
 require_once 'db.php'; // DB userdb
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(["success" => false, "message" => "Chỉ hỗ trợ POST"]);
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'POST') {
+    $input = json_decode(file_get_contents("php://input"), true);
+    $user_id = $input['user_id'] ?? null;
+    $balance_after = $input['balance_after'] ?? null;
+} elseif ($method === 'GET') {
+    $user_id = $_GET['user_id'] ?? null;
+    $balance_after = $_GET['balance_after'] ?? null;
+} else {
+    echo json_encode(["success" => false, "message" => "Chỉ hỗ trợ GET hoặc POST"]);
     exit;
 }
-
-$input = json_decode(file_get_contents("php://input"), true);
-$user_id = $input['user_id'] ?? null;
-$balance_after = $input['balance_after'] ?? null; // <-- nhận từ balance_after
 
 if (!$user_id || $balance_after === null) {
     echo json_encode(["success" => false, "message" => "Thiếu dữ liệu"]);

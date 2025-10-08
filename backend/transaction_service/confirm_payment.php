@@ -70,12 +70,37 @@ echo json_encode([
 ]);
 
 /* 5 Trừ tiền người gửi */
-$accountUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
-$payload = [
-    "user_id" => $user_id,
-    "amount"  => $row['AMOUNT']
+/* 5 Trừ tiền người gửi */
+$getBalanceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_balance.php";
+$options = [
+    'http' => [
+        'header'  => "Content-Type: application/json\r\n",
+        'method'  => 'POST',
+        'content' => json_encode(['user_id' => $user_id]),
+    ]
 ];
-file_get_contents($accountUrl . '?' . http_build_query($payload));
+$context  = stream_context_create($options);
+$response = file_get_contents($getBalanceUrl, false, $context);
+$data = json_decode($response, true);
+
+$current_balance = $data['balance'] ?? 0;
+$balance_after   = $current_balance - $row['AMOUNT'];
+
+// Gọi update_balance
+$updateUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
+$options = [
+    'http' => [
+        'header'  => "Content-Type: application/json\r\n",
+        'method'  => 'POST',
+        'content' => json_encode([
+            'user_id'       => $user_id,
+            'balance_after' => $balance_after
+        ]),
+    ]
+];
+$context  = stream_context_create($options);
+$response = file_get_contents($updateUrl, false, $context);
+$updateRes = json_decode($response, true);
 
 /* 6 Gạch nợ học phí */
 $invoiceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/update_invoice.php";
@@ -84,6 +109,4 @@ $payload2 = [
     "status"     => "PAID"
 ];
 file_get_contents($invoiceUrl . '?' . http_build_query($payload2));
-
-$conn->close();
-?>
+exit;
