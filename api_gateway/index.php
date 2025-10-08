@@ -1,10 +1,5 @@
 <?php 
 $GLOBAL_INPUT = file_get_contents('php://input');
-file_put_contents(
-    __DIR__ . '/debug_gateway_input.txt',
-    date('Y-m-d H:i:s') . " - " . $GLOBAL_INPUT . PHP_EOL,
-    FILE_APPEND
-);
 
 header('Content-Type: application/json');
 
@@ -23,13 +18,9 @@ case 'user':
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
         echo @file_get_contents($url) ?: json_encode(["error" => "Không thể kết nối user_service"]);
 
-        } elseif ($action === 'update_user') {
-        // API cập nhật email và số điện thoại
+    } elseif ($action === 'update_user') {
         $input = json_decode($GLOBAL_INPUT, true);
-
-        // Chuyển request POST đến user_service/update_user.php
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_user.php";
-        
         $opts = [
             'http' => [
                 'method'  => 'POST',
@@ -37,7 +28,6 @@ case 'user':
                 'content' => json_encode($input)
             ]
         ];
-
         $context = stream_context_create($opts);
         $response = @file_get_contents($url, false, $context);
         echo $response ?: json_encode(["error" => "Không thể kết nối user_service"]);
@@ -58,8 +48,8 @@ case 'user':
             curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
             curl_close($ch);
-
             echo $response;
+
         } elseif ($action === 'reset_pwd') {
             $url = "http://localhost/KTHDV_GK_IBANKING/backend/auth_service/reset_pwd.php";
             $ch = curl_init($url);
@@ -68,7 +58,6 @@ case 'user':
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
-
             if ($response === false) {
                 echo json_encode(["error" => "Không thể kết nối auth_service"]);
             } else {
@@ -83,38 +72,25 @@ case 'user':
     /* ---------------- OTP SERVICE ---------------- */
     case 'otp':
         if ($action === 'send') {
-
-            $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
-
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_otp.php";
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
-
-            if ($response === false) {
-                echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
-            } else {
-                echo $response;
-            }
+            echo $response ?: json_encode(["error" => "Không thể kết nối tới otp_service"]);
             curl_close($ch);
 
         } elseif ($action === 'verify') {
-            $url   = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp.php";
-
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp.php";
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
             $response = curl_exec($ch);
-
-            if ($response === false) {
-                echo json_encode(["error" => "Không thể kết nối tới otp_service"]);
-            } else {
-                echo $response;
-            }
+            echo $response ?: json_encode(["error" => "Không thể kết nối tới otp_service"]);
             curl_close($ch);
 
         } else {
@@ -129,12 +105,10 @@ case 'user':
             case 'get_transaction':
                 $user_id = $_GET['user_id'] ?? '';
                 $limit   = $_GET['limit'] ?? '';
-
                 if (!$user_id) {
                     echo json_encode(['success'=>false,'message'=>'Missing user_id']);
                     exit;
                 }
-
                 $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/list_transaction.php?user_id=" . urlencode($user_id);
                 if ($action === 'get_transaction' && $limit) {
                     $url .= "&limit=" . urlencode($limit);
@@ -190,7 +164,7 @@ case 'user':
                 echo json_encode(['success'=>true,'data'=>$recent_transactions]);
                 exit;
 
-               case 'create_transaction':
+            case 'create_transaction':
                 $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/add_transaction.php";
                 $ch = curl_init($url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -199,10 +173,9 @@ case 'user':
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
                 $response = curl_exec($ch);
                 curl_close($ch);
-
                 echo $response ?: json_encode(["success"=>false,"message"=>"Cannot connect transaction_service"]);
                 exit;
-            }
+        }
         break;
 
     /* ---------------- PAYMENT SERVICE ---------------- */
@@ -230,15 +203,11 @@ case 'payment':
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            $error = curl_error($ch);
-            file_put_contents("debug_gateway_error.txt", "[" . date("Y-m-d H:i:s") . "] CURL ERROR: " . $error . PHP_EOL, FILE_APPEND);
-            echo json_encode(["success" => false, "message" => "Gateway CURL Error: $error"]);
+            echo json_encode(["success" => false, "message" => "Gateway CURL Error: " . curl_error($ch)]);
             curl_close($ch);
             exit;
         }
         curl_close($ch);
-
-        file_put_contents("debug_gateway_response.txt", "[" . date("Y-m-d H:i:s") . "] " . $response . PHP_EOL, FILE_APPEND);
 
         if (!$response) {
             echo json_encode(["success" => false, "message" => "No response from transaction_service"]);
@@ -254,16 +223,12 @@ case 'payment':
 
     elseif ($action === 'confirm') {
         $url = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/index.php?action=confirm";
-
         global $GLOBAL_INPUT;
-
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
-
-        // GỌI CURL
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
@@ -273,8 +238,6 @@ case 'payment':
         }
 
         curl_close($ch);
-
-        // Kiểm tra phản hồi từ backend
         echo $response ?: json_encode(["success" => false, "message" => "No response from backend"]);
     }
     else {
