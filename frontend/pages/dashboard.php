@@ -256,6 +256,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(res => {
             if (res.success) {
+                if (res.status === "PAID") {
+                    messageBox.textContent = "Hóa đơn đã được thanh toán.";
+                    messageBox.style.color = "green";
+                    isInvoiceValid = false;
+                    toggleSubmitButton();
+                    return;
+                }
                 document.querySelector("[name='student_name']").value = res.student_name;
                 document.querySelector("[name='amount']").value = formatCurrency(res.amount_due);
                 document.querySelector("[name='amount_to_pay']").value = formatCurrency(res.amount_due);
