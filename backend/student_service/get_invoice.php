@@ -2,7 +2,7 @@
 header("Content-Type: application/json");
 require_once("db.php");
 
-// 1️⃣ Nhận MSSV từ POST JSON hoặc GET
+// 1 Nhận MSSV từ POST JSON hoặc GET
 $raw = file_get_contents("php://input");
 file_put_contents("debug_input_student.txt", $raw);
 
@@ -14,7 +14,7 @@ if (!$mssv) {
     exit;
 }
 
-// 2️⃣ Lấy student_id từ MSSV
+// 2 Lấy student_id từ MSSV
 $stmt = $conn->prepare("SELECT STUDENT_ID, FULL_NAME FROM STUDENTS WHERE MSSV = ?");
 $stmt->bind_param("s", $mssv); // MSSV thường là string
 $stmt->execute();
@@ -30,7 +30,7 @@ $student_id = $student['STUDENT_ID'];
 $student_name = $student['FULL_NAME'];
 $stmt->close();
 
-// 3️⃣ Lấy hóa đơn gần nhất theo student_id
+// 3 Lấy hóa đơn gần nhất theo student_id
 $stmt2 = $conn->prepare("
     SELECT INVOICE_ID, AMOUNT_DUE, STATUS 
     FROM TUITION_INVOICES 
@@ -50,7 +50,7 @@ $invoice = $res2->fetch_assoc();
 $stmt2->close();
 $conn->close();
 
-// 4️⃣ Trả dữ liệu ra
+// 4 Trả dữ liệu ra
 echo json_encode([
     "success" => true,
     "student_id"   => $student_id,
