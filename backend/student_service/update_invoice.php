@@ -1,67 +1,72 @@
 <?php
 header("Content-Type: application/json");
-require_once("db.php");
+require_once __DIR__ . "/db.php";
 
-// Lấy dữ liệu JSON từ body
-$input = json_decode(file_get_contents("php://input"), true);
+// Đọc dữ liệu JSON
+$input = json_decode(file_get_contents("php://input"), true) ?? [];
+if (empty($input)) {
+    $input = $_GET;
+}
 
-$invoice_id = $input['invoice_id'] ?? '';
-$amount_paid = $input['amount_paid'] ?? 0;
+$invoice_id  = trim($input['invoice_id'] ?? '');
+$amount_paid = isset($input['amount_paid']) ? floatval($input['amount_paid']) : null;
 
-if (!$invoice_id || $amount_paid <= 0) {
-    echo json_encode(["success" => false, "message" => "Thiếu tham số invoice_id hoặc amount_paid không hợp lệ"]);
+if ($invoice_id === '') {
+    echo json_encode(["success" => false, "message" => "Thiếu mã hóa đơn (invoice_id)"]);
     exit;
 }
 
 // Lấy thông tin hóa đơn
-$sql = "SELECT AMOUNT_DUE, AMOUNT_PAID FROM TUITION_INVOICES WHERE INVOICE_ID = ?";
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare("SELECT AMOUNT_DUE, AMOUNT_PAID FROM TUITION_INVOICES WHERE INVOICE_ID = ?");
 $stmt->bind_param("s", $invoice_id);
 $stmt->execute();
-$result = $stmt->get_result();
+$res = $stmt->get_result();
 
-if (!$row = $result->fetch_assoc()) {
+if (!$row = $res->fetch_assoc()) {
     echo json_encode(["success" => false, "message" => "Không tìm thấy hóa đơn"]);
     $stmt->close();
     $conn->close();
     exit;
 }
+$stmt->close();
 
-$current_paid = $row['AMOUNT_PAID'] ?? 0;
+$current_paid = (float)$row['AMOUNT_PAID'];
+$amount_due   = (float)$row['AMOUNT_DUE'];
 
-$due = $row['AMOUNT_DUE'];
-
-// Cộng thêm số tiền vừa thanh toán
-$new_paid = $current_paid + $amount_paid;
-
-// Xác định trạng thái mới
-$status = "partial";
-if ($new_paid >= $due) {
-    $new_paid = $due;
-    $status = "paid";
+// Chỉ cập nhật thanh toán một phần duy nhất
+if ($amount_paid === null || $amount_paid <= 0) {
+    echo json_encode(["success" => false, "message" => "Thiếu dữ liệu amount_paid hợp lệ"]);
+    $conn->close();
+    exit;
 }
 
-// Cập nhật DB
-$update_sql = "UPDATE TUITION_INVOICES 
-               SET AMOUNT_PAID = ?, STATUS = ?, UPDATED_AT = NOW() 
-               WHERE INVOICE_ID = ?";
-$update_stmt = $conn->prepare($update_sql);
-$update_stmt->bind_param("dss", $new_paid, $status, $invoice_id);
+$new_paid = $amount_paid; 
+if ($new_paid >= $amount_due) {
+    $new_paid = $amount_due;
+    $new_status = 'PAID';
+} else {
+    $new_status = 'UNPAID';
+}
 
-if ($update_stmt->execute()) {
+// Cập nhật vào DB
+$update = $conn->prepare("UPDATE TUITION_INVOICES 
+                          SET AMOUNT_PAID = ?, STATUS = ?, UPDATED_AT = NOW() 
+                          WHERE INVOICE_ID = ?");
+$update->bind_param("dss", $new_paid, $new_status, $invoice_id);
+
+if ($update->execute()) {
     echo json_encode([
-        "success" => true,
-        "message" => "Cập nhật hóa đơn thành công",
-        "invoice_id" => $invoice_id,
-        "amount_paid" => $new_paid,
-        "amount_due" => $due,
-        "status" => $status
+        "success"      => true,
+        "message"      => "Cập nhật hóa đơn thành công",
+        "invoice_id"   => $invoice_id,
+        "amount_due"   => $amount_due,
+        "amount_paid"  => $new_paid,
+        "status"       => $new_status
     ]);
-
 } else {
     echo json_encode(["success" => false, "message" => "Lỗi khi cập nhật hóa đơn"]);
 }
 
-$stmt->close();
-$update_stmt->close();
+$update->close();
 $conn->close();
+?>

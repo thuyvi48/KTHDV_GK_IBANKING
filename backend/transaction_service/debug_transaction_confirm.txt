@@ -1,5 +1,5 @@
 {
-    "payment_id": "PAY_985aa8",
+    "payment_id": "PAY_399fd0",
     "user_id": "U002",
-    "otpCode": "703944"
+    "otpCode": "651983"
 }
