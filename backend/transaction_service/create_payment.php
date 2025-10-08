@@ -82,7 +82,7 @@ $payload = [
     "payment_id" => $paymentId,
     "user_id"    => $userId,
     "email"      => $email,
-    "ttlSeconds" => 90
+    "ttlSeconds" => 300
 ];
 
 $ch = curl_init($otpUrl);

@@ -28,7 +28,7 @@ if (!$user_id || !$type || !$change_amount) {
     exit;
 }
 
-// 1️⃣ Lấy balance hiện tại từ user_service
+//  Lấy balance hiện tại từ user_service
 $get_balance_url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_balance.php";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $get_balance_url);
@@ -47,7 +47,7 @@ if (!$balance_data || !$balance_data['success']) {
 
 $current_balance = (float)$balance_data['balance'];
 
-// 2️⃣ Tính balance_after
+// 2Tính balance_after
 if ($type === "CREDIT") {
     $balance_after = $current_balance + $change_amount;
 } elseif ($type === "DEBIT") {
@@ -61,7 +61,7 @@ if ($type === "CREDIT") {
     exit;
 }
 
-// 3️⃣ Tạo transaction_id
+// 3Tạo transaction_id
 $res = $conn->query("SELECT TRANSACTION_ID FROM transactions ORDER BY TRANSACTION_ID DESC LIMIT 1");
 if ($res && $row = $res->fetch_assoc()) {
     $num = (int)substr($row['TRANSACTION_ID'], 2)+1;
