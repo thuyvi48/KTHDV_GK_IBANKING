@@ -70,7 +70,6 @@ echo json_encode([
 ]);
 
 /* 5 Trừ tiền người gửi */
-/* 5 Trừ tiền người gửi */
 $getBalanceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_balance.php";
 $options = [
     'http' => [
@@ -109,4 +108,41 @@ $payload2 = [
     "status"     => "PAID"
 ];
 file_get_contents($invoiceUrl . '?' . http_build_query($payload2));
+
+/* 7 Gửi email xác nhận giao dịch */
+$userUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
+$response = file_get_contents($userUrl);
+$userData = json_decode($response, true);
+
+$payer_email = $userData['EMAIL'] ?? '';
+
+
+if ($payer_email) {
+    $emailUrl = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/send_success.php";
+    $emailPayload = [
+        "email"      => $payer_email,
+        "amount"     => $row['AMOUNT'],
+        "student_id" => $row['STUDENT_ID'],
+        "invoice_id" => $row['INVOICE_ID'],
+        "payment_id" => $payment_id
+    ];
+
+    $opts = [
+        "http" => [
+            "method"  => "POST",
+            "header"  => "Content-Type: application/json",
+            "content" => json_encode($emailPayload)
+        ]
+    ];
+    $context = stream_context_create($opts);
+    $emailRes = file_get_contents($emailUrl, false, $context);
+    $emailJson = json_decode($emailRes, true);
+
+    if (!$emailJson || !$emailJson['success']) {
+        error_log("Không gửi được email xác nhận: " . ($emailJson['message'] ?? 'Unknown error'));
+    }
+} else {
+    error_log("Không tìm thấy email của user_id=$user_id để gửi xác nhận giao dịch");
+}
+
 exit;
