@@ -154,7 +154,7 @@ if ($payer_email) {
     error_log("Không tìm thấy email của user_id=$user_id để gửi xác nhận giao dịch");
 }
 
-/* 8️ Ghi log giao dịch vào transaction_service */
+/* 8 Ghi log giao dịch vào transaction_service */
 $transactionUrl = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/add_transaction.php";
 
 $txnPayload = [
@@ -162,7 +162,7 @@ $txnPayload = [
     "user_id"       => $user_id,
     "type"          => "DEBIT",  // vì là thanh toán học phí → trừ tiền
     "change_amount" => (float)$row['AMOUNT'],
-    "description"   => "Thanh toán học phí - Invoice ".$row['INVOICE_ID']
+    "description"   => "Thanh toán học phí - ".$row['INVOICE_ID']
 ];
 
 $opts = [

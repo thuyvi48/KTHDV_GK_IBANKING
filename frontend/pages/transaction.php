@@ -16,7 +16,7 @@ $status_map = [
 
 <div class="recent-transactions">
     <div class="section-header">
-        <h2>Lịch sử giao dịch</h2>
+        <h1>Lịch sử giao dịch</h1>
     </div>
 
     <div class="transactions-list">

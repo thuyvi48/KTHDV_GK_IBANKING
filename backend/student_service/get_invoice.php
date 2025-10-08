@@ -4,7 +4,6 @@ require_once("db.php");
 
 // 1 Nhận MSSV từ POST JSON hoặc GET
 $raw = file_get_contents("php://input");
-file_put_contents("debug_input_student.txt", $raw);
 
 $input = json_decode($raw, true);
 $mssv = $input['mssv'] ?? ($_GET['id'] ?? ''); 

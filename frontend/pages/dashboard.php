@@ -48,9 +48,7 @@ $status_map = [
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../frontend/assets/css/dashboard.css">
         <style>
-      /* nhỏ gọn style cho modal nếu css global ko cover */
-      .modal-readonly { background:#f8f9fa; padding:12px; border-radius:6px; }
-      .modal .modal-footer { border-top:0; }
+
     </style>
 </head>
 <body>
@@ -76,7 +74,7 @@ $status_map = [
     <!-- Payment Form -->
     <div class="payment-form">
         <form id="paymentForm">
-            <h3>Người nộp tiền</h3>
+            <h4>Người nộp tiền</h4>
             <label>Họ tên:</label>
             <input type="text" name="payer_name" value="<?php echo $payer_name; ?>" readonly>
             
@@ -86,7 +84,7 @@ $status_map = [
             <label>Email:</label>
             <input type="email" name="payer_email" value="<?php echo $payer_email; ?>" readonly>
 
-            <h3 style="grid-column:1 / -1">Thông tin học phí</h3>
+            <h4 style="grid-column:1 / -1">Thông tin học phí</h4>
             <label>MSSV:</label>
             <input type="text" id="mssv" name="mssv" placeholder="Nhập MSSV">
             <label>Họ tên sinh viên:</label>
@@ -94,7 +92,7 @@ $status_map = [
             <label>Số tiền cần nộp:</label>
             <input type="text" id="amount" name="amount" readonly>
 
-            <h3>Thông tin thanh toán</h3>
+            <h4>Thông tin thanh toán</h4>
             <label>Số dư khả dụng:</label>
             <input type="text" name="balance" value="<?php echo number_format($account_balance, 0, ',', '.'); ?> đ" readonly>
             <label>Số tiền học phí cần thanh toán:</label>
@@ -104,7 +102,7 @@ $status_map = [
             <div class="agree-submit">
                 <label>
                     <input type="checkbox" name="agree"> Tôi đồng ý với các 
-                    <span style="color:blue; margin:0 4px; cursor:pointer;">thỏa thuận và điều khoản</span> 
+                    <span style="color:blue; margin:0 4px; cursor:pointer;">Thỏa thuận và Điều khoản</span> 
                     của hệ thống iMAGINE
                 </label>
                     <button type="submit">Xác nhận giao dịch</button>
@@ -158,7 +156,7 @@ $status_map = [
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Xác nhận giao dịch</h5>
+        <h5 class="modal-title"><strong>Xác nhận giao dịch</strong></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body">
@@ -177,12 +175,12 @@ $status_map = [
           <p>Mã OTP đã được gửi đến email của bạn. Vui lòng nhập mã để xác nhận thanh toán.</p>
           <input type="text" id="otp_input" class="form-control" placeholder="Nhập mã OTP">
           <div id="otpMessage" class="mt-2" style="color:red;"></div>
-          <button type="button" class="btn btn-success w-100 mt-3" id="verifyOtpBtn">Xác thực OTP</button>
+          <button type="button" class="btn" id="verifyOtpBtn">Xác thực OTP</button>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button id="createPaymentBtn" type="button" class="btn btn-primary w-100">Tạo giao dịch & Gửi OTP</button>
+        <button id="createPaymentBtn" type="button" class="btn">Tạo giao dịch & Gửi OTP</button>
       </div>
     </div>
   </div>
@@ -193,7 +191,7 @@ $status_map = [
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function formatCurrency(amount) {
+    function formatCurrency(amount) {
     return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
 }
 
@@ -367,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        otpMessage.innerHTML = "Đang xác thực OTP...";
+        otpMessage.innerHTML = "<span style='color: green;'>Đang xác thực OTP...</span>";
 
         fetch("http://localhost/KTHDV_GK_IBANKING/api_gateway/index.php?service=payment&action=confirm", {
             method: "POST",
@@ -394,7 +392,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
-
 </body>
 </html>

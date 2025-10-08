@@ -8,8 +8,7 @@ $user = [
     "FULL_NAME" => "",
     "EMAIL" => "",
     "PHONE" => "",
-    "BALANCE" => 0,
-    "PAYMENT_STATUS" => ""
+    "BALANCE" => 0
 ];
 
 if ($userId) {
@@ -22,14 +21,6 @@ if ($userId) {
 
     if ($resp && isset($resp['FULL_NAME'])) {
         $user = $resp;
-
-        $payResp = callAPI("GET", $apiUrl, [
-            "service" => "transaction",
-            "action"  => "get_payment_status",
-            "user_id" => $userId
-        ]);
-
-        $user['PAYMENT_STATUS'] = $payResp['STATUS'] ?? "unknown";
     } else {
         $user['FULL_NAME'] = "Không tải được thông tin người dùng";
     }
@@ -59,35 +50,26 @@ if ($userId) {
                 </div>
             </div>
 
-            <div class="cust-form-row">
-                <div class="cust-form-group">
-                    <label>Số dư tài khoản</label>
-                    <input type="text" value="<?php echo number_format($user['BALANCE'], 0, ',', '.'); ?> ₫" readonly>
-                </div>
-                <div class="cust-form-group">
-                    <label>Trạng thái thanh toán</label>
-                    <input type="text" 
-                        value="<?php 
-                            echo match(strtolower($user['PAYMENT_STATUS'] ?? '')) {
-                                'completed' => 'Hoàn tất',
-                                'pending'   => 'Đang chờ',
-                                'failed'    => 'Thất bại',
-                                default     => 'Không xác định'
-                            }; 
-                        ?>" 
-                        readonly>
-                </div>
-            </div>
-
+    <div class="cust-form-row align-items-end">
+        <div class="cust-form-group" style="flex: 1;">
+            <label>Số dư tài khoản</label>
+            <input type="text" 
+                value="<?php echo number_format($user['BALANCE'], 0, ',', '.'); ?> ₫" 
+                readonly 
+                style="max-width: 180px;">
+        </div>
             <!-- Nút thao tác -->
-            <div class="text-center mt-4">
+            <div class="text-center mt-4 btn-group-inline">
                 <button type="button" id="btnEdit" class="btn btn-success px-3">Chỉnh sửa</button>
-                <button type="button" id="btnSave" class="btn btn-primary px-3" style="display:none;">Lưu</button>
-                <button type="button" id="btnCancel" class="btn btn-secondary px-3" style="display:none;">Hủy</button>
+                <div id="editActions" style="display: none; gap: 10px;">
+                    <button type="button" id="btnSave" class="btn px-3">Lưu</button>
+                    <button type="button" id="btnCancel" class="btn btn-secondary px-3">Hủy</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const btnEdit = document.getElementById("btnEdit");
@@ -96,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.getElementById("email");
     const phoneInput = document.getElementById("phone");
 
-    // 🔹 Thêm phần hiển thị thông báo
+    // Thêm phần hiển thị thông báo
     const messageBox = document.createElement("p");
     messageBox.id = "updateMessage";
     messageBox.style.marginTop = "15px";
@@ -109,8 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messageBox.textContent = text;
         messageBox.style.color = color;
         messageBox.style.opacity = "1";
-
-        // 🔸 Tự động ẩn sau 5 giây
         setTimeout(() => {
             messageBox.style.opacity = "0";
         }, 5000);
@@ -120,10 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btnEdit.addEventListener("click", () => {
         emailInput.removeAttribute("readonly");
         phoneInput.removeAttribute("readonly");
-
         btnEdit.style.display = "none";
-        btnSave.style.display = "inline-block";
-        btnCancel.style.display = "inline-block";
+        document.getElementById("editActions").style.display = "flex"; 
     });
 
     // Khi nhấn "Hủy"
@@ -160,8 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await res.json();
 
             if (result.success) {
-                showMessage("Cập nhật thành công!", "red");
-
+                showMessage("Cập nhật thành công!", "green");
                 emailInput.setAttribute("readonly", true);
                 phoneInput.setAttribute("readonly", true);
                 btnSave.style.display = "none";
@@ -176,4 +153,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-

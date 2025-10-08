@@ -23,8 +23,6 @@ switch ($action) {
     $user_id    = $input['user_id'] ?? $input['userId'] ?? '';
     $otpCode    = $input['otpCode'] ?? $input['code'] ?? $input['otp'] ?? '';
 
-    // Log để kiểm tra dữ liệu thực tế
-    file_put_contents(__DIR__ . "/debug_transaction_confirm.txt", json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
     if (!$payment_id || !$user_id || !$otpCode) {
         echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
