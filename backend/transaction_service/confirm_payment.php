@@ -1,11 +1,9 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/db.php';
-file_put_contents(__DIR__ . "/debug_confirm_log.txt", date('Y-m-d H:i:s') . " - confirm_payment called\n", FILE_APPEND);
 
 $input = json_decode(file_get_contents("php://input"), true) ?? [];
-file_put_contents(__DIR__ . "/debug_confirm_input.txt", file_get_contents("php://input"));
-    
+
 $payment_id = trim($input['payment_id'] ?? $input['paymentId'] ?? '');
 $user_id    = trim($input['user_id'] ?? $input['userId'] ?? '');
 $otpCode    = trim($input['otpCode'] ?? $input['code'] ?? $input['otp'] ?? $input['otp_code'] ?? '');
@@ -14,9 +12,6 @@ if ($payment_id === '' || $user_id === '' || $otpCode === '') {
     echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
     exit;
 }
-
-// Ghi log payload để kiểm tra
-file_put_contents(__DIR__ . "/debug_confirm_payload.txt", json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 /* 1️⃣ GỌI OTP SERVICE ĐỂ XÁC THỰC OTP */
 $otpUrl = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp_pay.php";
@@ -63,7 +58,7 @@ $stmt->bind_param("s", $payment_id);
 $stmt->execute();
 $stmt->close();
 
-/* 4️⃣ (Chuẩn bị gọi các service khác để xử lý hậu giao dịch) */
+/* 4️⃣ Phản hồi thành công */
 echo json_encode([
     "success"      => true,
     "message"      => "Xác thực OTP và cập nhật giao dịch thành công",
@@ -73,8 +68,9 @@ echo json_encode([
     "invoice_id"   => $row['INVOICE_ID'],
     "amount"       => (float)$row['AMOUNT']
 ]);
+
 /* 5️⃣ Trừ tiền người gửi */
-$accountUrl = "http://localhost/KTHDV_GK_IBANKING/backend/account_service/update_balance.php";
+$accountUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
 $payload = [
     "user_id" => $user_id,
     "amount"  => $row['AMOUNT']
@@ -88,4 +84,6 @@ $payload2 = [
     "status"     => "PAID"
 ];
 file_get_contents($invoiceUrl . '?' . http_build_query($payload2));
+
 $conn->close();
+?>

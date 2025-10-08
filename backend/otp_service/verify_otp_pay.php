@@ -1,15 +1,10 @@
 <?php
-file_put_contents(__DIR__ . "/debug_raw_input.txt", file_get_contents("php://input"));
-
 header('Content-Type: application/json');
 require __DIR__ . '/db.php';
 
 // Đọc dữ liệu JSON đầu vào
 $inputRaw = file_get_contents("php://input");
 $input = json_decode($inputRaw, true);
-
-// Ghi log input để debug (nếu cần)
-file_put_contents(__DIR__ . "/debug_input_confirm.txt", json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 // Kiểm tra nếu decode thất bại
 if (!is_array($input)) {
@@ -22,14 +17,8 @@ $payment_id = trim($input['payment_id'] ?? $input['paymentId'] ?? '');
 $user_id    = trim($input['user_id'] ?? $input['userId'] ?? '');
 $otpCode    = trim($input['otpCode'] ?? $input['code'] ?? $input['otp'] ?? $input['otp_code'] ?? '');
 
-// Debug khi thiếu dữ liệu
+// Kiểm tra dữ liệu bắt buộc
 if ($payment_id === '' || $user_id === '' || $otpCode === '') {
-    $missing = [
-        "payment_id" => empty($payment_id),
-        "user_id" => empty($user_id),
-        "otpCode" => empty($otpCode)
-    ];
-    file_put_contents(__DIR__ . "/debug_verify_missing.txt", json_encode($missing));
     echo json_encode(["success" => false, "message" => "Thiếu dữ liệu xác thực OTP"]);
     exit;
 }

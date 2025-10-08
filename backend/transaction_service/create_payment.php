@@ -94,15 +94,11 @@ $otpRes = curl_exec($ch);
 $curl_err = curl_error($ch);
 curl_close($ch);
 
-// Debug: lưu response
-file_put_contents("debug_otp.txt", $otpRes ?: $curl_err);
-
 if ($curl_err) {
     echo json_encode(['success' => false, 'message' => "Không thể kết nối OTP service: $curl_err"]);
     exit;
 }
 
-// Parse phản hồi từ OTP service
 $otpJson = json_decode($otpRes, true);
 if (!$otpJson || empty($otpJson['success']) || !$otpJson['success']) {
     echo json_encode(['success' => false, 'message' => $otpJson['message'] ?? 'Lỗi OTP']);
