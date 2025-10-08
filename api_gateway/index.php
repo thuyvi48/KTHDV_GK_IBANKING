@@ -122,7 +122,6 @@ case 'user':
         }
         break;
 
-    /* ---------------- TRANSACTION SERVICE ---------------- */
         /* ---------------- TRANSACTION SERVICE ---------------- */
     case 'transaction':
         switch ($action) {
