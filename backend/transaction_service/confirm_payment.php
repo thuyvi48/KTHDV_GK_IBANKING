@@ -13,7 +13,7 @@ if ($payment_id === '' || $user_id === '' || $otpCode === '') {
     exit;
 }
 
-/* 1️⃣ GỌI OTP SERVICE ĐỂ XÁC THỰC OTP */
+/* 1 GỌI OTP SERVICE ĐỂ XÁC THỰC OTP */
 $otpUrl = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/verify_otp_pay.php";
 
 $ch = curl_init($otpUrl);
@@ -40,7 +40,7 @@ if (!$otpJson || empty($otpJson['success'])) {
     exit;
 }
 
-/* 2️⃣ Nếu OTP hợp lệ thì tiếp tục xử lý giao dịch */
+/* 2 Nếu OTP hợp lệ thì tiếp tục xử lý giao dịch */
 $stmt = $conn->prepare("SELECT STUDENT_ID, INVOICE_ID, AMOUNT FROM PAYMENTS WHERE PAYMENT_ID=? AND USER_ID=? LIMIT 1");
 $stmt->bind_param("ss", $payment_id, $user_id);
 $stmt->execute();
@@ -52,13 +52,13 @@ if (!$row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-/* 3️⃣ Cập nhật trạng thái payment */
+/*3 Cập nhật trạng thái payment */
 $stmt = $conn->prepare("UPDATE PAYMENTS SET STATUS='done', CONFIRM_AT=NOW() WHERE PAYMENT_ID=?");
 $stmt->bind_param("s", $payment_id);
 $stmt->execute();
 $stmt->close();
 
-/* 4️⃣ Phản hồi thành công */
+/* 4 Phản hồi thành công */
 echo json_encode([
     "success"      => true,
     "message"      => "Xác thực OTP và cập nhật giao dịch thành công",
@@ -69,7 +69,7 @@ echo json_encode([
     "amount"       => (float)$row['AMOUNT']
 ]);
 
-/* 5️⃣ Trừ tiền người gửi */
+/* 5 Trừ tiền người gửi */
 $accountUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
 $payload = [
     "user_id" => $user_id,
@@ -77,7 +77,7 @@ $payload = [
 ];
 file_get_contents($accountUrl . '?' . http_build_query($payload));
 
-/* 6️⃣ Gạch nợ học phí */
+/* 6 Gạch nợ học phí */
 $invoiceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/update_invoice.php";
 $payload2 = [
     "invoice_id" => $row['INVOICE_ID'],
