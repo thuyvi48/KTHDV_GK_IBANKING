@@ -104,10 +104,19 @@ $updateRes = json_decode($response, true);
 /* 6 Gạch nợ học phí */
 $invoiceUrl = "http://localhost/KTHDV_GK_IBANKING/backend/student_service/update_invoice.php";
 $payload2 = [
-    "invoice_id" => $row['INVOICE_ID'],
-    "status"     => "PAID"
+    "invoice_id"  => $row['INVOICE_ID'],
+    "amount_paid" => $row['AMOUNT']  // số tiền vừa thanh toán
 ];
-file_get_contents($invoiceUrl . '?' . http_build_query($payload2));
+
+$options = [
+    "http" => [
+        "header"  => "Content-Type: application/json\r\n",
+        "method"  => "POST",
+        "content" => json_encode($payload2),
+    ]
+];
+$context = stream_context_create($options);
+$response = file_get_contents($invoiceUrl, false, $context);
 
 /* 7 Gửi email xác nhận giao dịch */
 $userUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/get_user.php?user_id=" . urlencode($user_id);
@@ -143,6 +152,32 @@ if ($payer_email) {
     }
 } else {
     error_log("Không tìm thấy email của user_id=$user_id để gửi xác nhận giao dịch");
+}
+
+/* 8️ Ghi log giao dịch vào transaction_service */
+$transactionUrl = "http://localhost/KTHDV_GK_IBANKING/backend/transaction_service/add_transaction.php";
+
+$txnPayload = [
+    "payment_id"    => $payment_id,
+    "user_id"       => $user_id,
+    "type"          => "DEBIT",  // vì là thanh toán học phí → trừ tiền
+    "change_amount" => (float)$row['AMOUNT'],
+    "description"   => "Thanh toán học phí - Invoice ".$row['INVOICE_ID']
+];
+
+$opts = [
+    "http" => [
+        "method"  => "POST",
+        "header"  => "Content-Type: application/json",
+        "content" => json_encode($txnPayload)
+    ]
+];
+$context = stream_context_create($opts);
+$txnRes = file_get_contents($transactionUrl, false, $context);
+$txnJson = json_decode($txnRes, true);
+
+if (!$txnJson || !$txnJson['success']) {
+    error_log("Không ghi được transaction: ".($txnJson['message'] ?? 'Unknown error'));
 }
 
 exit;
