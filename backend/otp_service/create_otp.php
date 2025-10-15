@@ -37,7 +37,7 @@ $stmt = $conn->prepare("
 $stmt->bind_param("sssss", $otp_id, $user_id, $payment_id, $code, $expires_at);
 
 if (!$stmt->execute()) {
-    echo json_encode(["success" => false, "message" => "Không thể lưu OTP vào cơ sở dữ liệu"]);
+    echo json_encode(["success" => false, "message" => "Giao dịch bị trùng lặp. Vui lòng kiểm tra lại."]);
     exit;
 }
 $stmt->close();

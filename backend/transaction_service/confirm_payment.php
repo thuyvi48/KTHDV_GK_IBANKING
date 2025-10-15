@@ -83,7 +83,7 @@ $response = file_get_contents($getBalanceUrl, false, $context);
 $data = json_decode($response, true);
 
 $current_balance = $data['balance'] ?? 0;
-$balance_after   = $current_balance - $row['AMOUNT'];
+$balance_after   = $current_balance;
 
 // Gọi update_balance
 $updateUrl = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
