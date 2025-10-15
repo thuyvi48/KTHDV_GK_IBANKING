@@ -19,6 +19,29 @@ if (!$student_id || !$invoice_id || !$amount_to_pay || !$userId) {
 // --- Tạo payment ID ---
 $paymentId = "PAY_" . substr(uniqid(), -6); // Ví dụ: PAY_ab12cd
 
+// --- Kiểm tra nếu invoice này đã có giao dịch pending hoặc done ---
+$check = $conn->prepare("
+    SELECT PAYMENT_ID, STATUS 
+    FROM PAYMENTS 
+    WHERE INVOICE_ID = ? 
+    AND (STATUS = 'pending' OR STATUS = 'done')
+    LIMIT 1
+");
+$check->bind_param("s", $invoice_id);
+$check->execute();
+$res = $check->get_result();
+
+if ($res->num_rows > 0) {
+    $row = $res->fetch_assoc();
+    echo json_encode([
+        'success' => false,
+        'message' => 'Hóa đơn này đang được hoặc đã được thanh toán. Vui lòng kiểm tra lại.'
+    ]);
+    exit;
+}
+$check->close();
+
+
 // --- Chuẩn bị INSERT ---
 $stmt = $conn->prepare("
     INSERT INTO PAYMENTS

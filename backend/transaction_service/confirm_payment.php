@@ -51,7 +51,25 @@ if (!$row = $result->fetch_assoc()) {
     exit;
 }
 $stmt->close();
-
+// Kiểm tra xem invoice này đã được xử lý chưa
+$checkInvoice = $conn->prepare("
+    SELECT PAYMENT_ID 
+    FROM PAYMENTS 
+    WHERE INVOICE_ID = (SELECT INVOICE_ID FROM PAYMENTS WHERE PAYMENT_ID = ?) 
+    AND STATUS = 'done'
+    LIMIT 1
+");
+$checkInvoice->bind_param("s", $payment_id);
+$checkInvoice->execute();
+$res = $checkInvoice->get_result();
+if ($res->num_rows > 0) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Hóa đơn này đã được thanh toán trước đó. Giao dịch của bạn sẽ không được xử lý."
+    ]);
+    exit;
+}
+$checkInvoice->close();
 /*3 Cập nhật trạng thái payment */
 $stmt = $conn->prepare("UPDATE PAYMENTS SET STATUS='done', CONFIRM_AT=NOW() WHERE PAYMENT_ID=?");
 $stmt->bind_param("s", $payment_id);

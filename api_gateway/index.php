@@ -92,6 +92,16 @@ case 'user':
             $response = curl_exec($ch);
             echo $response ?: json_encode(["error" => "Không thể kết nối tới otp_service"]);
             curl_close($ch);
+        } elseif ($action === 'resend') {
+            $url = "http://localhost/KTHDV_GK_IBANKING/backend/otp_service/resend_otp.php";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBAL_INPUT);
+            $response = curl_exec($ch);
+            echo $response ?: json_encode(["error" => "Không thể kết nối tới otp_service"]);
+            curl_close($ch);
 
         } else {
             echo json_encode(["error" => "Action otp không hợp lệ"]);
