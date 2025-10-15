@@ -82,7 +82,7 @@ $payload = [
     "payment_id" => $paymentId,
     "user_id"    => $userId,
     "email"      => $email,
-    "ttlSeconds" => 300
+    "ttlSeconds" => 30
 ];
 
 $ch = curl_init($otpUrl);
@@ -110,5 +110,5 @@ echo json_encode([
     'success' => true,
     'message' => 'Giao dịch tạo thành công. OTP đã gửi.',
     'payment_id' => $paymentId,
-    'otpExpiresIn' => $otpJson['expiresIn'] ?? 300
+    'otpExpiresIn' => $otpJson['expiresIn'] ?? 30
 ]);
