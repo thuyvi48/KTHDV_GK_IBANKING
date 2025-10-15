@@ -17,7 +17,7 @@ $input = json_decode(file_get_contents("php://input"), true);
 $payment_id  = trim($input['payment_id'] ?? '');
 $user_id     = trim($input['user_id'] ?? '');
 $email       = trim($input['email'] ?? '');
-$ttl_seconds = intval($input['ttlSeconds'] ?? 300);
+$ttl_seconds = intval($input['ttlSeconds'] ?? 30);
 $ttl_minutes = $ttl_seconds / 60; 
 if (!$payment_id || !$user_id || !$email) {
     echo json_encode(["success" => false, "message" => "Thiếu dữ liệu (payment_id, user_id hoặc email)"]);
@@ -63,7 +63,7 @@ try {
     $mail->Body    = "
         <h2>Xác nhận giao dịch thanh toán</h2>
         <p>Mã OTP của bạn là: <b style='font-size:20px;color:#007bff;'>$code</b></p>
-        <p>OTP này chỉ có hiệu lực trong <b>$ttl_minutes phút</b>.</p>
+        <p>OTP này chỉ có hiệu lực trong <b>$ttl_seconds giây</b>.</p>
         <hr>
         <p style='font-size:13px;color:#666;'>Nếu bạn không thực hiện giao dịch này, vui lòng bỏ qua email.</p>
     ";

@@ -37,7 +37,7 @@ $user_id = $userData['USER_ID'];
 
 // --- sinh OTP ---
 $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-$expires_seconds = 60; // = 60s, đổi nếu muốn 300 (5 phút)
+$expires_seconds = 60; // = 60s
 $expires_at = date("Y-m-d H:i:s", time() + $expires_seconds);
 
 // --- lưu OTP vào otpdb.OTPS ---
