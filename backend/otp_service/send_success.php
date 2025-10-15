@@ -31,8 +31,8 @@ try {
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'minhthuhuynh23@gmail.com';      // 🔹 Gmail gửi đi
-    $mail->Password   = 'kapendjgusnxwczc';              // 🔹 App Password Gmail
+    $mail->Username   = 'minhthuhuynh23@gmail.com';      // Gmail gửi đi
+    $mail->Password   = 'kapendjgusnxwczc';              // App Password Gmail
     $mail->SMTPSecure = 'ssl';
     $mail->Port       = 465;
     $mail->CharSet    = 'UTF-8';
