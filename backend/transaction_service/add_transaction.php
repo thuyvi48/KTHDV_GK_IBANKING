@@ -70,7 +70,7 @@ if ($res && $row = $res->fetch_assoc()) {
     $transaction_id = "TX001";
 }
 
-// 4️⃣ Thêm vào bảng transactions
+// 4 Thêm vào bảng transactions
 $balance_after = (float)$balance_after; // đảm bảo là double
 $change_amount = (int)$change_amount;   // đảm bảo là int
 $description   = (string)$description;
@@ -96,7 +96,7 @@ if (!$stmt->execute()) {
     exit;
 }
 
-// 5️⃣ Gọi update_balance
+// 5 Gọi update_balance
 $update_url = "http://localhost/KTHDV_GK_IBANKING/backend/user_service/update_balance.php";
 $update_payload = json_encode([
     "user_id" => $user_id,
@@ -118,7 +118,7 @@ if (!$update_data || !$update_data['success']) {
     exit;
 }
 
-// 6️⃣ Trả về JSON
+// 6 Trả về JSON
 echo json_encode([
     "success" => true,
     "transaction_id" => $transaction_id,
