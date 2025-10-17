@@ -37,9 +37,6 @@ $result = file_get_contents($url, false, $context);
 if ($result === FALSE) {
     $error = "Không thể kết nối server!";
 } else {
-    // Debug để xem API trả gì
-    file_put_contents("debug_reset_frontend.txt", $result);
-
     $res = json_decode($result, true);
     if ($res === null) {
         $error = "Phản hồi từ server không hợp lệ: " . htmlspecialchars($result);
