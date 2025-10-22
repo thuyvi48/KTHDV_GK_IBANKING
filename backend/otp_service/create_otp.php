@@ -27,8 +27,9 @@ if (!$payment_id || !$user_id || !$email) {
 // --- Sinh OTP ---
 $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 $expires_at = date("Y-m-d H:i:s", time() + $ttl_seconds);
-$otp_id = uniqid("OTP");
+$otp_id = 'OTP_' . bin2hex(random_bytes(6)); // ví dụ: OTP_3a9f7c2d1e
 
+error_log("OTP_ID: $otp_id | PAYMENT_ID: $payment_id | USER_ID: $user_id");
 // --- Lưu OTP ---
 $stmt = $conn->prepare("
     INSERT INTO OTPS (OTP_ID, USER_ID, PAYMENT_ID, CODE, IS_USED, CREATED_AT, EXPIRES_AT)
@@ -37,7 +38,8 @@ $stmt = $conn->prepare("
 $stmt->bind_param("sssss", $otp_id, $user_id, $payment_id, $code, $expires_at);
 
 if (!$stmt->execute()) {
-    echo json_encode(["success" => false, "message" => "Giao dịch bị trùng lặp. Vui lòng kiểm tra lại."]);
+    error_log("Lỗi khi ghi OTP: " . $stmt->error);
+    echo json_encode(["success" => false, "message" => "Giao dịch bị trùng lặp. Vui lòng thử lại."]);
     exit;
 }
 $stmt->close();
